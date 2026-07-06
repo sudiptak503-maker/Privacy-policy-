@@ -2887,19 +2887,6 @@ button, .brand-header, .user-info, .login-section {
         };
     }
 
-    // MutationObserver
-    const observer = new MutationObserver(() => {
-        const gameContent = document.getElementById('gameContent');
-        if (gameContent && !document.getElementById('gameHistoryContainer')) {
-            const historyDiv = document.createElement('div');
-            historyDiv.id = 'gameHistoryContainer';
-            historyDiv.className = 'game-history-container';
-            gameContent.appendChild(historyDiv);
-            renderGameHistory();
-        }
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-
     // ============================================================
     // 7. টেক্সট স্টাইল নরমাল
     // ============================================================
@@ -3444,19 +3431,6 @@ button, .brand-header, .user-info, .login-section {
         };
     }
 
-    // MutationObserver
-    const observer = new MutationObserver(() => {
-        const gameContent = document.getElementById('gameContent');
-        if (gameContent && !document.getElementById('gameHistoryContainer')) {
-            const historyDiv = document.createElement('div');
-            historyDiv.id = 'gameHistoryContainer';
-            historyDiv.className = 'game-history-container';
-            gameContent.appendChild(historyDiv);
-            renderGameHistory();
-        }
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-
     // ============================================================
     // 7. ইনিশিয়ালাইজেশন
     // ============================================================
@@ -3567,5 +3541,258 @@ button, .brand-header, .user-info, .login-section {
 <!-- ============================================================ -->
 <!-- শর্টকাট কোড শেষ -->
 <!-- ============================================================ -->
+  <script>
+// Gun Fire Game - CPU Optimization Override Code
+let lastGunScore = -1, lastGunBullets = -1, lastGunHit = -1;
+window.updateGunUI = function() {
+    // শুধুমাত্র ভ্যালু পরিবর্তন হলেই স্ক্রিন আপডেট হবে (CPU বাঁচবে)
+    if (gunScore !== lastGunScore || gunBullets !== lastGunBullets || gunTargetsHit !== lastGunHit) {
+        document.getElementById('gunTargetDisp').innerText = `${gunTargetsHit}/${gunTotalTargetsInRound}`;
+        document.getElementById('gunBulletDisp').innerText = gunBullets;
+        document.getElementById('gunScoreDisp').innerText = gunScore;
+        
+        lastGunScore = gunScore;
+        lastGunBullets = gunBullets;
+        lastGunHit = gunTargetsHit;
+    }
+};
+</script>
+  <script>
+document.addEventListener("DOMContentLoaded", function() {
+    const overlay = document.getElementById('loadingOverlay');
+    if (overlay) {
+        overlay.innerHTML = `
+            <style>
+                /* মূল ব্যাকগ্রাউন্ড ও স্ক্রিন সাইজ কন্ট্রোল */
+                #loadingOverlay {
+                    background: radial-gradient(circle at center, #2a2000 0%, #050505 100%) !important;
+                    overflow: hidden !important; /* স্ক্রিনের বাইরে যাওয়া বন্ধ করবে */
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                }
+                
+                /* গোল্ডেন স্পিনার রিং */
+                .gold-spinner-container {
+                    position: relative;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    margin-bottom: 25px;
+                }
+                .gold-spinner {
+                    width: 70px;
+                    height: 70px;
+                    border: 4px solid rgba(255, 215, 0, 0.1);
+                    border-left: 4px solid #ffd700;
+                    border-right: 4px solid #ffd700;
+                    border-radius: 50%;
+                    animation: spinGold 1.2s linear infinite;
+                    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+                }
+                .gold-spinner-inner {
+                    position: absolute;
+                    width: 40px;
+                    height: 40px;
+                    border: 3px solid rgba(255, 255, 255, 0.1);
+                    border-top: 3px solid #fff;
+                    border-bottom: 3px solid #fff;
+                    border-radius: 50%;
+                    animation: spinGoldReverse 0.8s linear infinite;
+                }
+                
+                /* অ্যানিমেশন কিফ্রেম */
+                @keyframes spinGold { 100% { transform: rotate(360deg); } }
+                @keyframes spinGoldReverse { 100% { transform: rotate(-360deg); } }
+                
+                /* প্রিমিয়াম লোগো টেক্সট */
+                .gold-logo-text {
+                    font-size: 26px;
+                    font-weight: 900;
+                    background: linear-gradient(135deg, #ffd700, #fff, #f0a500);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    letter-spacing: 3px;
+                    text-transform: uppercase;
+                    margin-bottom: 8px;
+                    text-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+                    animation: pulseScale 1.5s ease-in-out infinite alternate;
+                }
+                @keyframes pulseScale { 0% { transform: scale(1); } 100% { transform: scale(1.03); } }
+                
+                .pro-loading-text {
+                    color: #ccc;
+                    font-size: 12px;
+                    letter-spacing: 2px;
+                    margin-bottom: 30px;
+                    text-transform: uppercase;
+                }
+                
+                /* নতুন প্রোগ্রেস বার ডিজাইন */
+                .pro-progress-bg {
+                    width: 80%;
+                    max-width: 280px;
+                    height: 6px;
+                    background: rgba(255, 255, 255, 0.08);
+                    border-radius: 10px;
+                    overflow: hidden;
+                    border: 1px solid rgba(255, 215, 0, 0.2);
+                }
+                .pro-progress-bar {
+                    height: 100%;
+                    width: 0%;
+                    background: linear-gradient(90deg, #d4af37, #ffd700, #fff);
+                    border-radius: 10px;
+                    transition: width 0.3s ease;
+                    box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+                }
+            </style>
+            
+            <div class="gold-spinner-container">
+                <div class="gold-spinner"></div>
+                <div class="gold-spinner-inner"></div>
+            </div>
+            <div class="gold-logo-text">STAR GAME</div>
+            <div class="pro-loading-text">Loading Premium Experience...</div>
+            <div class="pro-progress-bg">
+                <div class="pro-progress-bar" id="loadingProgressBar"></div>
+            </div>
+        `;
+    }
+});
+</script>
+  <!-- Game Transition Buffering Animation Override -->
+<style>
+/* গেম ট্রানজিশন বাফারিং ওভারলে স্টাইল */
+#gameTransitionOverlay {
+    position: fixed; 
+    top: 0; left: 0; 
+    width: 100vw; height: 100vh;
+    background: radial-gradient(circle at center, #1a1a2e 0%, #050505 100%);
+    z-index: 9999999;
+    display: none;
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center;
+    opacity: 1; 
+    transition: opacity 0.4s ease;
+}
+.gt-icon-box {
+    width: 120px; height: 120px;
+    background: rgba(255, 215, 0, 0.1);
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    border-radius: 50%;
+    display: flex; justify-content: center; align-items: center;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.2), inset 0 0 20px rgba(255, 215, 0, 0.1);
+    animation: gtPulse 1.5s infinite alternate;
+}
+.gt-icon {
+    font-size: 60px;
+    animation: gtBounce 0.8s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+    filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5));
+}
+.gt-text {
+    color: #ffd700; 
+    font-size: 18px; 
+    font-weight: 900; 
+    margin-top: 25px;
+    letter-spacing: 3px; 
+    text-transform: uppercase;
+    animation: textPulse 1s infinite alternate;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.gt-spinner {
+    margin-top: 15px;
+    width: 40px; height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+.gt-spinner::after {
+    content: '';
+    position: absolute; left: 0; top: 0; height: 100%; width: 50%;
+    background: #ffd700;
+    border-radius: 4px;
+    animation: gtLoadRun 1s infinite linear;
+}
+
+@keyframes gtBounce {
+    0% { transform: translateY(0) scale(1); }
+    100% { transform: translateY(-15px) scale(1.1); }
+}
+@keyframes gtPulse {
+    0% { transform: scale(1); box-shadow: 0 0 30px rgba(255, 215, 0, 0.2); }
+    100% { transform: scale(1.05); box-shadow: 0 0 50px rgba(255, 215, 0, 0.5); }
+}
+@keyframes gtLoadRun {
+    0% { left: -50%; }
+    100% { left: 100%; }
+}
+</style>
+
+<div id="gameTransitionOverlay">
+    <div class="gt-icon-box">
+        <div class="gt-icon" id="gtIcon">🚀</div>
+    </div>
+    <div class="gt-text" id="gtText">Loading...</div>
+    <div class="gt-spinner"></div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+    
+    // প্রতিটি গেমের জন্য আলাদা অ্যানিমেশন ডেটা
+    const transitionData = {
+        'rocket': { icon: '🚀', text: 'Preparing Rocket...' },
+        'spin': { icon: '🎰', text: 'Loading Slot...' },
+        'cointoss': { icon: '🪙', text: 'Flipping Coin...' },
+        'cracken': { icon: '🐙', text: 'Waking Kraken...' },
+        'gunfire': { icon: '🔫', text: 'Loading Weapons...' },
+        'findcoin': { icon: '💣', text: 'Planting Bombs...' }
+    };
+
+    // আসল গেম ওপেন ফাংশনটিকে সেভ করে রাখা
+    const originalOpenGameForTransition = window.openGame;
+    
+    // নতুন ওভাররাইড ফাংশন
+    if (typeof originalOpenGameForTransition === 'function') {
+        window.openGame = function(name) {
+            const overlay = document.getElementById('gameTransitionOverlay');
+            const gtIcon = document.getElementById('gtIcon');
+            const gtText = document.getElementById('gtText');
+            
+            if(overlay && transitionData[name]) {
+                // অ্যানিমেশন স্ক্রিন সেট আপ ও প্রদর্শন
+                gtIcon.innerText = transitionData[name].icon;
+                gtText.innerText = transitionData[name].text;
+                overlay.style.display = 'flex';
+                
+                // ব্রাউজারকে ডিসপ্লে আপডেট করার সময় দেওয়া
+                setTimeout(() => {
+                    overlay.style.opacity = '1';
+                }, 10);
+                
+                // ব্যাকগ্রাউন্ডে আসল গেম লোড করা
+                originalOpenGameForTransition(name);
+                
+                // ১.২ সেকেন্ড (1200ms) পর অ্যানিমেশন সরিয়ে নেওয়া
+                setTimeout(() => {
+                    overlay.style.opacity = '0';
+                    setTimeout(() => {
+                        overlay.style.display = 'none';
+                    }, 400); // ফেইড-আউট হওয়ার জন্য ৪০০ মিলিসেকেন্ড সময়
+                }, 1200);
+            } else {
+                // যদি গেমের নাম লিস্টে না থাকে, তবে সরাসরি ওপেন হবে
+                originalOpenGameForTransition(name);
+            }
+        };
+    }
+})();
+</script>
+<!-- End Game Transition Buffering -->
 </body>
 </html>
