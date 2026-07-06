@@ -1,0 +1,3571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>🎰 Star Game - Premium Edition</title>
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Orbitron', sans-serif; user-select: none; }
+        
+        body {
+            background: linear-gradient(135deg, #050505, #1a1500, #332600, #050505);
+            background-size: 400% 400%;
+            animation: diamondGlow 12s ease infinite;
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        @keyframes diamondGlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .brand-header {
+            text-align: center;
+            padding: 30px 10px 10px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .brand-title {
+            font-size: 45px;
+            font-weight: 900;
+            background: linear-gradient(to right, #fff, #ffd700, #ffeb73, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 0 0 20px rgba(255,215,0,0.6), 0 0 40px rgba(255,255,255,0.2);
+        }
+
+        .brand-subtitle {
+            font-size: 16px;
+            color: #ffed4a;
+            letter-spacing: 2px;
+            margin-top: 5px;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(255,215,0,0.4);
+        }
+
+        /* Login Section */
+        .login-section {
+            padding: 15px 20px;
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,215,0,0.2);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #ffd700;
+        }
+
+        .user-info .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffd700, #f0a500);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            font-weight: 900;
+            color: #111;
+        }
+
+        .login-btns {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, #ffd700, #f0a500);
+            color: #111;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-logout {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: #fff;
+        }
+
+        .wallet-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255,215,0,0.2);
+            border-bottom: 1px solid rgba(255,215,0,0.2);
+            margin-bottom: 20px;
+            z-index: 10;
+            position: relative;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .wallet-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .wallet-val {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255,215,0,0.5);
+        }
+
+        .wallet-label {
+            font-size: 12px;
+            color: #ccc;
+            text-transform: uppercase;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-small {
+            background: linear-gradient(135deg, #ffd700, #f0a500);
+            color: #111;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(255, 165, 0, 0.3);
+        }
+        
+        .btn-withdraw {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: #fff;
+        }
+
+        .home-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            padding: 10px 20px 80px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .game-icon-card {
+            background: transparent;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .game-icon-card:hover {
+            transform: scale(1.08);
+        }
+
+        .g-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 10px;
+            background: linear-gradient(145deg, rgba(255,215,0,0.1), rgba(0,0,0,0.5));
+            border: 2px solid rgba(255,215,0,0.4);
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5), inset 0 0 15px rgba(255,215,0,0.2);
+        }
+
+        .g-icon span {
+            font-size: 50px !important;
+        }
+
+        .g-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+        }
+
+        .full-screen-game {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(135deg, #0f0b01, #291c04);
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .full-screen-game.active {
+            display: flex;
+        }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+            z-index: 200; display: none; justify-content: center; align-items: center;
+        }
+        
+        .modal-content {
+            background: linear-gradient(145deg, #222, #111);
+            border: 1px solid #ffd700; border-radius: 15px;
+            padding: 30px; width: 90%; max-width: 450px;
+            box-shadow: 0 0 30px rgba(255,215,0,0.2); text-align: center;
+        }
+
+        .modal-content h3 { color: #ffd700; margin-bottom: 15px; font-size: 22px;}
+        .modal-content input {
+            width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 8px;
+            border: 1px solid rgba(255,215,0,0.3); background: rgba(0,0,0,0.5); color: #fff; font-size: 16px;
+        }
+        
+        .close-btn { margin-top: 10px; background: #555; color: #fff; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; border: none; font-size: 16px;}
+
+        .admin-lock {
+            position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
+            color: rgba(255,255,255,0.2); font-size: 16px; z-index: 10; padding: 10px;
+            cursor: pointer;
+        }
+
+        button {
+            background: linear-gradient(135deg, #ffd700, #f0a500);
+            color: #111; border: none; padding: 15px 30px; border-radius: 50px;
+            font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.3s;
+        }
+        button:active { transform: scale(0.95); }
+        .btn-danger { background: linear-gradient(135deg, #ff1f44, #c0392b); color:#fff; }
+
+        .game-title { text-align: center; font-size: 24px; color: #ffd700; margin-bottom: 20px; text-transform: uppercase; }
+        .back-btn { background: rgba(255,255,255,0.1); color: #fff; margin-bottom: 20px; width: max-content; }
+        .result-box { background: rgba(0,0,0,0.5); padding: 18px; border-radius: 10px; text-align: center; border: 1px solid rgba(255,215,0,0.2); margin-top: 15px; font-size: 16px; }
+        .flex { display: flex; gap: 10px; justify-content: center; margin: 15px 0; flex-wrap: wrap; }
+        
+        .aviator-container { background: #000; border-radius: 16px; padding: 15px; height: 280px; position: relative; border: 1px solid rgba(255,215,0,0.2); overflow: hidden; }
+        .aviator-rocket-3d { position: absolute; left: 10%; bottom: 10%; font-size: 50px; z-index: 4; transform: rotate(-15deg); }
+        .aviator-multi-3d { position: absolute; top: 15%; right: 10%; font-size: 45px; font-weight: 900; color: #ffd700; z-index: 5; }
+        
+        .coin-3d-wrapper { perspective: 1000px; margin: 30px auto; width: 180px; height: 180px; }
+        .coin-3d { width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 2s; }
+        .coin-side { width: 100%; height: 100%; position: absolute; backface-visibility: hidden; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 80px; border: 4px solid #ffd700; }
+        .coin-head { background: radial-gradient(circle, #ffd700, #b8860b); color: #fff; }
+        .coin-tail { background: radial-gradient(circle, #e5e7eb, #9ca3af); color: #333; transform: rotateY(180deg); }
+
+        .cracken-3d-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 20px 0; }
+        .fruit-cell { height: 90px; background: rgba(255,255,255,0.05); border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 45px; border: 1px solid rgba(255,255,255,0.1); }
+        
+        .slot-3d { background: #111; border-radius: 15px; padding: 15px; border: 2px solid rgba(255,215,0,0.4); margin: 20px 0; overflow: hidden; position: relative; }
+        .slot-reel-container { height: 90px; overflow: hidden; position: relative; background: #000; border-radius: 10px; }
+        .slot-reel { display: flex; position: absolute; height: 100%; }
+        .slot-item-3d { min-width: 90px; height: 100%; display: flex; justify-content: center; align-items: center; font-size: 35px; font-weight: bold; border-right: 1px solid #333; }
+        
+        .admin-table { width: 100%; color: #fff; font-size: 13px; margin-top: 10px; border-collapse: collapse; }
+        .admin-table th, .admin-table td { border: 1px solid #444; padding: 6px 8px; text-align: center; }
+
+        .fc-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 15px 0; }
+        .fc-box {
+            background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(0,0,0,0.5));
+            border: 1px solid rgba(255,215,0,0.3);
+            border-radius: 8px; height: 70px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 32px; font-weight: bold; cursor: pointer; transition: 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .fc-box:active { transform: scale(0.9); }
+        .fc-box.open { background: rgba(0,0,0,0.6); border-color: #555; cursor: default; transform: scale(0.95); box-shadow: none; }
+        
+        .premium-buy-btn {
+            display: block; width: 100%; margin-bottom: 20px; padding: 16px;
+            background: linear-gradient(135deg, #2980b9, #2c3e50);
+            color: #fff; border: 1px solid rgba(255,215,0,0.3); border-radius: 12px;
+            font-size: 17px; font-weight: 900; text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(255,215,0,0.1);
+            cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s;
+        }
+        .premium-buy-btn:active { transform: scale(0.98); }
+        .premium-buy-btn span { color: #ffd700; }
+
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 420px;
+            width: 100%;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: rgba(18, 18, 30, 0.95);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 215, 0, 0.25);
+            border-radius: 16px;
+            padding: 18px 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(255, 215, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transform: translateX(120%);
+            animation: toastSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            pointer-events: auto;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .toast.removing {
+            transform: translateX(120%);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes toastSlideIn {
+            0% { transform: translateX(120%); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+
+        .toast-icon { font-size: 28px; flex-shrink: 0; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(255,255,255,0.05); }
+        .toast-content { flex: 1; min-width: 0; }
+        .toast-title { font-size: 13px; font-weight: 700; color: #ffd700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
+        .toast-message { font-size: 14px; color: #e0e0e0; line-height: 1.4; }
+        .toast-close { background: none; border: none; color: rgba(255,255,255,0.3); font-size: 20px; cursor: pointer; padding: 4px 8px; border-radius: 8px; }
+        .toast-close:hover { color: #fff; background: rgba(255,255,255,0.08); }
+
+        .toast-success { border-left: 4px solid #2ecc71; }
+        .toast-success .toast-title { color: #2ecc71; }
+        .toast-error { border-left: 4px solid #e74c3c; }
+        .toast-error .toast-title { color: #e74c3c; }
+        .toast-warning { border-left: 4px solid #f39c12; }
+        .toast-warning .toast-title { color: #f39c12; }
+        .toast-info { border-left: 4px solid #3498db; }
+        .toast-info .toast-title { color: #3498db; }
+
+        /* Coin Buy Table */
+        .coin-rate-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .coin-rate-item {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,215,0,0.2);
+            border-radius: 10px;
+            padding: 12px 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-align: center;
+        }
+        .coin-rate-item:hover {
+            background: rgba(255,215,0,0.1);
+            transform: scale(1.02);
+        }
+        .coin-rate-item .coins { font-size: 18px; font-weight: 700; color: #ffd700; }
+        .coin-rate-item .price { font-size: 14px; color: #aaa; }
+
+        /* Language Switcher (only on home) */
+        .lang-switch {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            margin: 0 10px;
+        }
+        .lang-btn {
+            padding: 4px 12px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.1);
+            color: #aaa;
+            border: 1px solid transparent;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .lang-btn.active {
+            background: rgba(255,215,0,0.2);
+            color: #ffd700;
+            border-color: #ffd700;
+        }
+
+        /* Admin Panel - Compact & Professional */
+        .admin-panel {
+            background: rgba(0,0,0,0.5);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255,215,0,0.1);
+        }
+        .admin-panel h4 {
+            color: #ffd700;
+            margin-bottom: 10px;
+            font-size: 15px;
+            letter-spacing: 1px;
+        }
+        .admin-panel .admin-btn {
+            padding: 6px 12px;
+            border-radius: 5px;
+            border: none;
+            font-weight: 700;
+            font-size: 11px;
+            cursor: pointer;
+            transition: 0.2s;
+            margin: 2px;
+        }
+        .admin-panel .admin-btn:hover { transform: scale(1.05); }
+        .admin-panel .admin-btn.approve { background: #2ecc71; color: #fff; }
+        .admin-panel .admin-btn.reject { background: #e74c3c; color: #fff; }
+        .admin-panel .admin-btn.ban { background: #c0392b; color: #fff; }
+        .admin-panel .admin-btn.add { background: #3498db; color: #fff; }
+        .admin-panel .admin-danger-btn {
+            background: #e74c3c; color: #fff;
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .admin-panel .admin-input {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,215,0,0.2);
+            border-radius: 5px;
+            padding: 6px 10px;
+            color: #fff;
+            width: 100%;
+            max-width: 100px;
+            margin: 2px;
+            font-size: 12px;
+        }
+
+        .tab-header {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 10px 12px;
+            background: #333;
+            color: #fff;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            min-width: 60px;
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #ffd700, #f0a500);
+            color: #111;
+        }
+        .tab-content { display: none; text-align: left; }
+        .tab-content.active { display: block; }
+
+        /* Login Overlay */
+        #loginOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #050505, #1a1500, #332600);
+            z-index: 9999999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        #loginOverlay .auth-box {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,215,0,0.3);
+            border-radius: 20px;
+            padding: 40px 30px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+        }
+        #loginOverlay .auth-box h2 {
+            color: #ffd700;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        #loginOverlay .auth-box p {
+            color: #aaa;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+        #loginOverlay .auth-box .auth-input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,215,0,0.3);
+            background: rgba(0,0,0,0.4);
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 12px;
+            outline: none;
+        }
+        #loginOverlay .auth-box .auth-input:focus {
+            border-color: #ffd700;
+            box-shadow: 0 0 15px rgba(255,215,0,0.1);
+        }
+        #loginOverlay .auth-box .btn-login-id {
+            background: linear-gradient(135deg, #8e44ad, #6c3483);
+            color: #fff;
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: none;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        #loginOverlay .auth-box .btn-login-id:active { transform: scale(0.98); }
+
+        @media (max-width: 480px) {
+            .toast-container { top: 12px; right: 12px; max-width: calc(100% - 24px); }
+            .toast { padding: 14px 18px; border-radius: 12px; }
+            .toast-icon { font-size: 22px; width: 36px; height: 36px; }
+            .toast-title { font-size: 11px; }
+            .toast-message { font-size: 13px; }
+            .login-section { flex-direction: column; align-items: stretch; }
+            .wallet-container { flex-direction: column; align-items: stretch; }
+            .action-btns { justify-content: center; }
+            .coin-rate-grid { grid-template-columns: repeat(2, 1fr); }
+            #loginOverlay .auth-box { padding: 30px 20px; }
+            .tab-btn { font-size: 10px; padding: 8px; }
+            .admin-table { font-size: 11px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== LOGIN OVERLAY (username/password) ===== -->
+    <div id="loginOverlay">
+        <div class="auth-box">
+            <h2>🎰 Star Game</h2>
+            <p>Please login to continue</p>
+            <input type="text" id="loginUserId" class="auth-input" placeholder="Username" autocomplete="username">
+            <input type="password" id="loginUserPass" class="auth-input" placeholder="Password" autocomplete="current-password">
+            <button class="btn-login-id" onclick="processUserLogin()">🔑 Login</button>
+            <div id="loginStatus" style="margin-top:12px; font-size:14px; color:#aaa;">🔑 Enter username & password</div>
+            <div style="margin-top:16px; font-size:13px; color:#666;">
+                <span>Don't have account? </span>
+                <a href="#" onclick="toggleSignupMode()" style="color:#ffd700; text-decoration:underline; cursor:pointer;">Sign Up</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MAIN APP (hidden until login) ===== -->
+    <div id="homeScreen" style="display:none;">
+        <div class="brand-header">
+            <div class="brand-title">Star Game</div>
+            <div class="brand-subtitle" data-i18n="subtitle">Play More, Win More</div>
+        </div>
+
+        <!-- Login Section (only shows user info and logout) -->
+        <div class="login-section">
+            <div class="user-info" id="userInfo">
+                <div class="avatar" id="userAvatar">👤</div>
+                <div>
+                    <div id="userName" style="font-weight:700;">Guest</div>
+                    <div style="font-size:11px; color:#aaa;" id="userStatus">Offline</div>
+                </div>
+            </div>
+            <div class="login-btns" id="loginBtns">
+                <button class="btn-login btn-logout" onclick="logoutUser()" id="logoutBtn">🚪 Logout</button>
+            </div>
+        </div>
+
+        <div style="padding: 0 20px;">
+            <button id="buyCoinsPremiumBtn" class="premium-buy-btn" onclick="document.getElementById('addCoinsModal').style.display='flex'">
+                🪙 <span data-i18n="buyCoins">Buy Coins</span>
+            </button>
+        </div>
+
+        <div class="wallet-container">
+            <div class="wallet-box">
+                <span class="wallet-val" id="coinDisplay">100</span>
+                <span class="wallet-label" data-i18n="coins">Coins 🪙</span>
+            </div>
+            <div class="action-btns">
+                <button class="btn-small" onclick="openExchange()" data-i18n="exchange">Exchange</button>
+                <button class="btn-small btn-withdraw" onclick="openWithdraw()" data-i18n="withdraw">Withdraw</button>
+            </div>
+            <div class="wallet-box">
+                <span class="wallet-val">₹<span id="moneyDisplay">0</span></span>
+                <span class="wallet-label" data-i18n="money">Money 💵</span>
+            </div>
+        </div>
+
+        <div class="home-grid">
+            <div class="game-icon-card" onclick="openGame('rocket')">
+                <div class="g-icon"><span>🚀</span></div>
+                <div class="g-name" data-i18n="game_aviator">Aviator</div>
+            </div>
+            <div class="game-icon-card" onclick="openGame('spin')">
+                <div class="g-icon"><span>🎰</span></div>
+                <div class="g-name" data-i18n="game_slot">Slot Spin</div>
+            </div>
+            <div class="game-icon-card" onclick="openGame('cointoss')">
+                <div class="g-icon"><span>🪙</span></div>
+                <div class="g-name" data-i18n="game_toss">Toss</div>
+            </div>
+            <div class="game-icon-card" onclick="openGame('cracken')">
+                <div class="g-icon"><span>🐙</span></div>
+                <div class="g-name" data-i18n="game_fruit">Fruit Game</div>
+            </div>
+            <div class="game-icon-card" onclick="openGame('gunfire')">
+                <div class="g-icon"><span>🔫</span></div>
+                <div class="g-name" data-i18n="game_gun">Gun Fire</div>
+            </div>
+            <div class="game-icon-card" onclick="openGame('findcoin')">
+                <div class="g-icon"><span>💣</span></div>
+                <div class="g-name" data-i18n="game_find">Find Coin</div>
+            </div>
+        </div>
+
+        <div class="admin-lock" id="adminLock">🔒</div>
+    </div>
+
+    <div class="full-screen-game" id="gameArea">
+        <button class="back-btn" onclick="goBack()">⬅ Home</button>
+        <div id="gameContent"></div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="exchangeModal">
+        <div class="modal-content">
+            <h3>Coin Exchange</h3>
+            <p style="color:#ccc; font-size:14px; margin-bottom:15px;">1000 Coins = 10 INR</p>
+            <button onclick="processExchange()">Exchange</button>
+            <button class="close-btn" onclick="closeModals()">Cancel</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="withdrawModal">
+        <div class="modal-content">
+            <h3>Withdraw Money</h3>
+            <p style="color:#ccc; font-size:14px; margin-bottom:15px;">Minimum withdrawal 100 INR</p>
+            <input type="text" id="upiId" placeholder="Your UPI ID">
+            <input type="number" id="withdrawAmt" placeholder="Amount (INR)">
+            <button class="btn-withdraw" style="width:100%; border:none; padding:15px;" onclick="processWithdraw()">Submit Withdraw Request</button>
+            <button class="close-btn" onclick="closeModals()">Cancel</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="addCoinsModal">
+        <div class="modal-content">
+            <h3>🪙 Buy Coins</h3>
+            <p style="color:#ccc; font-size:14px; margin-bottom:15px;">Select your package</p>
+            
+            <div class="coin-rate-grid" id="coinRateGrid">
+                <div class="coin-rate-item" onclick="selectCoinPackage(500, 10)"><div class="coins">🪙 500</div><div class="price">₹10</div></div>
+                <div class="coin-rate-item" onclick="selectCoinPackage(1000, 20)"><div class="coins">🪙 1000</div><div class="price">₹20</div></div>
+                <div class="coin-rate-item" onclick="selectCoinPackage(2000, 40)"><div class="coins">🪙 2000</div><div class="price">₹40</div></div>
+                <div class="coin-rate-item" onclick="selectCoinPackage(5000, 100)"><div class="coins">🪙 5000</div><div class="price">₹100</div></div>
+                <div class="coin-rate-item" onclick="selectCoinPackage(10000, 200)"><div class="coins">🪙 10000</div><div class="price">₹200</div></div>
+                <div class="coin-rate-item" onclick="selectCoinPackage(25000, 500)"><div class="coins">🪙 25000</div><div class="price">₹500</div></div>
+                <div class="coin-rate-item" onclick="selectCoinPackage(50000, 1000)"><div class="coins">🪙 50000</div><div class="price">₹1000</div></div>
+                <div class="coin-rate-item" onclick="selectCoinPackage(100000, 2000)"><div class="coins">🪙 100000</div><div class="price">₹2000</div></div>
+                <div class="coin-rate-item" onclick="selectCoinPackage(200000, 4000)"><div class="coins">🪙 200000</div><div class="price">₹4000</div></div>
+                <div class="coin-rate-item" onclick="selectCoinPackage(500000, 10000)"><div class="coins">🪙 500000</div><div class="price">₹10000</div></div>
+            </div>
+
+            <div style="background:#1a1a2e; padding:15px; border-radius:10px; margin-bottom:15px;">
+                <p style="font-size:12px; color:#ffd700; margin-bottom:10px;">Select package, then enter UTR ID</p>
+                <input type="text" id="upiUtr" placeholder="12-digit UTR ID" maxlength="12">
+                <button style="width:100%; padding:15px; background:linear-gradient(135deg, #2ecc71, #27ae60); color:#fff;" onclick="buyViaUPI()">Verify & Add</button>
+            </div>
+
+            <button class="close-btn" onclick="document.getElementById('addCoinsModal').style.display='none'">Cancel</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="adminModal">
+        <div class="modal-content" style="max-width: 750px; height:85vh; overflow-y:auto; padding:20px;">
+            <h3 style="color:#ffd700; text-align:center; font-size:20px;">🛠 Admin Panel</h3>
+            <div class="tab-header">
+                <button class="tab-btn active" onclick="switchAdminTab('users')">👥 Users</button>
+                <button class="tab-btn" onclick="switchAdminTab('withdraw')">💸 Withdraw</button>
+                <button class="tab-btn" onclick="switchAdminTab('coinadd')">🪙 Coin Add</button>
+            </div>
+
+            <div id="adminTabUsers" class="tab-content active">
+                <div class="admin-panel">
+                    <h4>📋 User List</h4>
+                    <div style="overflow-x:auto;">
+                        <table class="admin-table" id="userListTable">
+                            <thead><tr><th>User</th><th>Coins</th><th>Money</th><th>Actions</th></tr></thead>
+                            <tbody id="userListBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="adminTabWithdraw" class="tab-content">
+                <div class="admin-panel">
+                    <h4>💸 Withdraw Requests</h4>
+                    <table class="admin-table">
+                        <thead><tr><th>User</th><th>UPI</th><th>Amount</th><th>Actions</th></tr></thead>
+                        <tbody id="adminWithdrawTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="adminTabCoinadd" class="tab-content">
+                <div class="admin-panel">
+                    <h4>🪙 Coin Add Requests</h4>
+                    <table class="admin-table">
+                        <thead><tr><th>User</th><th>UTR</th><th>Coins</th><th>Actions</th></tr></thead>
+                        <tbody id="adminCoinAddTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div style="background: rgba(255,0,0,0.08); border: 1px solid rgba(255,0,0,0.3); border-radius: 10px; padding: 15px; margin-top: 15px; text-align: center;">
+                <h4 style="color: #ff4444; font-size: 15px; margin-bottom: 5px;">⚠️ Danger Zone</h4>
+                <p style="color: #ff8888; font-size: 11px; margin-bottom: 10px;">Delete all app & Firebase data (irreversible)</p>
+                <button onclick="forceDeleteAllData()" style="
+                    background: linear-gradient(135deg, #e74c3c, #c0392b);
+                    color: #fff;
+                    padding: 10px 20px;
+                    border: none;
+                    border-radius: 8px;
+                    font-size: 14px;
+                    font-weight: 900;
+                    cursor: pointer;
+                    transition: 0.3s;
+                ">🗑️ Delete All Data</button>
+            </div>
+
+            <button class="close-btn" style="margin-top:15px;" onclick="closeModals()">Close</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="adminPassModal">
+        <div class="modal-content" style="max-width: 400px;">
+            <h3>🔒 Security Check</h3>
+            <p style="color:#ccc; font-size:14px; margin-bottom:15px;">Enter admin password to continue</p>
+            <input type="password" id="adminPassInput" placeholder="Admin Password">
+            <button style="width:100%; padding:15px; margin-bottom:10px;" onclick="verifyAdminPass()">Access Panel</button>
+            <button class="close-btn" onclick="document.getElementById('adminPassModal').style.display='none'">Cancel</button>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="toast-container"></div>
+
+<script>
+// ==========================================
+// 1. FIREBASE INITIALIZATION
+// ==========================================
+const firebaseConfig = {
+    apiKey: "AIzaSyBnNh44-cLjmfCFuYlHCvEkduETQ2p_SKE",
+    authDomain: "earn-brid.firebaseapp.com",
+    databaseURL: "https://earn-brid-default-rtdb.firebaseio.com",
+    projectId: "earn-brid",
+    storageBucket: "earn-brid.firebasestorage.app",
+    messagingSenderId: "17888870046",
+    appId: "1:17888870046:web:d1595d1e3de0ee6707c58f"
+};
+
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+const auth = firebase.auth();
+
+// ==========================================
+// 2. TOAST SYSTEM
+// ==========================================
+function showToast(message, type = 'info', title = null) {
+    const container = document.getElementById('toastContainer');
+    const titles = { success: '✅ Success', error: '❌ Error', warning: '⚠️ Warning', info: 'ℹ️ Info' };
+    const icons = { success: '🎉', error: '🚫', warning: '⚡', info: '📢' };
+    
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `
+        <div class="toast-icon">${icons[type] || '📢'}</div>
+        <div class="toast-content">
+            <div class="toast-title">${title || titles[type] || 'Info'}</div>
+            <div class="toast-message">${message}</div>
+        </div>
+        <button class="toast-close" onclick="this.closest('.toast').remove()">✕</button>
+    `;
+    container.appendChild(toast);
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.classList.add('removing');
+            setTimeout(() => toast.remove(), 450);
+        }
+    }, 4500);
+}
+
+// ==========================================
+// 3. AUTH SYSTEM (username/password with Firebase)
+// ==========================================
+let currentUser = null;
+let isGuest = false;
+
+function toggleSignupMode() {
+    const btn = document.querySelector('#loginOverlay .btn-login-id');
+    const title = document.querySelector('#loginOverlay .auth-box h2');
+    const subtitle = document.querySelector('#loginOverlay .auth-box p');
+    const status = document.getElementById('loginStatus');
+    const userInput = document.getElementById('loginUserId');
+    const passInput = document.getElementById('loginUserPass');
+    
+    if (btn.dataset.mode === 'signup') {
+        // Switch to login
+        btn.textContent = '🔑 Login';
+        btn.dataset.mode = 'login';
+        btn.classList.remove('btn-signup');
+        if (title) title.textContent = '🎰 Star Game';
+        if (subtitle) subtitle.textContent = 'Please login to continue';
+        userInput.placeholder = 'Username';
+        passInput.placeholder = 'Password';
+        if (status) status.textContent = '🔑 Enter username & password';
+        document.querySelector('#loginOverlay .auth-box a').textContent = 'Sign Up';
+    } else {
+        // Switch to signup
+        btn.textContent = '✅ Create Account';
+        btn.dataset.mode = 'signup';
+        btn.classList.add('btn-signup');
+        if (title) title.textContent = '🎰 Create Account';
+        if (subtitle) subtitle.textContent = 'Enter username & password to sign up';
+        userInput.placeholder = 'Choose Username';
+        passInput.placeholder = 'Create Password (6+ chars)';
+        if (status) status.textContent = '📝 Fill in the details';
+        document.querySelector('#loginOverlay .auth-box a').textContent = '← Login';
+    }
+}
+
+function processUserLogin() {
+    const userInput = document.getElementById('loginUserId').value.trim();
+    const passInput = document.getElementById('loginUserPass').value.trim();
+    const statusEl = document.getElementById('loginStatus');
+    
+    if (!userInput || !passInput) {
+        statusEl.textContent = '⚠️ Please fill all fields!';
+        statusEl.style.color = '#ff6b6b';
+        return;
+    }
+    
+    const email = userInput + '@tempuser.com';
+    const btn = document.querySelector('#loginOverlay .btn-login-id');
+    const isSignup = btn && btn.dataset.mode === 'signup';
+    
+    statusEl.textContent = isSignup ? '⏳ Creating account...' : '⏳ Logging in...';
+    statusEl.style.color = '#ffd700';
+    
+    if (isSignup) {
+        auth.createUserWithEmailAndPassword(email, passInput)
+            .then((userCredential) => {
+                const user = userCredential.user;
+                return database.ref('users/' + user.uid).set({
+                    username: userInput,
+                    email: email,
+                    coins: 1000,
+                    money: 0,
+                    createdAt: firebase.database.ServerValue.TIMESTAMP,
+                    isGuest: false
+                }).then(() => {
+                    statusEl.textContent = '✅ Account created! Logging in...';
+                    statusEl.style.color = '#2ecc71';
+                    setupLoggedInUser(user, userInput);
+                });
+            })
+            .catch((error) => {
+                let msg = error.message;
+                if (error.code === 'auth/email-already-in-use') {
+                    msg = '❌ Username already taken! Try another.';
+                } else if (error.code === 'auth/weak-password') {
+                    msg = '❌ Password too weak! Use at least 6 characters.';
+                } else {
+                    msg = '❌ ' + error.message;
+                }
+                statusEl.textContent = msg;
+                statusEl.style.color = '#ff6b6b';
+            });
+    } else {
+        auth.signInWithEmailAndPassword(email, passInput)
+            .then((userCredential) => {
+                const user = userCredential.user;
+                statusEl.textContent = '✅ Login successful!';
+                statusEl.style.color = '#2ecc71';
+                // Get username from DB
+                database.ref('users/' + user.uid).once('value').then(snap => {
+                    const data = snap.val();
+                    const username = data && data.username ? data.username : userInput;
+                    setupLoggedInUser(user, username);
+                });
+            })
+            .catch((error) => {
+                let msg = error.message;
+                if (error.code === 'auth/user-not-found') {
+                    msg = '❌ Username not found! Please sign up first.';
+                } else if (error.code === 'auth/wrong-password') {
+                    msg = '❌ Wrong password! Try again.';
+                } else {
+                    msg = '❌ ' + error.message;
+                }
+                statusEl.textContent = msg;
+                statusEl.style.color = '#ff6b6b';
+            });
+    }
+}
+
+function setupLoggedInUser(user, username) {
+    currentUser = {
+        uid: user.uid,
+        displayName: username,
+        isGuest: false
+    };
+    isGuest = false;
+    
+    document.getElementById('loginOverlay').style.display = 'none';
+    document.getElementById('homeScreen').style.display = 'block';
+    
+    updateUserUI(currentUser);
+    loadUserData(user.uid);
+    showToast('✅ Welcome, ' + username + '!', 'success');
+}
+
+function updateUserUI(user) {
+    const nameEl = document.getElementById('userName');
+    const avatarEl = document.getElementById('userAvatar');
+    const statusEl = document.getElementById('userStatus');
+    const logoutBtn = document.getElementById('logoutBtn');
+    
+    if (user) {
+        const displayName = user.displayName || 'User';
+        nameEl.textContent = displayName;
+        avatarEl.textContent = displayName.charAt(0).toUpperCase();
+        statusEl.textContent = '🟢 Online';
+        statusEl.style.color = '#2ecc71';
+        logoutBtn.style.display = 'inline-block';
+    } else {
+        nameEl.textContent = 'Guest';
+        avatarEl.textContent = '👤';
+        statusEl.textContent = '⚪ Offline';
+        statusEl.style.color = '#aaa';
+        logoutBtn.style.display = 'none';
+    }
+}
+
+function logoutUser() {
+    auth.signOut().then(() => {
+        currentUser = null;
+        isGuest = false;
+        document.getElementById('loginOverlay').style.display = 'flex';
+        document.getElementById('homeScreen').style.display = 'none';
+        updateUserUI(null);
+        showToast('Logout successful!', 'info');
+        coins = 1000;
+        money = 0;
+        updateUI();
+        // Reset login form
+        const btn = document.querySelector('#loginOverlay .btn-login-id');
+        if (btn) {
+            btn.textContent = '🔑 Login';
+            btn.dataset.mode = 'login';
+            btn.classList.remove('btn-signup');
+        }
+        document.getElementById('loginUserId').value = '';
+        document.getElementById('loginUserPass').value = '';
+        const status = document.getElementById('loginStatus');
+        if (status) status.textContent = '🔑 Enter username & password';
+    }).catch(err => {
+        showToast('Logout error: ' + err.message, 'error');
+    });
+}
+
+// ==========================================
+// 4. DATABASE OPERATIONS
+// ==========================================
+function getUserRef(uid) {
+    return database.ref('users/' + uid);
+}
+
+function loadUserData(uid) {
+    getUserRef(uid).on('value', snapshot => {
+        const data = snapshot.val();
+        if (data) {
+            coins = data.coins || 1000;
+            money = data.money || 0;
+            updateUI();
+        } else {
+            getUserRef(uid).set({
+                coins: 1000,
+                money: 0,
+                createdAt: Date.now(),
+                isGuest: isGuest
+            });
+            coins = 1000;
+            money = 0;
+            updateUI();
+        }
+    });
+}
+
+function saveUserData() {
+    if (!currentUser) return;
+    getUserRef(currentUser.uid).update({
+        coins: coins,
+        money: money,
+        lastUpdated: Date.now()
+    });
+}
+
+// ==========================================
+// 5. WALLET SYSTEM
+// ==========================================
+let coins = 1000;
+let money = 0;
+let winRate = 50;
+
+const coinDisp = document.getElementById('coinDisplay');
+const moneyDisp = document.getElementById('moneyDisplay');
+
+function updateUI() {
+    coinDisp.innerText = Math.floor(coins);
+    moneyDisp.innerText = Math.floor(money);
+    saveUserData();
+}
+
+// ==========================================
+// 6. BUY COINS VIA UPI
+// ==========================================
+let selectedCoins = 0;
+let selectedPrice = 0;
+const usedUTRs = new Set();
+
+function selectCoinPackage(coins, price) {
+    selectedCoins = coins;
+    selectedPrice = price;
+    showToast(`🪙 ${coins} Coins = ₹${price} selected`, 'info');
+}
+
+function buyViaUPI() {
+    if (!currentUser) {
+        showToast('Please login first!', 'warning');
+        return;
+    }
+    if (selectedCoins === 0 || selectedPrice === 0) {
+        showToast('Please select a package!', 'warning');
+        return;
+    }
+    const utr = document.getElementById('upiUtr').value.trim();
+    if (utr.length !== 12 || isNaN(utr)) {
+        showToast('Please enter a valid 12-digit UTR!', 'error');
+        return;
+    }
+    if (usedUTRs.has(utr)) {
+        showToast('This UTR has already been used!', 'error');
+        return;
+    }
+
+    usedUTRs.add(utr);
+    
+    const reqRef = database.ref('coinAddRequests').push();
+    reqRef.set({
+        userId: currentUser.uid,
+        userName: currentUser.displayName || 'User',
+        utr: utr,
+        coinsToAdd: selectedCoins,
+        amount: selectedPrice,
+        status: 'pending',
+        timestamp: Date.now()
+    }).then(() => {
+        showToast(`✅ Coin add request sent! ${selectedCoins} coins will be added after admin approval.`, 'success');
+        document.getElementById('upiUtr').value = '';
+        selectedCoins = 0;
+        selectedPrice = 0;
+        document.getElementById('addCoinsModal').style.display = 'none';
+    }).catch(err => {
+        showToast('Error: ' + err.message, 'error');
+    });
+}
+
+// ==========================================
+// 7. WITHDRAW SYSTEM
+// ==========================================
+function processWithdraw() {
+    if (!currentUser) {
+        showToast('Please login first!', 'warning');
+        return;
+    }
+    const upi = document.getElementById('upiId').value;
+    const amt = parseInt(document.getElementById('withdrawAmt').value);
+    if (!upi || isNaN(amt) || amt < 100) {
+        showToast('Please fill correctly! (minimum 100 INR)', 'error');
+        return;
+    }
+    if (money < amt) {
+        showToast('Insufficient balance!', 'error');
+        return;
+    }
+
+    money -= amt;
+    updateUI();
+
+    const reqRef = database.ref('withdrawRequests').push();
+    reqRef.set({
+        userId: currentUser.uid,
+        userName: currentUser.displayName || 'User',
+        upi: upi,
+        amount: amt,
+        status: 'pending',
+        timestamp: Date.now()
+    }).then(() => {
+        showToast('Withdraw request sent to admin!', 'success');
+        closeModals();
+        document.getElementById('upiId').value = '';
+        document.getElementById('withdrawAmt').value = '';
+    }).catch(err => {
+        showToast('Error: ' + err.message, 'error');
+    });
+}
+
+// ==========================================
+// 8. ADMIN SYSTEM
+// ==========================================
+let adminPassword = '0786';
+
+function verifyAdminPass() {
+    const pass = document.getElementById('adminPassInput').value;
+    if (pass === adminPassword) {
+        document.getElementById('adminPassModal').style.display = 'none';
+        document.getElementById('adminModal').style.display = 'flex';
+        loadAdminData();
+        showToast('Admin panel opened!', 'success');
+    } else {
+        showToast('Wrong password!', 'error');
+    }
+}
+
+function switchAdminTab(tab) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById('adminTab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+    document.querySelector(`.tab-btn[onclick="switchAdminTab('${tab}')"]`).classList.add('active');
+}
+
+function loadAdminData() {
+    // User List
+    database.ref('users').on('value', snapshot => {
+        const data = snapshot.val();
+        const tbody = document.getElementById('userListBody');
+        tbody.innerHTML = '';
+        if (data) {
+            Object.keys(data).forEach(key => {
+                const user = data[key];
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${user.username || (user.isGuest ? 'Guest' : key.slice(0,8))}</td>
+                        <td>${user.coins || 0}</td>
+                        <td>₹${user.money || 0}</td>
+                        <td>
+                            <button class="admin-btn add" onclick="adminAddCoins('${key}', 100)">+100</button>
+                            <button class="admin-btn add" onclick="adminAddMoney('${key}', 10)">+₹10</button>
+                            <button class="admin-btn ban" onclick="adminBanUser('${key}')">🚫</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+    });
+
+    // Withdraw Requests
+    database.ref('withdrawRequests').on('value', snapshot => {
+        const data = snapshot.val();
+        const tbody = document.getElementById('adminWithdrawTable');
+        tbody.innerHTML = '';
+        if (data) {
+            Object.keys(data).forEach(key => {
+                const req = data[key];
+                if (req.status === 'pending') {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${req.userName || 'Unknown'}</td>
+                            <td>${req.upi || 'N/A'}</td>
+                            <td>₹${req.amount}</td>
+                            <td>
+                                <button class="admin-btn approve" onclick="approveWithdraw('${key}', '${req.userId}', ${req.amount})">✅</button>
+                                <button class="admin-btn reject" onclick="rejectWithdraw('${key}')">❌</button>
+                            </td>
+                        </tr>
+                    `;
+                }
+            });
+        }
+    });
+
+    // Coin Add Requests
+    database.ref('coinAddRequests').on('value', snapshot => {
+        const data = snapshot.val();
+        const tbody = document.getElementById('adminCoinAddTable');
+        tbody.innerHTML = '';
+        if (data) {
+            Object.keys(data).forEach(key => {
+                const req = data[key];
+                if (req.status === 'pending') {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${req.userName || 'Unknown'}</td>
+                            <td>${req.utr || 'N/A'}</td>
+                            <td>${req.coinsToAdd} 🪙</td>
+                            <td>
+                                <button class="admin-btn approve" onclick="approveCoinAdd('${key}', '${req.userId}', ${req.coinsToAdd})">✅</button>
+                                <button class="admin-btn reject" onclick="rejectCoinAdd('${key}')">❌</button>
+                            </td>
+                        </tr>
+                    `;
+                }
+            });
+        }
+    });
+}
+
+// Admin Actions
+function adminAddCoins(uid, amount) {
+    database.ref('users/' + uid).once('value').then(snap => {
+        const data = snap.val() || {};
+        database.ref('users/' + uid).update({ coins: (data.coins || 0) + amount });
+        showToast(`✅ ${amount} coins added!`, 'success');
+    });
+}
+
+function adminAddMoney(uid, amount) {
+    database.ref('users/' + uid).once('value').then(snap => {
+        const data = snap.val() || {};
+        database.ref('users/' + uid).update({ money: (data.money || 0) + amount });
+        showToast(`✅ ₹${amount} added!`, 'success');
+    });
+}
+
+function adminBanUser(uid) {
+    if (confirm('Ban this user?')) {
+        database.ref('users/' + uid).update({ banned: true });
+        showToast('🚫 User banned!', 'warning');
+    }
+}
+
+function approveWithdraw(key, uid, amount) {
+    database.ref('withdrawRequests/' + key).update({ status: 'approved' });
+    showToast(`✅ Withdraw approved!`, 'success');
+}
+
+function rejectWithdraw(key) {
+    database.ref('withdrawRequests/' + key).update({ status: 'rejected' });
+    showToast('❌ Withdraw rejected', 'error');
+}
+
+function approveCoinAdd(key, uid, coins) {
+    database.ref('users/' + uid).once('value').then(snap => {
+        const data = snap.val() || {};
+        database.ref('users/' + uid).update({ coins: (data.coins || 0) + coins });
+        database.ref('coinAddRequests/' + key).update({ status: 'approved' });
+        showToast(`✅ ${coins} coins added!`, 'success');
+    });
+}
+
+function rejectCoinAdd(key) {
+    database.ref('coinAddRequests/' + key).update({ status: 'rejected' });
+    showToast('❌ Coin add rejected', 'error');
+}
+
+// Admin lock click
+let lockClicks = 0;
+let lockTimeout;
+
+document.getElementById('adminLock').addEventListener('click', () => {
+    lockClicks++;
+    clearTimeout(lockTimeout);
+    lockTimeout = setTimeout(() => { lockClicks = 0; }, 1000);
+    if (lockClicks === 3) {
+        lockClicks = 0;
+        document.getElementById('adminPassModal').style.display = 'flex';
+    }
+});
+
+// ==========================================
+// 9. GAME FUNCTIONS
+// ==========================================
+function openExchange() { document.getElementById('exchangeModal').style.display = 'flex'; }
+function openWithdraw() { document.getElementById('withdrawModal').style.display = 'flex'; }
+function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); }
+
+function processExchange() {
+    if (coins >= 1000) {
+        coins -= 1000;
+        money += 10;
+        updateUI();
+        showToast('✅ 10 INR added!', 'success');
+        closeModals();
+    } else {
+        showToast('Insufficient coins! (need 1000)', 'error');
+    }
+}
+
+// ==========================================
+// 10. AUDIO & GAME SYSTEM
+// ==========================================
+class SoftAudio {
+    constructor() { this.ctx = null; }
+    init() { if (!this.ctx) { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } return this.ctx; }
+    play(type) {
+        try {
+            const ctx = this.init();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            let freq = 400, dur = 0.15, vol = 0.02;
+            if(type === 'click') { freq = 600; dur = 0.05; }
+            if(type === 'win') { freq = 800; osc.frequency.linearRampToValueAtTime(1200, ctx.currentTime + 0.3); dur = 0.3; vol = 0.03; }
+            if(type === 'lose') { freq = 300; osc.frequency.linearRampToValueAtTime(150, ctx.currentTime + 0.3); dur = 0.3; }
+            if(type === 'spin') { freq = 400; osc.frequency.linearRampToValueAtTime(500, ctx.currentTime + 0.2); dur = 0.2; }
+            osc.frequency.setValueAtTime(freq, ctx.currentTime);
+            gain.gain.setValueAtTime(vol, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + dur);
+        } catch(e) {}
+    }
+}
+const audio = new SoftAudio();
+window.playSound = function(t) { audio.play(t); }
+
+window.deduct = function(amount) {
+    if (coins < amount) {
+        showToast('Insufficient coins! 🪙', 'error');
+        return false;
+    }
+    coins -= amount;
+    updateUI();
+    return true;
+};
+window.add = function(amount) {
+    coins += amount;
+    updateUI();
+    playSound('win');
+    showToast(`🎉 You won ${amount} coins!`, 'success');
+};
+
+// ==========================================
+// 11. GAME RENDER
+// ==========================================
+const home = document.getElementById('homeScreen');
+const gameArea = document.getElementById('gameArea');
+const gameContent = document.getElementById('gameContent');
+window.historyData = { rocket: [], spin: [], cointoss: [], cracken: [], gunfire: [], findcoin: [] };
+let currentGameName = '';
+
+function openGame(name) {
+    if (!currentUser) {
+        showToast('Please login first!', 'warning');
+        return;
+    }
+    currentGameName = name;
+    home.style.display = 'none';
+    gameArea.classList.add('active');
+    renderGame(name);
+    playSound('click');
+}
+
+function goBack() {
+    if(window.gunAnimationId) cancelAnimationFrame(window.gunAnimationId);
+    window.gunGameActive = false;
+    if(window.rocketInterval) clearInterval(window.rocketInterval);
+    gameArea.classList.remove('active');
+    home.style.display = 'block';
+    playSound('click');
+}
+
+function renderGame(name) {
+    let html = `<div class="game-title">${getTitle(name)}</div>`;
+    if (name === 'rocket') { html += renderRocket(); gameContent.innerHTML = html; initRocket(); }
+    else if (name === 'spin') { html += renderSpin(); gameContent.innerHTML = html; initSpin(); }
+    else if (name === 'cointoss') { html += renderCoinToss(); gameContent.innerHTML = html; initCoinToss(); }
+    else if (name === 'cracken') { html += renderCracken(); gameContent.innerHTML = html; initCracken(); }
+    else if (name === 'gunfire') { html += renderGunGame(); gameContent.innerHTML = html; initGunGame(); }
+    else if (name === 'findcoin') { html += renderFindCoin(); gameContent.innerHTML = html; }
+}
+
+function getTitle(name) {
+    const map = { spin:'🎰 Slot Spin', cracken:'🐙 Kraken', rocket:'🚀 Aviator', cointoss:'🪙 Toss', gunfire:'🔫 Gun Fire', findcoin:'💣 Find Coin' };
+    return map[name] || name;
+}
+
+// ==========================================
+// 12. GAME RENDER FUNCTIONS
+// ==========================================
+function renderRocket() {
+    return `<div class="aviator-container" style="position: relative; overflow: hidden; height: 280px; background: #000; border-radius: 16px; border: 1px solid rgba(255,215,0,0.2);">
+        <div style="position: absolute; left: 0; bottom: 0; width: 100%; height: 100%; pointer-events: none;">
+            <div style="border-bottom: 1px dashed rgba(255,255,255,0.1); position:absolute; bottom: 25%; width:100%;"></div>
+            <div style="border-bottom: 1px dashed rgba(255,255,255,0.1); position:absolute; bottom: 50%; width:100%;"></div>
+            <div style="border-bottom: 1px dashed rgba(255,255,255,0.1); position:absolute; bottom: 75%; width:100%;"></div>
+            <div style="border-left: 1px dashed rgba(255,255,255,0.1); position:absolute; left: 25%; height:100%;"></div>
+            <div style="border-left: 1px dashed rgba(255,255,255,0.1); position:absolute; left: 50%; height:100%;"></div>
+            <div style="border-left: 1px dashed rgba(255,255,255,0.1); position:absolute; left: 75%; height:100%;"></div>
+        </div>
+        <div style="position: absolute; left: 5px; top: 12px; height: 75%; display: flex; flex-direction: column; justify-content: space-between; font-size: 10px; color: rgba(255,215,0,0.6); z-index: 2;">
+            <div>5.0x</div><div>4.0x</div><div>3.0x</div><div>2.0x</div><div>1.0x</div>
+        </div>
+        <div style="position: absolute; left: 45px; bottom: 5px; width: 80%; display: flex; justify-content: space-between; font-size: 10px; color: rgba(255,255,255,0.4); z-index: 2;">
+            <div>0s</div><div>5s</div><div>10s</div><div>15s</div>
+        </div>
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute; left:0; top:0; width:100%; height:100%; z-index:1; pointer-events:none;">
+            <defs>
+                <linearGradient id="lineGlow" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="rgba(255, 31, 68, 0.5)"/>
+                    <stop offset="100%" stop-color="rgba(255, 31, 68, 0.0)"/>
+                </linearGradient>
+            </defs>
+            <path id="avFillPath" d="" fill="url(#lineGlow)"/>
+            <path id="avStrokePath" d="" fill="none" stroke="#ff1f44" stroke-width="3" stroke-linecap="round" filter="drop-shadow(0 0 5px #ff1f44)"/>
+        </svg>
+        <div class="aviator-rocket-3d" id="avRocket" style="position: absolute; left: 10%; bottom: 10%; font-size: 50px; z-index: 4; transform: rotate(-15deg); transition: opacity 0.5s ease-out, transform 0.1s;">🚀</div>
+        <div class="aviator-multi-3d" id="rocketMulti">1.00x</div>
+    </div>
+    <div class="flex" style="margin-top:20px;">
+        <button id="betRocketBtn" style="background:#2ecc71; width:50%;">🚀 Bet (10 🪙)</button>
+        <button id="cashoutBtn" class="btn-danger" style="width:50%;" disabled>💸 Cashout</button>
+    </div>
+    <div class="result-box" id="rocketResult">Start the rocket</div>`;
+}
+
+function initRocket() {
+    let mult = 1.00, running = false, betActive = false, rx = 10, ry = 10;
+    const betBtn = document.getElementById('betRocketBtn'), cashBtn = document.getElementById('cashoutBtn');
+    const rocket = document.getElementById('avRocket'), multiSpan = document.getElementById('rocketMulti'), res = document.getElementById('rocketResult');
+    const strokePath = document.getElementById('avStrokePath'), fillPath = document.getElementById('avFillPath');
+
+    betBtn.onclick = function() {
+        if (!window.deduct(10)) return;
+        running = true; betActive = true; mult = 1.00; rx = 10; ry = 10;
+        rocket.innerText = '🚀'; rocket.style.opacity = '1'; rocket.style.transform = 'rotate(-15deg)';
+        rocket.style.left = '10%'; rocket.style.bottom = '10%'; multiSpan.style.color = '#ffd700';
+        if(strokePath) strokePath.setAttribute('d', '');
+        if(fillPath) fillPath.setAttribute('d', '');
+        res.innerText = '🚀 Flying...'; betBtn.disabled = true; cashBtn.disabled = false; playSound('spin');
+        
+        let isWin = (Math.random() * 100) < winRate;
+        let crash = isWin ? (2 + Math.random() * 5) : (1.05 + Math.random() * 0.5);
+        
+        window.rocketInterval = setInterval(() => {
+            if (!running) return;
+            mult += 0.015; rx += 0.8; ry += 0.6;
+            if(rx > 85) rx = 85; if(ry > 75) ry = 75;
+            multiSpan.innerText = mult.toFixed(2) + 'x'; 
+            rocket.style.left = rx + '%'; rocket.style.bottom = ry + '%';
+            if (strokePath && fillPath) {
+                const dCurve = `M 10 90 Q ${(10 + rx) / 1.5} 90 ${rx} ${100 - ry}`;
+                strokePath.setAttribute('d', dCurve);
+                fillPath.setAttribute('d', `${dCurve} L ${rx} 90 L 10 90 Z`);
+            }
+            if (mult >= crash) {
+                running = false; clearInterval(window.rocketInterval);
+                rocket.innerText = '💥'; rocket.style.transform = 'scale(1.5)';
+                setTimeout(() => { rocket.style.opacity = '0'; }, 100); 
+                multiSpan.style.color = '#ff1f44'; res.innerHTML = `💥 <strong>Crash!</strong> ${mult.toFixed(2)}x`;
+                betBtn.disabled = false; cashBtn.disabled = true; betActive = false; playSound('lose');
+                showToast(`💥 Crash! ${mult.toFixed(2)}x`, 'error');
+            }
+        }, 50);
+    };
+
+    cashBtn.onclick = function() {
+        if (!betActive || !running) return;
+        running = false; clearInterval(window.rocketInterval);
+        const winAmt = Math.floor(10 * mult); 
+        window.add(winAmt);
+        res.innerHTML = `✅ <strong>Success!</strong> You won ${winAmt} 🪙 coins`;
+        betBtn.disabled = false; cashBtn.disabled = true; betActive = false;
+    };
+}
+
+function renderSpin() {
+    return `<div class="slot-3d">
+        <div style="position:absolute; left:50%; top:-5px; transform:translateX(-50%); width:0; height:0; border-left:12px solid transparent; border-right:12px solid transparent; border-top:18px solid red; z-index:10;"></div>
+        <div class="slot-reel-container"><div class="slot-reel" id="slotStrip"></div></div>
+    </div>
+    <div class="flex"><button id="spinBtn" style="width:100%;">🎰 Spin (10 🪙)</button></div>
+    <div class="result-box" id="spinResult">Spin the slot</div>`;
+}
+
+function initSpin() {
+    const strip = document.getElementById('slotStrip'), btn = document.getElementById('spinBtn'), res = document.getElementById('spinResult');
+    const items = [0, 5, 20, 0, 50, 5, 0, 10, 5, 100, 0, 10];
+    let html = '';
+    for(let i=0; i<60; i++) { html += `<div class="slot-item-3d" style="color:${items[i % items.length]>0?'#2ecc71':'#fff'}">${items[i % items.length]}</div>`; }
+    strip.innerHTML = html;
+    btn.onclick = function() {
+        if (!window.deduct(10)) return;
+        btn.disabled = true; playSound('spin');
+        strip.style.transition = 'none'; strip.style.left = '0px';
+        
+        let isWin = (Math.random() * 100) < winRate;
+        let validIndices = [];
+        for(let i=20; i<40; i++) { let v = items[i % items.length]; if(isWin ? v > 0 : v === 0) validIndices.push(i); }
+        let targetIndex = validIndices[Math.floor(Math.random() * validIndices.length)];
+        let winAmount = items[targetIndex % items.length];
+        
+        if (winAmount > 0) window.add(winAmount);
+
+        setTimeout(() => {
+            let finalPos = -(targetIndex * 90) + (strip.parentElement.offsetWidth/2) - 45;
+            strip.style.transition = 'left 3s cubic-bezier(0.15, 0.85, 0.35, 1)'; strip.style.left = finalPos + 'px';
+            setTimeout(() => {
+                res.innerHTML = winAmount > 0 ? `🎉 You won <strong>${winAmount}</strong> 🪙` : `😞 You lost`;
+                btn.disabled = false;
+            }, 3100);
+        }, 50);
+    };
+}
+
+function renderCoinToss() {
+    return `<div class="coin-3d-wrapper"><div class="coin-3d" id="coin3d"><div class="coin-side coin-head">👑</div><div class="coin-side coin-tail">🦅</div></div></div>
+        <div class="flex"><button onclick="toss3D('Head')" style="background:#3498db; color:#fff; width:50%;">👑 Head</button><button onclick="toss3D('Tail')" style="background:#e67e22; color:#fff; width:50%;">🦅 Tail</button></div>
+        <div class="result-box" id="tossResult3d">Bet: 10 🪙</div>`;
+}
+
+function initCoinToss() {}
+
+window.toss3D = function(choice) {
+    if (!window.deduct(10)) return;
+    const coin = document.getElementById('coin3d'), res = document.getElementById('tossResult3d');
+    playSound('spin'); res.innerText = 'Tossing...';
+    coin.style.transition = 'none'; coin.style.transform = 'rotateY(0deg)'; void coin.offsetWidth; 
+    
+    let isWin = (Math.random() * 100) < winRate; 
+    let isHead = isWin ? (choice === 'Head') : (choice !== 'Head');
+    
+    if(isWin) { window.add(20); }
+    
+    setTimeout(() => { coin.style.transition = 'transform 2s ease-out'; coin.style.transform = `rotateY(${isHead ? 1800 : 1980}deg)`; }, 20);
+    setTimeout(() => {
+        if(isWin) { res.innerHTML = `🎉 You won! 20 🪙`; } 
+        else { res.innerHTML = `😞 You lost!`; playSound('lose'); }
+    }, 2050);
+}
+
+function renderCracken() {
+    return `<div class="cracken-3d-grid" id="crackenGrid">${Array(15).fill('<div class="fruit-cell">🍒</div>').join('')}</div>
+        <div class="flex"><button id="crackenSpinBtn" style="width:100%;">🎰 Spin (10 🪙)</button></div>
+        <div class="result-box" id="crackenResult">Match 3 fruits</div>`;
+}
+
+function initCracken() {
+    const btn = document.getElementById('crackenSpinBtn'), res = document.getElementById('crackenResult'), cells = document.querySelectorAll('.fruit-cell');
+    const fruits = ['🍒','🍋','🍊','🍉','💎'];
+    btn.onclick = function() {
+        if (!window.deduct(10)) return;
+        btn.disabled = true; playSound('spin'); res.innerText = 'Shuffling...';
+        
+        let isWin = (Math.random() * 100) < winRate;
+        let matchCount = 0;
+        let winAmount = 0;
+
+        if (isWin) {
+            matchCount = Math.random() < 0.6 ? 3 : 5;
+            winAmount = matchCount === 3 ? 20 : 40; 
+            window.add(winAmount);
+        }
+
+        let interval = setInterval(() => { cells.forEach(c => c.innerText = fruits[Math.floor(Math.random()*fruits.length)]); }, 100);
+        
+        setTimeout(() => {
+            clearInterval(interval);
+            if(isWin) {
+                let f = fruits[Math.floor(Math.random()*fruits.length)];
+                cells[5].innerText = f; cells[6].innerText = f; cells[7].innerText = f;
+                if (matchCount === 5) {
+                    cells[8].innerText = f; cells[9].innerText = f;
+                }
+                res.innerHTML = `🎉 Match found! You won ${winAmount} 🪙`;
+            } else { 
+                res.innerHTML = `😞 No match`; playSound('lose'); 
+            }
+            btn.disabled = false;
+        }, 1500);
+    };
+}
+
+// ==========================================
+// 13. GUN FIRE GAME
+// ==========================================
+window.gunGameActive = false;
+let gunBullets = 0, gunScore = 0, gunRound = 1, gunMaxRounds = 3, gunBetAmount = 10, gunRoundBonus = 0;
+let gunCanvas, gunCtx, gunGunAngle = 0, gunTargets = [], gunProjectiles = [], gunAnimationId = null;
+let gunTargetsHit = 0, gunTotalTargetsInRound = 0, gunRoundTransition = false;
+
+const GUN_ROUNDS = {
+    1: { bullets: 15, targets: 10, reward: 2, bonus: 0, name: 'Easy', speed: 0.006, targetEmojis: ['🍾'] },
+    2: { bullets: 6, targets: 5, reward: 5, bonus: 0, name: 'Medium', speed: 0.012, targetEmojis: ['🍾'] },
+    3: { bullets: 3, targets: 3, reward: 0, bonus: 50, name: 'Hard', speed: 0.035, targetEmojis: ['🍾'] } 
+};
+
+function renderGunGame() {
+    return `
+        <div style="background: linear-gradient(145deg, #1a1500, #0a0800); border-radius: 16px; padding: 15px; border: 1px solid rgba(255,215,0,0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; background: rgba(0,0,0,0.5); padding: 10px 12px; border-radius: 10px; gap: 4px; flex-wrap: wrap;">
+                <div style="text-align: center; flex:1; min-width:60px;">
+                    <span style="font-size: 11px; color:#aaa;">🎯 Targets</span>
+                    <div style="font-size: 18px; font-weight:900; color:#ffd700;" id="gunTargetDisp">0/0</div>
+                </div>
+                <div style="text-align: center; flex:1; min-width:60px;">
+                    <span style="font-size: 11px; color:#aaa;">🔫 Bullets</span>
+                    <div style="font-size: 18px; font-weight:900; color:#ff1f44;" id="gunBulletDisp">0</div>
+                </div>
+                <div style="text-align: center; flex:1; min-width:60px;">
+                    <span style="font-size: 11px; color:#aaa;">🪙 Coins</span>
+                    <div style="font-size: 18px; font-weight:900; color:#2ecc71;" id="gunScoreDisp">0</div>
+                </div>
+            </div>
+            <div style="position: relative; background: #0a0f0a; border-radius: 12px; border: 1px solid rgba(255,215,0,0.15); overflow: hidden;">
+                <canvas id="gunCanvas" width="500" height="400" style="display: block; width: 100%; background: radial-gradient(circle at 30% 30%, #1a2a1a, #0a0f0a);"></canvas>
+                <div id="gunClickOverlay" style="position: absolute; top:0; left:0; width:100%; height:100%; cursor: crosshair; z-index:10;" onclick="fireGunFromCanvas(event)"></div>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
+                <button id="gunBet10Btn" onclick="startGunGame(10)" style="flex:1; background: #2ecc71; color:#fff; padding:12px; font-size:14px; min-width:80px;">🎯 Bet 10</button>
+                <button id="gunBet50Btn" onclick="startGunGame(50)" style="flex:1; background: #f39c12; color:#fff; padding:12px; font-size:14px; min-width:80px;">🎯 Bet 50</button>
+                <button id="gunShootBtn" onclick="fireGunFromButton()" disabled style="flex:1; background: #e74c3c; color:#fff; padding:12px; font-size:14px; min-width:80px;">🔫 Shoot</button>
+            </div>
+            <div id="gunStatus" class="result-box">🎯 Start with 10 or 50 coins</div>
+        </div>
+    `;
+}
+
+function initGunGame() {
+    setTimeout(() => {
+        const canvas = document.getElementById('gunCanvas');
+        if (canvas) {
+            gunCanvas = canvas;
+            gunCtx = canvas.getContext('2d');
+            drawGunScenePlaceholder();
+        }
+    }, 100);
+}
+
+function drawGunScenePlaceholder() {
+    if (!gunCtx) return;
+    const w = gunCanvas.width, h = gunCanvas.height, cx = w/2, cy = h/2;
+    gunCtx.clearRect(0, 0, w, h);
+    gunCtx.font = '50px sans-serif';
+    gunCtx.textAlign = 'center';
+    gunCtx.textBaseline = 'middle';
+    gunCtx.save();
+    gunCtx.translate(cx, cy);
+    gunCtx.scale(-1, 1);
+    gunCtx.fillText('🔫', 0, 0);
+    gunCtx.restore();
+    gunCtx.font = '16px sans-serif';
+    gunCtx.fillStyle = 'rgba(255,255,255,0.4)';
+    gunCtx.fillText('Place bet to start', cx, cy + 60);
+}
+
+window.startGunGame = function(bet) {
+    if (window.gunGameActive) {
+        showToast('Game already running!', 'warning');
+        return;
+    }
+    if (!window.deduct(bet)) return;
+    
+    gunBetAmount = bet;
+    window.gunGameActive = true;
+    gunRoundTransition = false;
+    gunRound = 1;
+    gunScore = 0;
+    gunRoundBonus = 0;
+    gunProjectiles = [];
+    gunTargetsHit = 0;
+    
+    document.getElementById('gunBet10Btn').disabled = true;
+    document.getElementById('gunBet50Btn').disabled = true;
+    document.getElementById('gunShootBtn').disabled = false;
+    
+    setupGunRound(1);
+};
+
+function setupGunRound(round) {
+    gunRound = round;
+    gunRoundTransition = false;
+    const config = GUN_ROUNDS[round];
+    gunBullets = config.bullets;
+    gunTotalTargetsInRound = config.targets;
+    gunTargetsHit = 0;
+    gunProjectiles = [];
+    gunTargets = [];
+    
+    const centerX = gunCanvas.width / 2;
+    const centerY = gunCanvas.height / 2;
+    const maxRadius = Math.min(centerX, centerY) - 40;
+    const minRadius = 65;
+
+    for (let i = 0; i < gunTotalTargetsInRound; i++) {
+        const orbitRadius = minRadius + (maxRadius - minRadius) * (i / gunTotalTargetsInRound) + 10;
+        const angle = (i / gunTotalTargetsInRound) * 2 * Math.PI + Math.random() * 0.2;
+        const size = 45 + Math.floor(Math.random() * 15);
+        gunTargets.push({
+            orbitRadius: orbitRadius,
+            angle: angle,
+            speed: config.speed * (i % 2 === 0 ? 1 : -1),
+            size: size,
+            emoji: '🍾',
+            hit: false,
+            x: centerX + orbitRadius * Math.cos(angle),
+            y: centerY + orbitRadius * Math.sin(angle)
+        });
+    }
+    
+    gunGunAngle = 0;
+    updateGunUI();
+    document.getElementById('gunStatus').innerHTML = `🎯 Round ${round}: ${config.bullets} bullets, ${config.targets} targets`;
+    
+    if (window.gunAnimationId) cancelAnimationFrame(window.gunAnimationId);
+    gunGameLoop();
+}
+
+function gunGameLoop() {
+    if (!window.gunGameActive) {
+        if (gunCtx) drawGunScene();
+        return;
+    }
+    updateGunPhysics();
+    drawGunScene();
+    window.gunAnimationId = requestAnimationFrame(gunGameLoop);
+}
+
+function updateGunPhysics() {
+    const centerX = gunCanvas.width / 2;
+    const centerY = gunCanvas.height / 2;
+    gunGunAngle += 0.025;
+
+    for (let t of gunTargets) {
+        if (t.hit) continue;
+        t.angle += t.speed;
+        t.x = centerX + t.orbitRadius * Math.cos(t.angle);
+        t.y = centerY + t.orbitRadius * Math.sin(t.angle);
+    }
+
+    for (let i = gunProjectiles.length - 1; i >= 0; i--) {
+        const p = gunProjectiles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life--;
+        let hit = false;
+        for (let t of gunTargets) {
+            if (t.hit) continue;
+            const dist = Math.sqrt(Math.pow(p.x - t.x, 2) + Math.pow(p.y - t.y, 2));
+            if (dist < t.size/2 + 10) {
+                t.hit = true;
+                hit = true;
+                gunTargetsHit++;
+                
+                gunScore += 2;
+                window.add(2);
+
+                playSound('win');
+                document.getElementById('gunStatus').innerHTML = `✅ Hit! (bullets left: ${gunBullets})`;
+                break;
+            }
+        }
+        if (hit || p.x < -30 || p.x > gunCanvas.width+30 || p.y < -30 || p.y > gunCanvas.height+30 || p.life <= 0) {
+            gunProjectiles.splice(i, 1);
+        }
+    }
+
+    if (gunTargetsHit >= gunTotalTargetsInRound) {
+        if (!gunRoundTransition) {
+            gunRoundTransition = true;
+            
+            if (gunRound === 1) gunRoundBonus += (gunBetAmount * 2);
+            if (gunRound === 2) gunRoundBonus += (gunBetAmount * 4);
+            if (gunRound === 3) gunRoundBonus += (gunBetAmount * 10);
+
+            if (gunRound < gunMaxRounds) {
+                document.getElementById('gunStatus').innerHTML = `🎉 Round ${gunRound} complete!`;
+                playSound('win');
+                setTimeout(() => { gunRound++; setupGunRound(gunRound); }, 1200);
+            } else {
+                document.getElementById('gunStatus').innerHTML = `🎉 Round 3 complete!`;
+                playSound('win');
+                setTimeout(() => { endGunGame(true); }, 1000);
+            }
+        }
+        return;
+    }
+
+    if (gunBullets <= 0 && gunProjectiles.length === 0 && gunTargetsHit < gunTotalTargetsInRound) {
+        if (!gunRoundTransition) {
+            gunRoundTransition = true;
+            document.getElementById('gunStatus').innerHTML = `💀 Game Over! Missed targets.`;
+            playSound('lose');
+            setTimeout(() => { endGunGame(false); }, 1200);
+        }
+    }
+    
+    updateGunUI();
+}
+
+function drawGunScene() {
+    if (!gunCtx) return;
+    const w = gunCanvas.width, h = gunCanvas.height;
+    const centerX = w/2, centerY = h/2;
+    
+    gunCtx.clearRect(0, 0, w, h);
+    
+    gunCtx.fillStyle = 'rgba(255,255,255,0.04)';
+    for (let i=0; i<40; i++) {
+        gunCtx.beginPath();
+        gunCtx.arc(Math.random()*w, Math.random()*h, 1.5, 0, 2*Math.PI);
+        gunCtx.fill();
+    }
+
+    for (let t of gunTargets) {
+        if (t.hit) {
+            gunCtx.font = `${t.size + 15}px sans-serif`;
+            gunCtx.fillStyle = '#ff8800';
+            gunCtx.fillText('💥', t.x, t.y);
+            continue;
+        }
+        gunCtx.font = `${t.size}px sans-serif`;
+        gunCtx.shadowColor = 'rgba(255,215,0,0.2)';
+        gunCtx.shadowBlur = 10;
+        gunCtx.fillText(t.emoji, t.x, t.y);
+        gunCtx.shadowBlur = 0;
+    }
+
+    gunCtx.save();
+    gunCtx.translate(centerX, centerY);
+    gunCtx.rotate(gunGunAngle);
+    gunCtx.scale(-1, 1);
+    gunCtx.font = '55px sans-serif';
+    gunCtx.textAlign = 'center';
+    gunCtx.textBaseline = 'middle';
+    gunCtx.fillText('🔫', 0, 0);
+    gunCtx.restore();
+
+    for (let p of gunProjectiles) {
+        gunCtx.shadowColor = '#ffaa00';
+        gunCtx.shadowBlur = 15;
+        gunCtx.fillStyle = '#ffff88';
+        gunCtx.beginPath();
+        gunCtx.arc(p.x, p.y, 8, 0, 2*Math.PI);
+        gunCtx.fill();
+        gunCtx.fillStyle = 'rgba(255,200,0,0.4)';
+        gunCtx.beginPath();
+        gunCtx.arc(p.x - p.vx*2, p.y - p.vy*2, 5, 0, 2*Math.PI);
+        gunCtx.fill();
+        gunCtx.shadowBlur = 0;
+    }
+}
+
+window.fireGunFromCanvas = function(event) {
+    if (!window.gunGameActive || gunBullets <= 0) {
+        if (gunBullets <= 0 && window.gunGameActive) {
+            showToast('🔫 No bullets left!', 'warning');
+        }
+        return;
+    }
+    gunBullets--;
+    const centerX = gunCanvas.width / 2;
+    const centerY = gunCanvas.height / 2;
+    const speed = 9;
+    const vx = speed * Math.cos(gunGunAngle);
+    const vy = speed * Math.sin(gunGunAngle);
+    gunProjectiles.push({
+        x: centerX + 40 * Math.cos(gunGunAngle),
+        y: centerY + 40 * Math.sin(gunGunAngle),
+        vx: vx,
+        vy: vy,
+        life: 70
+    });
+    playSound('spin');
+    document.getElementById('gunStatus').innerHTML = `🔫 Fire! (bullets left: ${gunBullets})`;
+    updateGunUI();
+};
+
+window.fireGunFromButton = function() {
+    if (!window.gunGameActive || gunBullets <= 0) {
+        if (gunBullets <= 0 && window.gunGameActive) {
+            showToast('🔫 No bullets left!', 'warning');
+        }
+        return;
+    }
+    gunBullets--;
+    const centerX = gunCanvas.width / 2;
+    const centerY = gunCanvas.height / 2;
+    const speed = 9;
+    const vx = speed * Math.cos(gunGunAngle);
+    const vy = speed * Math.sin(gunGunAngle);
+    gunProjectiles.push({
+        x: centerX + 40 * Math.cos(gunGunAngle),
+        y: centerY + 40 * Math.sin(gunGunAngle),
+        vx: vx,
+        vy: vy,
+        life: 70
+    });
+    playSound('spin');
+    document.getElementById('gunStatus').innerHTML = `🔫 Fire! (bullets left: ${gunBullets})`;
+    updateGunUI();
+};
+
+function endGunGame(isWin) {
+    window.gunGameActive = false;
+    document.getElementById('gunBet10Btn').disabled = false;
+    document.getElementById('gunBet50Btn').disabled = false;
+    document.getElementById('gunShootBtn').disabled = true;
+    
+    if (isWin) {
+        window.add(gunRoundBonus);
+        gunScore += gunRoundBonus; 
+        document.getElementById('gunStatus').innerHTML = `🏆 Champion! Won all rounds! Total ${gunScore} 🪙 won! 🎉`;
+        playSound('win');
+        showToast(`🏆 You won all rounds! Bonus ${gunRoundBonus} coins added!`, 'success');
+    } else {
+        if (gunScore > 0) {
+            document.getElementById('gunStatus').innerHTML = `⏹ Game ended! You kept ${gunScore} 🪙 from hits.`;
+            showToast(`⏹ You kept ${gunScore} coins from hits!`, 'info');
+        } else {
+            document.getElementById('gunStatus').innerHTML = `😞 You lost!`;
+            showToast('😞 You lost!', 'error');
+        }
+    }
+    updateGunUI();
+}
+
+function updateGunUI() {
+    document.getElementById('gunTargetDisp').innerText = `${gunTargetsHit}/${gunTotalTargetsInRound}`;
+    document.getElementById('gunBulletDisp').innerText = gunBullets;
+    document.getElementById('gunScoreDisp').innerText = gunScore;
+}
+
+// ==========================================
+// 14. FIND COIN GAME
+// ==========================================
+function renderFindCoin() {
+    return `<div class="result-box" style="margin-bottom:10px;">Collected: <span id="fcScoreDisp" style="color:#ffd700; font-size:24px; font-weight:bold;">0</span> 🪙</div>
+        <div class="fc-grid" id="fcGrid"></div>
+        <div class="flex">
+            <button id="fcBetBtn" style="background:#2ecc71; width:50%;" onclick="startFindCoin()">▶ Bet (10 🪙)</button>
+            <button id="fcCashoutBtn" class="btn-danger" style="width:50%;" onclick="cashoutFindCoin()" disabled>💸 Cashout</button>
+        </div>
+        <div class="result-box" id="fcStatus">Start with 10 coins</div>`;
+}
+
+let fcActive = false, fcScore = 0, fcOpened = 0, fcBoard = [];
+
+window.startFindCoin = function() {
+    if (!window.deduct(10)) return;
+    fcActive = true;
+    fcScore = 0;
+    fcOpened = 0;
+    document.getElementById('fcCashoutBtn').disabled = false;
+    document.getElementById('fcBetBtn').disabled = true;
+    document.getElementById('fcScoreDisp').innerText = '0';
+    document.getElementById('fcStatus').innerText = 'Open boxes... Beware of bombs!';
+    
+    fcBoard = [50,50,50,50,50, 20,20,20,20,20, 10,10,10,10,10, 0,0,0,0,0, 0,0,0,0,0].sort(() => Math.random() - 0.5);
+    
+    let html = '';
+    for(let i=0; i<25; i++) {
+        html += `<div class="fc-box" id="fcb_${i}" onclick="openBoxFC(${i})">❓</div>`;
+    }
+    document.getElementById('fcGrid').innerHTML = html;
+};
+
+window.openBoxFC = function(i) {
+    if (!fcActive) return;
+    const box = document.getElementById(`fcb_${i}`);
+    if (box.classList.contains('open')) return;
+    
+    box.classList.add('open');
+    const val = fcBoard[i];
+    
+    if (val === 0) {
+        box.innerText = '💣';
+        box.style.background = 'rgba(255, 31, 68, 0.5)';
+        fcActive = false;
+        document.getElementById('fcCashoutBtn').disabled = true;
+        document.getElementById('fcBetBtn').disabled = false;
+        document.getElementById('fcStatus').innerText = 'You lost! Bomb exploded.';
+        playSound('lose');
+        showToast('💣 Bomb! You lost!', 'error');
+        revealAllFC();
+    } else {
+        box.innerText = val;
+        box.style.color = '#ffd700';
+        fcScore += val;
+        fcOpened++;
+        document.getElementById('fcScoreDisp').innerText = fcScore;
+        playSound('click');
+        
+        if (fcOpened === 15) {
+            fcScore += 1000;
+            fcActive = false;
+            window.add(fcScore);
+            document.getElementById('fcCashoutBtn').disabled = true;
+            document.getElementById('fcBetBtn').disabled = false;
+            document.getElementById('fcStatus').innerText = `🎉 Jackpot! You got all coins! Won ${fcScore} 🪙`;
+            playSound('win');
+            showToast(`🎉 Jackpot! ${fcScore} coins!`, 'success');
+            revealAllFC();
+        }
+    }
+};
+
+window.cashoutFindCoin = function() {
+    if (!fcActive || fcScore === 0) {
+        showToast('Collect some coins first!', 'warning');
+        return;
+    }
+    fcActive = false;
+    window.add(fcScore);
+    document.getElementById('fcCashoutBtn').disabled = true;
+    document.getElementById('fcBetBtn').disabled = false;
+    document.getElementById('fcStatus').innerText = `Success! Cashed out ${fcScore} 🪙`;
+    playSound('win');
+    showToast(`✅ Cashed out ${fcScore} coins!`, 'success');
+    revealAllFC();
+};
+
+function revealAllFC() {
+    for (let i=0; i<25; i++) {
+        const box = document.getElementById(`fcb_${i}`);
+        if (!box.classList.contains('open')) {
+            box.classList.add('open');
+            box.style.opacity = '0.5';
+            box.innerText = fcBoard[i] === 0 ? '💣' : fcBoard[i];
+            if (fcBoard[i] !== 0) box.style.color = '#ccc';
+        }
+    }
+}
+
+// ==========================================
+// 15. LANGUAGE TRANSLATION SYSTEM
+// ==========================================
+let currentLang = 'en';
+const translations = {
+    en: {
+        subtitle: 'Play More, Win More',
+        buyCoins: 'Buy Coins',
+        coins: 'Coins 🪙',
+        money: 'Money 💵',
+        exchange: 'Exchange',
+        withdraw: 'Withdraw',
+        game_aviator: 'Aviator',
+        game_slot: 'Slot Spin',
+        game_toss: 'Toss',
+        game_fruit: 'Fruit Game',
+        game_gun: 'Gun Fire',
+        game_find: 'Find Coin'
+    },
+    bn: {
+        subtitle: 'খেলুন বেশি, জিতুন বেশি',
+        buyCoins: 'কয়েন কিনুন',
+        coins: 'কয়েন 🪙',
+        money: 'টাকা 💵',
+        exchange: 'এক্সচেঞ্জ',
+        withdraw: 'উইথড্র',
+        game_aviator: 'এভিয়েটর',
+        game_slot: 'স্লট স্পিন',
+        game_toss: 'টস',
+        game_fruit: 'ফ্রুট গেম',
+        game_gun: 'গান ফায়ার',
+        game_find: 'কয়েন খুঁজুন'
+    },
+    hi: {
+        subtitle: 'ज्यादा खेलो, ज्यादा जीतो',
+        buyCoins: 'सिक्के खरीदें',
+        coins: 'सिक्के 🪙',
+        money: 'पैसे 💵',
+        exchange: 'एक्सचेंज',
+        withdraw: 'निकासी',
+        game_aviator: 'एविएटर',
+        game_slot: 'स्लॉट स्पिन',
+        game_toss: 'टॉस',
+        game_fruit: 'फ्रूट गेम',
+        game_gun: 'गन फायर',
+        game_find: 'सिक्का खोजें'
+    }
+};
+
+function translateUI(lang) {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[lang] && translations[lang][key]) {
+            el.innerText = translations[lang][key];
+        }
+    });
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+    });
+    currentLang = lang;
+}
+
+function initLanguageSwitcher() {
+    const header = document.querySelector('.login-section');
+    const langDiv = document.createElement('div');
+    langDiv.className = 'lang-switch';
+    langDiv.innerHTML = `
+        <button class="lang-btn active" data-lang="en" onclick="translateUI('en')">Eng</button>
+        <button class="lang-btn" data-lang="bn" onclick="translateUI('bn')">বাং</button>
+        <button class="lang-btn" data-lang="hi" onclick="translateUI('hi')">हिं</button>
+    `;
+    header.appendChild(langDiv);
+}
+
+// ==========================================
+// 16. BACKGROUND MUSIC SYSTEM
+// ==========================================
+const BG_URLS = {
+    home: 'https://files.catbox.moe/3um0tq.mp3',
+    aviator: 'https://files.catbox.moe/bh5gye.mp3',
+    spin: 'https://files.catbox.moe/ilbm7j.mp3',
+    cointoss: 'https://files.catbox.moe/ilbm7j.mp3',
+    gunfire: 'https://files.catbox.moe/1s3gpr.mp3',
+    default: 'https://files.catbox.moe/ilbm7j.mp3'
+};
+
+const audioCache = {};
+let currentBg = null;
+let currentBgKey = null;
+let isHomeActive = true;
+
+function forceStopAllBg() {
+    if (currentBg) {
+        currentBg.pause();
+        currentBg.currentTime = 0;
+        currentBg.onended = null;
+        currentBg = null;
+        currentBgKey = null;
+    }
+    for (let key in audioCache) {
+        if (audioCache[key]) {
+            audioCache[key].pause();
+            audioCache[key].currentTime = 0;
+            audioCache[key].onended = null;
+        }
+    }
+    isHomeActive = false;
+}
+
+function playBg(key) {
+    forceStopAllBg();
+    const url = BG_URLS[key] || BG_URLS.default;
+    if (!url) return;
+    
+    let audio = audioCache[key];
+    if (!audio) {
+        audio = new Audio(url);
+        audio.loop = false;
+        audio.preload = 'auto';
+        audio.volume = 0.15;
+        audioCache[key] = audio;
+    }
+    
+    audio.currentTime = 0;
+    audio.play().then(() => {
+        currentBg = audio;
+        currentBgKey = key;
+        isHomeActive = (key === 'home');
+        
+        if (key === 'home') {
+            audio.onended = function() {
+                if (isHomeActive && currentBg === audio) {
+                    audio.currentTime = 0;
+                    audio.play().catch(() => {});
+                }
+            };
+        } else {
+            audio.onended = null;
+        }
+    }).catch(() => {
+        currentBg = null;
+    });
+}
+
+const origOpenGameBg = window.openGame;
+window.openGame = function(name) {
+    const bgMap = {
+        'rocket': 'aviator',
+        'spin': 'spin',
+        'cointoss': 'cointoss',
+        'gunfire': 'gunfire',
+        'cracken': 'default',
+        'findcoin': 'default'
+    };
+    const soundKey = bgMap[name];
+    if (soundKey) {
+        setTimeout(() => playBg(soundKey), 200);
+    }
+    if (origOpenGameBg) origOpenGameBg(name);
+};
+
+const origGoBackBg = window.goBack;
+window.goBack = function() {
+    forceStopAllBg();
+    setTimeout(() => playBg('home'), 100);
+    if (origGoBackBg) origGoBackBg();
+};
+
+// ==========================================
+// 17. DELETE ALL DATA FUNCTION (admin)
+// ==========================================
+window.forceDeleteAllData = function() {
+    if (!confirm('⚠️ WARNING: This will delete ALL data (users, requests, everything) from Firebase!\n\nThis action is irreversible. Are you sure?')) return;
+    if (!confirm('🔴 Last confirmation: Delete all data?')) return;
+
+    showToast('⏳ Deleting all data...', 'warning');
+
+    const deleteRefs = [
+        database.ref('users'),
+        database.ref('withdrawRequests'),
+        database.ref('coinAddRequests'),
+        database.ref('paymentRequests')
+    ];
+
+    let completed = 0;
+    let hasError = false;
+
+    deleteRefs.forEach(ref => {
+        ref.remove()
+            .then(() => {
+                completed++;
+                if (completed === deleteRefs.length && !hasError) {
+                    showToast('✅ All data deleted successfully!', 'success');
+                    ['userListBody', 'adminWithdrawTable', 'adminCoinAddTable'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.innerHTML = '<tr><td colspan="4" style="color:#888;text-align:center;">📭 No data</td></tr>';
+                    });
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    document.cookie.split(";").forEach(function(c) {
+                        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+                    });
+                    coins = 1000;
+                    money = 0;
+                    if (typeof updateUI === 'function') updateUI();
+                    showToast('🔄 App reset. Please login again.', 'info');
+                }
+            })
+            .catch(err => {
+                hasError = true;
+                showToast('❌ Error: ' + err.message, 'error');
+            });
+    });
+};
+
+// ==========================================
+// 18. AUTH STATE LISTENER (auto-login)
+// ==========================================
+auth.onAuthStateChanged((user) => {
+    if (user) {
+        database.ref('users/' + user.uid).once('value').then((snapshot) => {
+            const data = snapshot.val();
+            if (data && data.username) {
+                setupLoggedInUser(user, data.username);
+            } else {
+                const username = user.email ? user.email.replace('@tempuser.com', '') : 'User';
+                database.ref('users/' + user.uid).set({
+                    username: username,
+                    email: user.email,
+                    coins: 1000,
+                    money: 0,
+                    createdAt: firebase.database.ServerValue.TIMESTAMP,
+                    isGuest: false
+                });
+                setupLoggedInUser(user, username);
+            }
+        });
+    } else {
+        // Show login if not authenticated
+        document.getElementById('loginOverlay').style.display = 'flex';
+        document.getElementById('homeScreen').style.display = 'none';
+    }
+});
+
+// ==========================================
+// 19. INIT
+// ==========================================
+updateUI();
+initLanguageSwitcher();
+
+// Ensure login overlay is visible initially
+document.getElementById('loginOverlay').style.display = 'flex';
+document.getElementById('homeScreen').style.display = 'none';
+
+if (document.readyState === 'complete') {
+    playBg('home');
+} else {
+    window.addEventListener('load', () => playBg('home'));
+}
+
+console.log('✅ Star Game: Login fixed, Firebase auth integrated, game access only after login.');
+</script>
+<!-- ============================================================ -->
+<!-- শর্টকাট কোড: পপআপ ব্লক + গেম অ্যানিমেশন + লোডিং অ্যানিমেশন + এক্সচেঞ্জ কাস্টম -->
+<!-- আপনার existing ফাইলের শেষে (</body> এর ঠিক আগে) এই কোডটি বসান -->
+<!-- ============================================================ -->
+
+<style>
+/* ===== লোডিং অ্যানিমেশন ===== */
+#loadingOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0a0a1a, #1a1500, #2a2000);
+    z-index: 99999999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.8s ease;
+}
+#loadingOverlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+.loading-animals {
+    display: flex;
+    gap: 20px;
+    font-size: 60px;
+    animation: animalDance 1.2s ease-in-out infinite alternate;
+}
+.loading-animals span {
+    display: inline-block;
+    animation: animalBounce 0.6s ease-in-out infinite alternate;
+}
+.loading-animals span:nth-child(2) { animation-delay: 0.15s; }
+.loading-animals span:nth-child(3) { animation-delay: 0.3s; }
+.loading-animals span:nth-child(4) { animation-delay: 0.45s; }
+.loading-animals span:nth-child(5) { animation-delay: 0.6s; }
+
+@keyframes animalDance {
+    0% { transform: scale(1) rotate(-3deg); }
+    100% { transform: scale(1.1) rotate(3deg); }
+}
+@keyframes animalBounce {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-20px); }
+}
+
+.loading-text {
+    margin-top: 30px;
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffd700;
+    letter-spacing: 4px;
+    text-shadow: 0 0 20px rgba(255,215,0,0.3);
+    animation: textPulse 1.5s ease-in-out infinite;
+}
+@keyframes textPulse {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+}
+
+.loading-progress {
+    margin-top: 20px;
+    width: 200px;
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+.loading-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ffd700, #ff6b6b);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+/* ===== এক্সচেঞ্জে কাস্টম কয়েন ইনপুট ===== */
+.exchange-coin-input {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin: 12px 0;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.exchange-coin-input input {
+    width: 120px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,215,0,0.3);
+    background: rgba(0,0,0,0.4);
+    color: #fff;
+    font-size: 16px;
+    text-align: center;
+}
+.exchange-coin-input input:focus {
+    border-color: #ffd700;
+    outline: none;
+    box-shadow: 0 0 15px rgba(255,215,0,0.1);
+}
+.exchange-coin-input label {
+    color: #aaa;
+    font-size: 14px;
+}
+.exchange-coin-input .rate-info {
+    color: #ffd700;
+    font-weight: 700;
+    font-size: 15px;
+}
+.exchange-coin-input .coin-badge {
+    font-size: 20px;
+}
+
+/* ===== গেম হিস্টরি স্টাইল ===== */
+.game-history-container {
+    margin-top: 15px;
+    padding: 12px 15px;
+    background: rgba(0,0,0,0.4);
+    border-radius: 10px;
+    border: 1px solid rgba(255,215,0,0.1);
+    max-height: 150px;
+    overflow-y: auto;
+}
+.game-history-container::-webkit-scrollbar {
+    width: 4px;
+}
+.game-history-container::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.05);
+    border-radius: 4px;
+}
+.game-history-container::-webkit-scrollbar-thumb {
+    background: rgba(255,215,0,0.3);
+    border-radius: 4px;
+}
+.game-history-title {
+    color: #888;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.game-history-title button {
+    background: rgba(255,255,255,0.05);
+    border: none;
+    color: #666;
+    font-size: 11px;
+    cursor: pointer;
+    padding: 3px 10px;
+    border-radius: 4px;
+}
+.game-history-title button:hover {
+    background: rgba(255,255,255,0.1);
+    color: #aaa;
+}
+.history-entry {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 13px;
+}
+.history-entry .h-time {
+    color: #666;
+    font-size: 11px;
+}
+.history-entry .h-win {
+    color: #2ecc71;
+}
+.history-entry .h-lose {
+    color: #e74c3c;
+}
+.history-entry .h-game {
+    color: #ffd700;
+    font-size: 11px;
+}
+
+/* ===== অ্যানিমেটেড রেজাল্ট পপআপ (গেমের ভেতরে) ===== */
+.animated-result {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(10px);
+    padding: 30px 50px;
+    border-radius: 20px;
+    border: 2px solid rgba(255,215,0,0.3);
+    z-index: 9999;
+    text-align: center;
+    font-size: 28px;
+    font-weight: 700;
+    pointer-events: none;
+    transition: none;
+    opacity: 0;
+    box-shadow: 0 0 60px rgba(255,215,0,0.1);
+}
+.animated-result.show {
+    animation: resultPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+.animated-result.hide {
+    animation: resultFade 0.5s ease forwards;
+}
+@keyframes resultPop {
+    0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+    60% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+@keyframes resultFade {
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+}
+.animated-result .result-emoji {
+    font-size: 50px;
+    display: block;
+    margin-bottom: 10px;
+}
+.animated-result .result-amount {
+    color: #ffd700;
+}
+.animated-result.win {
+    border-color: #2ecc71;
+}
+.animated-result.win .result-amount {
+    color: #2ecc71;
+}
+.animated-result.lose {
+    border-color: #e74c3c;
+}
+.animated-result.lose .result-amount {
+    color: #e74c3c;
+}
+
+/* ===== টেক্সট স্টাইল নরমাল ===== */
+.game-title, .g-name, .brand-title, .brand-subtitle,
+.wallet-label, .wallet-val, .result-box, .toast-message,
+.modal-content h3, .modal-content p, .admin-panel h4,
+.btn-small, .btn-login, .premium-buy-btn, .tab-btn,
+button, .brand-header, .user-info, .login-section {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    letter-spacing: 0.3px !important;
+}
+.brand-title {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    font-weight: 900 !important;
+}
+</style>
+
+<!-- ===== লোডিং ওভারলে ===== -->
+<div id="loadingOverlay">
+    <div class="loading-animals">
+        <span>🦁</span>
+        <span>🐘</span>
+        <span>🦒</span>
+        <span>🐧</span>
+        <span>🦊</span>
+    </div>
+    <div class="loading-text">🌟 Loading Star Game...</div>
+    <div class="loading-progress">
+        <div class="loading-progress-bar" id="loadingProgressBar"></div>
+    </div>
+</div>
+
+<!-- ===== অ্যানিমেটেড রেজাল্ট এলিমেন্ট ===== -->
+<div id="animatedResult" class="animated-result">
+    <span class="result-emoji" id="resultEmoji">🎉</span>
+    <div id="resultText">You won <span class="result-amount" id="resultAmount">0</span> coins!</div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    // ============================================================
+    // 1. পপআপ ব্লক সিস্টেম (toast ব্লক)
+    // ============================================================
+    // মূল showToast ফাংশন ওভাররাইড
+    const originalShowToast = window.showToast;
+    if (typeof originalShowToast === 'function') {
+        window.showToast = function(message, type, title) {
+            // শুধুমাত্র গেম সম্পর্কিত মেসেজ ব্লক করব
+            const gameMessages = ['won', 'lost', 'win', 'lose', 'crash', '🎉', '💥', '✅', '❌'];
+            const isGameMessage = gameMessages.some(msg => message.toLowerCase().includes(msg.toLowerCase()));
+            
+            // গেম অ্যাক্টিভ থাকলে এবং মেসেজ গেম সম্পর্কিত হলে ব্লক
+            const gameArea = document.getElementById('gameArea');
+            if (gameArea && gameArea.classList.contains('active') && isGameMessage) {
+                // ব্লক করব - কিছু করব না
+                return;
+            }
+            
+            // বাকি মেসেজ দেখাব
+            if (originalShowToast) {
+                originalShowToast(message, type, title);
+            }
+        };
+    }
+
+    // ============================================================
+    // 2. অ্যানিমেটেড রেজাল্ট পপআপ
+    // ============================================================
+    const resultEl = document.getElementById('animatedResult');
+    const resultEmoji = document.getElementById('resultEmoji');
+    const resultAmount = document.getElementById('resultAmount');
+    const resultText = document.getElementById('resultText');
+
+    let resultTimeout = null;
+
+    window.showAnimatedResult = function(amount, isWin, gameName) {
+        // আগের টাইমআউট ক্লিয়ার
+        if (resultTimeout) {
+            clearTimeout(resultTimeout);
+            resultTimeout = null;
+        }
+        
+        // এলিমেন্ট রিসেট
+        resultEl.className = 'animated-result';
+        resultEl.style.display = 'block';
+        
+        // কন্টেন্ট সেট
+        if (isWin) {
+            resultEl.className = 'animated-result win show';
+            resultEmoji.textContent = '🎉';
+            resultText.innerHTML = `You won <span class="result-amount" id="resultAmount">${amount}</span> coins!`;
+        } else {
+            resultEl.className = 'animated-result lose show';
+            resultEmoji.textContent = '💔';
+            resultText.innerHTML = `You lost <span class="result-amount" id="resultAmount">${amount}</span> coins!`;
+        }
+        
+        // 1.5 সেকেন্ড পর হাইড
+        resultTimeout = setTimeout(() => {
+            resultEl.classList.remove('show');
+            resultEl.classList.add('hide');
+            setTimeout(() => {
+                resultEl.style.display = 'none';
+                resultEl.className = 'animated-result';
+            }, 500);
+            resultTimeout = null;
+        }, 1500);
+    };
+
+    // ============================================================
+    // 3. গেম ফাংশন ওভাররাইড (অ্যানিমেশন + পপআপ ব্লক)
+    // ============================================================
+    
+    // add ফাংশন ওভাররাইড
+    const originalAdd = window.add;
+    if (typeof originalAdd === 'function') {
+        window.add = function(amount) {
+            originalAdd(amount);
+            // অ্যানিমেটেড রেজাল্ট দেখান
+            const gameName = currentGameName || 'Game';
+            window.showAnimatedResult(amount, true, gameName);
+            // হিস্টরিতে যোগ
+            if (typeof window.addGameHistory === 'function') {
+                window.addGameHistory(gameName, 'win', amount, 10);
+            }
+        };
+    }
+
+    // deduct ফাংশন ওভাররাইড - লুজ হলে
+    const originalDeduct = window.deduct;
+    if (typeof originalDeduct === 'function') {
+        window.deduct = function(amount) {
+            const result = originalDeduct(amount);
+            if (result) {
+                // লুজ অ্যানিমেশন (শুধুমাত্র গেমে থাকলে)
+                const gameArea = document.getElementById('gameArea');
+                if (gameArea && gameArea.classList.contains('active')) {
+                    const gameName = currentGameName || 'Game';
+                    window.showAnimatedResult(amount, false, gameName);
+                    if (typeof window.addGameHistory === 'function') {
+                        window.addGameHistory(gameName, 'lose', amount, amount);
+                    }
+                }
+            }
+            return result;
+        };
+    }
+
+    // ============================================================
+    // 4. এক্সচেঞ্জে কাস্টম কয়েন ইনপুট
+    // ============================================================
+    const EXCHANGE_RATE_COINS = 1000;
+    const EXCHANGE_RATE_MONEY = 10;
+
+    function addCustomCoinInputToExchange() {
+        const exchangeModal = document.getElementById('exchangeModal');
+        if (!exchangeModal) return;
+        const modalContent = exchangeModal.querySelector('.modal-content');
+        if (!modalContent) return;
+        if (modalContent.querySelector('.exchange-coin-input')) return;
+        
+        const inputDiv = document.createElement('div');
+        inputDiv.className = 'exchange-coin-input';
+        inputDiv.innerHTML = `
+            <span class="coin-badge">🪙</span>
+            <label>Enter coins:</label>
+            <input type="number" id="customExchangeCoins" value="1000" min="1000" step="100" placeholder="1000">
+            <span class="rate-info">= ₹<span id="customExchangeMoneyDisplay">10</span></span>
+            <button onclick="calculateCustomExchange()" style="padding:8px 20px; font-size:13px; border-radius:8px; background:#2ecc71; color:#fff; border:none; cursor:pointer;">Exchange</button>
+        `;
+        
+        const p = modalContent.querySelector('p');
+        if (p) {
+            modalContent.insertBefore(inputDiv, p.nextSibling);
+        } else {
+            modalContent.insertBefore(inputDiv, modalContent.firstChild.nextSibling);
+        }
+        
+        const coinInput = document.getElementById('customExchangeCoins');
+        if (coinInput) {
+            coinInput.addEventListener('input', function() {
+                const val = parseInt(this.value) || 0;
+                const moneyDisplay = document.getElementById('customExchangeMoneyDisplay');
+                if (moneyDisplay) {
+                    if (val >= 1000) {
+                        const money = Math.floor(val / 1000) * 10;
+                        moneyDisplay.textContent = money;
+                    } else {
+                        moneyDisplay.textContent = '0 (min 1000)';
+                    }
+                }
+            });
+        }
+    }
+
+    window.calculateCustomExchange = function() {
+        const coinInput = document.getElementById('customExchangeCoins');
+        if (!coinInput) return;
+        const coinsToExchange = parseInt(coinInput.value) || 0;
+        
+        if (coinsToExchange < 1000) {
+            showToast('⚠️ Minimum 1000 coins required!', 'warning');
+            return;
+        }
+        if (coinsToExchange > window.coins) {
+            showToast(`⚠️ You have only ${window.coins} coins!`, 'error');
+            return;
+        }
+        
+        const exchangeUnits = Math.floor(coinsToExchange / 1000);
+        const moneyToAdd = exchangeUnits * 10;
+        const coinsToDeduct = exchangeUnits * 1000;
+        
+        if (exchangeUnits === 0) {
+            showToast('⚠️ Need at least 1000 coins!', 'warning');
+            return;
+        }
+        
+        window.coins -= coinsToDeduct;
+        window.money += moneyToAdd;
+        if (typeof updateUI === 'function') updateUI();
+        showToast(`✅ ${moneyToAdd} INR added! (${coinsToDeduct} coins used)`, 'success');
+        if (typeof closeModals === 'function') closeModals();
+        coinInput.value = '1000';
+        const moneyDisplay = document.getElementById('customExchangeMoneyDisplay');
+        if (moneyDisplay) moneyDisplay.textContent = '10';
+    };
+
+    // ============================================================
+    // 5. গেম হিস্টরি সিস্টেম
+    // ============================================================
+    if (!window.gameHistory) {
+        window.gameHistory = [];
+    }
+
+    window.addGameHistory = function(gameName, result, amount, betAmount) {
+        const entry = {
+            game: gameName,
+            result: result,
+            amount: amount,
+            bet: betAmount || 0,
+            time: new Date().toLocaleTimeString()
+        };
+        window.gameHistory.unshift(entry);
+        if (window.gameHistory.length > 50) {
+            window.gameHistory.pop();
+        }
+        renderGameHistory();
+    };
+
+    function renderGameHistory() {
+        const container = document.getElementById('gameHistoryContainer');
+        if (!container) return;
+        
+        let html = `
+            <div class="game-history-title">
+                <span>📜 Game History</span>
+                <button onclick="clearGameHistory()">Clear</button>
+            </div>
+        `;
+        
+        if (window.gameHistory.length === 0) {
+            html += `<div style="color:#555; font-size:13px; text-align:center; padding:10px 0;">No games played yet</div>`;
+        } else {
+            window.gameHistory.forEach(entry => {
+                const resultClass = entry.result === 'win' ? 'h-win' : 'h-lose';
+                const resultText = entry.result === 'win' ? '✅ +' : '❌ -';
+                html += `
+                    <div class="history-entry">
+                        <span>
+                            <span class="h-game">${entry.game}</span>
+                            <span class="${resultClass}">${resultText}${entry.amount} 🪙</span>
+                            ${entry.bet > 0 ? `<span style="color:#666;font-size:11px;">(bet: ${entry.bet})</span>` : ''}
+                        </span>
+                        <span class="h-time">${entry.time}</span>
+                    </div>
+                `;
+            });
+        }
+        container.innerHTML = html;
+    }
+
+    window.clearGameHistory = function() {
+        window.gameHistory = [];
+        renderGameHistory();
+        if (typeof showToast === 'function') showToast('🗑️ History cleared!', 'info');
+    };
+
+    // ============================================================
+    // 6. গেম রেন্ডারে হিস্টরি যোগ করা
+    // ============================================================
+    const originalRenderGame = window.renderGame;
+    if (typeof originalRenderGame === 'function') {
+        window.renderGame = function(name) {
+            originalRenderGame(name);
+            setTimeout(() => {
+                const gameContent = document.getElementById('gameContent');
+                if (gameContent && !document.getElementById('gameHistoryContainer')) {
+                    const historyDiv = document.createElement('div');
+                    historyDiv.id = 'gameHistoryContainer';
+                    historyDiv.className = 'game-history-container';
+                    gameContent.appendChild(historyDiv);
+                    renderGameHistory();
+                }
+            }, 100);
+        };
+    }
+
+    // MutationObserver
+    const observer = new MutationObserver(() => {
+        const gameContent = document.getElementById('gameContent');
+        if (gameContent && !document.getElementById('gameHistoryContainer')) {
+            const historyDiv = document.createElement('div');
+            historyDiv.id = 'gameHistoryContainer';
+            historyDiv.className = 'game-history-container';
+            gameContent.appendChild(historyDiv);
+            renderGameHistory();
+        }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    // ============================================================
+    // 7. টেক্সট স্টাইল নরমাল
+    // ============================================================
+    function normalizeGameTexts() {
+        document.querySelectorAll('.game-title, .g-name, .brand-title, .brand-subtitle, .wallet-label, .wallet-val, .result-box, .toast-message, .modal-content h3, .modal-content p, .admin-panel h4, .btn-small, .btn-login, .premium-buy-btn, .tab-btn, button, .brand-header, .user-info, .login-section').forEach(el => {
+            if (el) {
+                el.style.fontFamily = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+                el.style.letterSpacing = '0.3px';
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', normalizeGameTexts);
+    const originalOpenGame = window.openGame;
+    if (typeof originalOpenGame === 'function') {
+        window.openGame = function(name) {
+            originalOpenGame(name);
+            setTimeout(() => {
+                normalizeGameTexts();
+                const container = document.getElementById('gameHistoryContainer');
+                if (container) renderGameHistory();
+            }, 200);
+        };
+    }
+      // ============================================================
+    // 8. লোডিং অ্যানিমেশন
+    // ============================================================
+    let loadingComplete = false;
+    let loadingProgress = 0;
+    const progressBar = document.getElementById('loadingProgressBar');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+
+    function updateLoadingProgress(value) {
+        loadingProgress = Math.min(value, 100);
+        if (progressBar) {
+            progressBar.style.width = loadingProgress + '%';
+        }
+    }
+
+    function finishLoading() {
+        if (loadingComplete) return;
+        loadingComplete = true;
+        updateLoadingProgress(100);
+        setTimeout(() => {
+            if (loadingOverlay) {
+                loadingOverlay.classList.add('hidden');
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                }, 800);
+            }
+            const user = firebase.auth().currentUser;
+            if (user) {
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('homeScreen').style.display = 'block';
+                database.ref('users/' + user.uid).once('value').then(snap => {
+                    const data = snap.val();
+                    if (data && data.username) {
+                        if (typeof setupLoggedInUser === 'function') {
+                            setupLoggedInUser(user, data.username);
+                        }
+                    }
+                });
+            } else {
+                document.getElementById('loginOverlay').style.display = 'flex';
+                document.getElementById('homeScreen').style.display = 'none';
+            }
+        }, 600);
+    }
+
+    let loadInterval = setInterval(() => {
+        if (loadingProgress < 90) {
+            const increment = 5 + Math.random() * 15;
+            updateLoadingProgress(Math.min(loadingProgress + increment, 90));
+        } else if (loadingProgress >= 90 && !loadingComplete) {
+            clearInterval(loadInterval);
+            if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+                finishLoading();
+            } else {
+                setTimeout(finishLoading, 2000);
+            }
+        }
+    }, 300);
+
+    if (typeof firebase !== 'undefined') {
+        firebase.auth().onAuthStateChanged(() => {
+            if (!loadingComplete) {
+                setTimeout(finishLoading, 500);
+            }
+        });
+    }
+
+    setTimeout(() => {
+        if (!loadingComplete) {
+            finishLoading();
+        }
+    }, 5000);
+
+    // ============================================================
+    // 9. ইনিশিয়ালাইজেশন
+    // ============================================================
+    if (document.readyState === 'complete') {
+        addCustomCoinInputToExchange();
+    } else {
+        window.addEventListener('load', addCustomCoinInputToExchange);
+    }
+
+    const originalLogin = window.processUserLogin;
+    if (typeof originalLogin === 'function') {
+        window.processUserLogin = function() {
+            originalLogin();
+            setTimeout(normalizeGameTexts, 300);
+        };
+    }
+
+    const origFinish = finishLoading;
+    finishLoading = function() {
+        origFinish();
+        setTimeout(() => {
+            normalizeGameTexts();
+            addCustomCoinInputToExchange();
+            if (typeof updateUI === 'function') updateUI();
+            const gameContent = document.getElementById('gameContent');
+            if (gameContent && !document.getElementById('gameHistoryContainer')) {
+                const historyDiv = document.createElement('div');
+                historyDiv.id = 'gameHistoryContainer';
+                historyDiv.className = 'game-history-container';
+                gameContent.appendChild(historyDiv);
+                renderGameHistory();
+            }
+        }, 500);
+    };
+
+    console.log('✅ শর্টকাট লোড হয়েছে: পপআপ ব্লক, অ্যানিমেটেড রেজাল্ট, কাস্টম কয়েন, গেম হিস্টরি, টেক্সট নরমাল');
+})();
+</script>
+  <!-- ============================================================ -->
+<!-- শর্টকাট কোড: শুধু জিতলে অ্যানিমেটেড পপআপ + এডমিন প্যানেলে Win/Loss Rate কন্ট্রোল -->
+<!-- আপনার existing ফাইলের শেষে (</body> এর ঠিক আগে) এই কোডটি বসান -->
+<!-- ============================================================ -->
+
+<style>
+/* ===== অ্যানিমেটেড রেজাল্ট পপআপ (শুধু জিতলে) ===== */
+.animated-result {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(10px);
+    padding: 30px 50px;
+    border-radius: 20px;
+    border: 2px solid rgba(46, 204, 113, 0.4);
+    z-index: 9999;
+    text-align: center;
+    font-size: 28px;
+    font-weight: 700;
+    pointer-events: none;
+    opacity: 0;
+    box-shadow: 0 0 60px rgba(46, 204, 113, 0.15);
+    display: none;
+}
+.animated-result.show {
+    display: block;
+    animation: resultPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+.animated-result.hide {
+    animation: resultFade 0.5s ease forwards;
+}
+@keyframes resultPop {
+    0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+    60% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+@keyframes resultFade {
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+}
+.animated-result .result-emoji {
+    font-size: 50px;
+    display: block;
+    margin-bottom: 10px;
+}
+.animated-result .result-amount {
+    color: #2ecc71;
+}
+
+/* ===== এডমিন প্যানেলে রেট কন্ট্রোল ===== */
+.rate-control {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+    background: rgba(0,0,0,0.3);
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin: 10px 0;
+    border: 1px solid rgba(255,215,0,0.15);
+}
+.rate-control label {
+    color: #aaa;
+    font-size: 13px;
+    font-weight: 600;
+}
+.rate-control input[type="range"] {
+    flex: 1;
+    min-width: 120px;
+    accent-color: #ffd700;
+    height: 6px;
+    border-radius: 3px;
+    background: #333;
+}
+.rate-control .rate-value {
+    color: #ffd700;
+    font-weight: 700;
+    font-size: 18px;
+    min-width: 50px;
+    text-align: center;
+}
+.rate-control .rate-status {
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+.rate-control .rate-status.easy {
+    background: rgba(46, 204, 113, 0.2);
+    color: #2ecc71;
+}
+.rate-control .rate-status.medium {
+    background: rgba(243, 156, 18, 0.2);
+    color: #f39c12;
+}
+.rate-control .rate-status.hard {
+    background: rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+}
+</style>
+
+<!-- ===== অ্যানিমেটেড রেজাল্ট এলিমেন্ট (শুধু জিতলে) ===== -->
+<div id="animatedResult" class="animated-result">
+    <span class="result-emoji" id="resultEmoji">🎉</span>
+    <div id="resultText">You won <span class="result-amount" id="resultAmount">0</span> coins!</div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    // ============================================================
+    // 1. Win/Loss Rate সিস্টেম (Firebase এ সংরক্ষণ)
+    // ============================================================
+    // ডিফল্ট রেট 50%
+    let currentWinRate = 50;
+    
+    // Firebase থেকে রেট লোড
+    function loadWinRate() {
+        const rateRef = database.ref('gameSettings/winRate');
+        rateRef.once('value').then(snapshot => {
+            const val = snapshot.val();
+            if (val !== null && val !== undefined) {
+                currentWinRate = val;
+                window.winRate = val;
+                updateRateUI();
+            } else {
+                // ডিফল্ট 50 সেট
+                rateRef.set(50);
+                currentWinRate = 50;
+                window.winRate = 50;
+                updateRateUI();
+            }
+        }).catch(() => {
+            // লোকাল স্টোরেজ থেকে লোড
+            const saved = localStorage.getItem('winRate');
+            if (saved) {
+                currentWinRate = parseInt(saved);
+                window.winRate = currentWinRate;
+                updateRateUI();
+            }
+        });
+    }
+    
+    // রেট সেভ
+    function saveWinRate(rate) {
+        currentWinRate = rate;
+        window.winRate = rate;
+        localStorage.setItem('winRate', rate);
+        
+        // Firebase এ সেভ
+        const rateRef = database.ref('gameSettings/winRate');
+        rateRef.set(rate).catch(() => {});
+        
+        updateRateUI();
+        showToast(`✅ Win rate updated to ${rate}%`, 'success');
+    }
+    
+    // UI আপডেট
+    function updateRateUI() {
+        const rateSlider = document.getElementById('winRateSlider');
+        const rateDisplay = document.getElementById('winRateDisplay');
+        const rateStatus = document.getElementById('winRateStatus');
+        
+        if (rateSlider) rateSlider.value = currentWinRate;
+        if (rateDisplay) rateDisplay.textContent = currentWinRate + '%';
+        
+        if (rateStatus) {
+            rateStatus.className = 'rate-status';
+            if (currentWinRate >= 70) {
+                rateStatus.classList.add('easy');
+                rateStatus.textContent = '🟢 Easy';
+            } else if (currentWinRate >= 40) {
+                rateStatus.classList.add('medium');
+                rateStatus.textContent = '🟡 Medium';
+            } else {
+                rateStatus.classList.add('hard');
+                rateStatus.textContent = '🔴 Hard';
+            }
+        }
+    }
+    
+    // এডমিন প্যানেলে রেট কন্ট্রোল যোগ করা
+    function addRateControlToAdmin() {
+        // এডমিন প্যানেলের ইউজার ট্যাবের মধ্যে যোগ করব
+        const usersTab = document.getElementById('adminTabUsers');
+        if (!usersTab) return;
+        
+        // ইতিমধ্যে যোগ করা আছে কিনা চেক
+        if (usersTab.querySelector('.rate-control')) return;
+        
+        const rateDiv = document.createElement('div');
+        rateDiv.className = 'rate-control';
+        rateDiv.innerHTML = `
+            <label>🎯 Win Rate</label>
+            <input type="range" id="winRateSlider" min="10" max="90" value="50" step="5">
+            <span class="rate-value" id="winRateDisplay">50%</span>
+            <span class="rate-status" id="winRateStatus">🟡 Medium</span>
+            <button onclick="applyWinRate()" style="padding:6px 18px; font-size:12px; border-radius:6px; background:#3498db; color:#fff; border:none; cursor:pointer;">Apply</button>
+            <button onclick="resetWinRate()" style="padding:6px 14px; font-size:12px; border-radius:6px; background:#e67e22; color:#fff; border:none; cursor:pointer;">Reset 50%</button>
+        `;
+        
+        // হেডারের পরে বসানো
+        const header = usersTab.querySelector('h4');
+        if (header) {
+            header.parentNode.insertBefore(rateDiv, header.nextSibling);
+        } else {
+            usersTab.insertBefore(rateDiv, usersTab.firstChild);
+        }
+        
+        // স্লাইডার ইভেন্ট
+        const slider = document.getElementById('winRateSlider');
+        if (slider) {
+            slider.addEventListener('input', function() {
+                const val = parseInt(this.value);
+                const display = document.getElementById('winRateDisplay');
+                const status = document.getElementById('winRateStatus');
+                if (display) display.textContent = val + '%';
+                if (status) {
+                    status.className = 'rate-status';
+                    if (val >= 70) {
+                        status.classList.add('easy');
+                        status.textContent = '🟢 Easy';
+                    } else if (val >= 40) {
+                        status.classList.add('medium');
+                        status.textContent = '🟡 Medium';
+                    } else {
+                        status.classList.add('hard');
+                        status.textContent = '🔴 Hard';
+                    }
+                }
+            });
+        }
+        
+        // কারেন্ট রেট সেট
+        updateRateUI();
+    }
+    
+    // Apply বাটন
+    window.applyWinRate = function() {
+        const slider = document.getElementById('winRateSlider');
+        if (slider) {
+            const val = parseInt(slider.value);
+            saveWinRate(val);
+        }
+    };
+    
+    // Reset বাটন
+    window.resetWinRate = function() {
+        saveWinRate(50);
+        const slider = document.getElementById('winRateSlider');
+        if (slider) slider.value = 50;
+        updateRateUI();
+        showToast('✅ Win rate reset to 50%', 'success');
+    };
+
+    // ============================================================
+    // 2. শুধুমাত্র জিতলে অ্যানিমেটেড পপআপ
+    // ============================================================
+    const resultEl = document.getElementById('animatedResult');
+    const resultEmoji = document.getElementById('resultEmoji');
+    const resultAmount = document.getElementById('resultAmount');
+    const resultText = document.getElementById('resultText');
+
+    let resultTimeout = null;
+
+    window.showAnimatedResult = function(amount, isWin) {
+        if (!isWin) return;
+        
+        if (resultTimeout) {
+            clearTimeout(resultTimeout);
+            resultTimeout = null;
+        }
+        
+        resultEl.className = 'animated-result';
+        resultEl.style.display = 'block';
+        
+        resultEl.className = 'animated-result show';
+        resultEmoji.textContent = '🎉';
+        resultText.innerHTML = `You won <span class="result-amount" id="resultAmount">${amount}</span> coins!`;
+        
+        resultTimeout = setTimeout(() => {
+            resultEl.classList.remove('show');
+            resultEl.classList.add('hide');
+            setTimeout(() => {
+                resultEl.style.display = 'none';
+                resultEl.className = 'animated-result';
+            }, 500);
+            resultTimeout = null;
+        }, 1500);
+    };
+
+    // ============================================================
+    // 3. add ফাংশন ওভাররাইড
+    // ============================================================
+    const originalAdd = window.add;
+    if (typeof originalAdd === 'function') {
+        window.add = function(amount) {
+            const result = originalAdd(amount);
+            window.showAnimatedResult(amount, true);
+            if (typeof window.addGameHistory === 'function') {
+                const gameName = window.currentGameName || 'Game';
+                window.addGameHistory(gameName, 'win', amount, 10);
+            }
+            return result;
+        };
+    }
+
+    // ============================================================
+    // 4. deduct ফাংশন - হারলে কিছু দেখাব না
+    // ============================================================
+    const originalDeduct = window.deduct;
+    if (typeof originalDeduct === 'function') {
+        window.deduct = function(amount) {
+            const result = originalDeduct(amount);
+            if (result) {
+                const gameArea = document.getElementById('gameArea');
+                if (gameArea && gameArea.classList.contains('active')) {
+                    if (typeof window.addGameHistory === 'function') {
+                        const gameName = window.currentGameName || 'Game';
+                        window.addGameHistory(gameName, 'lose', amount, amount);
+                    }
+                }
+            }
+            return result;
+        };
+    }
+
+    // ============================================================
+    // 5. গেম হিস্টরি সিস্টেম
+    // ============================================================
+    if (!window.gameHistory) {
+        window.gameHistory = [];
+    }
+
+    window.addGameHistory = function(gameName, result, amount, betAmount) {
+        const entry = {
+            game: gameName,
+            result: result,
+            amount: amount,
+            bet: betAmount || 0,
+            time: new Date().toLocaleTimeString()
+        };
+        window.gameHistory.unshift(entry);
+        if (window.gameHistory.length > 50) {
+            window.gameHistory.pop();
+        }
+        renderGameHistory();
+    };
+
+    function renderGameHistory() {
+        const container = document.getElementById('gameHistoryContainer');
+        if (!container) return;
+        
+        let html = `
+            <div class="game-history-title">
+                <span>📜 Game History</span>
+                <button onclick="clearGameHistory()">Clear</button>
+            </div>
+        `;
+        
+        if (window.gameHistory.length === 0) {
+            html += `<div style="color:#555; font-size:13px; text-align:center; padding:10px 0;">No games played yet</div>`;
+        } else {
+            window.gameHistory.forEach(entry => {
+                const resultClass = entry.result === 'win' ? 'h-win' : 'h-lose';
+                const resultText = entry.result === 'win' ? '✅ +' : '❌ -';
+                html += `
+                    <div class="history-entry">
+                        <span>
+                            <span class="h-game">${entry.game}</span>
+                            <span class="${resultClass}">${resultText}${entry.amount} 🪙</span>
+                            ${entry.bet > 0 ? `<span style="color:#666;font-size:11px;">(bet: ${entry.bet})</span>` : ''}
+                        </span>
+                        <span class="h-time">${entry.time}</span>
+                    </div>
+                `;
+            });
+        }
+        container.innerHTML = html;
+    }
+
+    window.clearGameHistory = function() {
+        window.gameHistory = [];
+        renderGameHistory();
+        if (typeof showToast === 'function') showToast('🗑️ History cleared!', 'info');
+    };
+
+    // ============================================================
+    // 6. গেম রেন্ডারে হিস্টরি যোগ করা
+    // ============================================================
+    const originalRenderGame = window.renderGame;
+    if (typeof originalRenderGame === 'function') {
+        window.renderGame = function(name) {
+            originalRenderGame(name);
+            setTimeout(() => {
+                const gameContent = document.getElementById('gameContent');
+                if (gameContent && !document.getElementById('gameHistoryContainer')) {
+                    const historyDiv = document.createElement('div');
+                    historyDiv.id = 'gameHistoryContainer';
+                    historyDiv.className = 'game-history-container';
+                    gameContent.appendChild(historyDiv);
+                    renderGameHistory();
+                }
+            }, 100);
+        };
+    }
+
+    // MutationObserver
+    const observer = new MutationObserver(() => {
+        const gameContent = document.getElementById('gameContent');
+        if (gameContent && !document.getElementById('gameHistoryContainer')) {
+            const historyDiv = document.createElement('div');
+            historyDiv.id = 'gameHistoryContainer';
+            historyDiv.className = 'game-history-container';
+            gameContent.appendChild(historyDiv);
+            renderGameHistory();
+        }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    // ============================================================
+    // 7. ইনিশিয়ালাইজেশন
+    // ============================================================
+    // রেট লোড
+    loadWinRate();
+    
+    // এডমিন প্যানেল খোলার সময় রেট কন্ট্রোল যোগ করা
+    const adminLock = document.getElementById('adminLock');
+    if (adminLock) {
+        const origAdminClick = adminLock.onclick;
+        adminLock.addEventListener('click', function() {
+            // একটু দেরি করে যোগ করি যাতে প্যানেল লোড হয়
+            setTimeout(addRateControlToAdmin, 500);
+        });
+    }
+    
+    // যদি এডমিন মডাল ইতিমধ্যে খোলা থাকে
+    const adminModal = document.getElementById('adminModal');
+    if (adminModal) {
+        const observer2 = new MutationObserver(() => {
+            if (adminModal.style.display === 'flex') {
+                setTimeout(addRateControlToAdmin, 300);
+            }
+        });
+        observer2.observe(adminModal, { attributes: true, attributeFilter: ['style'] });
+    }
+
+    console.log('✅ শর্টকাট লোড হয়েছে: শুধু জিতলে পপআপ, এডমিন প্যানেলে Win Rate কন্ট্রোল');
+})();
+</script>
+  <!-- ============================================================ -->
+<!-- শর্টকাট কোড: ফ্রুট গেম (Cracken) হাইলাইট ফিক্স -->
+<!-- ============================================================ -->
+<style>
+/* মিলে যাওয়া ফলের জন্য হাইলাইট স্টাইল */
+.fruit-cell.highlight-win {
+    background: rgba(46, 204, 113, 0.4) !important;
+    border: 2px solid #2ecc71 !important;
+    transform: scale(1.15);
+    box-shadow: 0 0 20px rgba(46, 204, 113, 0.8);
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+</style>
+
+<script>
+(function() {
+    'use strict';
+    
+    // ফ্রুট গেমের লজিক ওভাররাইড করে হাইলাইট যুক্ত করা
+    window.initCracken = function() {
+        const btn = document.getElementById('crackenSpinBtn');
+        const res = document.getElementById('crackenResult');
+        const cells = document.querySelectorAll('.fruit-cell');
+        const fruits = ['🍒','🍋','🍊','🍉','💎'];
+        
+        if(!btn) return;
+
+        btn.onclick = function() {
+            if (!window.deduct(10)) return;
+            btn.disabled = true; 
+            if(typeof playSound === 'function') playSound('spin'); 
+            res.innerText = 'Shuffling...';
+            
+            // স্পিন শুরুর আগে আগের হাইলাইট মুছে ফেলা
+            cells.forEach(c => c.classList.remove('highlight-win'));
+
+            let isWin = (Math.random() * 100) < (window.winRate || 50);
+            let matchCount = 0;
+            let winAmount = 0;
+
+            if (isWin) {
+                matchCount = Math.random() < 0.6 ? 3 : 5;
+                winAmount = matchCount === 3 ? 20 : 40; 
+                if(typeof window.add === 'function') window.add(winAmount);
+            }
+
+            let interval = setInterval(() => { 
+                cells.forEach(c => c.innerText = fruits[Math.floor(Math.random()*fruits.length)]); 
+            }, 100);
+            
+            setTimeout(() => {
+                clearInterval(interval);
+                if(isWin) {
+                    let f = fruits[Math.floor(Math.random()*fruits.length)];
+                    // ফল মেলানো এবং হাইলাইট ক্লাস যোগ করা
+                    cells[5].innerText = f; cells[6].innerText = f; cells[7].innerText = f;
+                    cells[5].classList.add('highlight-win');
+                    cells[6].classList.add('highlight-win');
+                    cells[7].classList.add('highlight-win');
+                    
+                    if (matchCount === 5) {
+                        cells[8].innerText = f; cells[9].innerText = f;
+                        cells[8].classList.add('highlight-win');
+                        cells[9].classList.add('highlight-win');
+                    }
+                    res.innerHTML = `🎉 Match found! You won ${winAmount} 🪙`;
+                } else { 
+                    res.innerHTML = `😞 No match`; 
+                    if(typeof playSound === 'function') playSound('lose'); 
+                }
+                btn.disabled = false;
+            }, 1500);
+        };
+    };
+})();
+</script>
+<!-- ============================================================ -->
+<!-- শর্টকাট কোড শেষ -->
+<!-- ============================================================ -->
+</body>
+</html>
