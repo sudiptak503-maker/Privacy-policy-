@@ -616,7 +616,7 @@ function processUserLogin() {
             .then((userCredential) => {
                 const user = userCredential.user;
                 return database.ref('users/' + user.uid).set({
-                    username: userInput, email: email, coins: 1000, money: 0,
+                    username: userInput, email: email, coins: 10, money: 0,
                     createdAt: firebase.database.ServerValue.TIMESTAMP, isGuest: false
                 }).then(() => {
                     statusEl.textContent = '✅ Account created! Logging in...';
@@ -681,7 +681,7 @@ function logoutUser() {
         document.getElementById('loginOverlay').style.display = 'flex';
         document.getElementById('homeScreen').style.display = 'none';
         updateUserUI(null); showToast('Logout successful!', 'info');
-        coins = 1000; money = 0; updateUI();
+        coins = 10; money = 0; updateUI();
         document.getElementById('loginUserId').value = ''; document.getElementById('loginUserPass').value = '';
         const status = document.getElementById('loginStatus');
         if (status) status.textContent = '🔑 Enter username & password';
@@ -695,14 +695,14 @@ function getUserRef(uid) {
     return database.ref('users/' + uid);
 }
 
-let coins = 1000;
+let coins = 10;
 let money = 0;
 
 function loadUserData(uid) {
     getUserRef(uid).on('value', snapshot => {
         const data = snapshot.val();
         if (data) {
-            coins = data.coins || 1000;
+            coins = data.coins || 10;
             money = data.money || 0;
             // শুধু DOM আপডেট করুন, saveUserData() কল করবেন না (লুপ বন্ধ করা হয়েছে)
             document.getElementById('coinDisplay').innerText = Math.floor(coins);
