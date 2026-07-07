@@ -3200,5 +3200,246 @@ setTimeout(() => {
 
 }, 4000);
 </script>
+  <script>
+setTimeout(() => {
+    // ==========================================
+    // 🌟 UNIFIED MULTIPLAYER ROUTER (LAG & BUG FREE)
+    // ==========================================
+    
+    // ১. Unified Room Generator (সব গেমের জন্য একটাই হোস্ট ফাংশন)
+    window.generateRoom = function() {
+        if(!currentUser) { showToast('Please login first!', 'warning'); return; }
+        
+        const code = Math.floor(1000 + Math.random() * 9000).toString();
+        window.currentMpRoom = code;
+        window.isHost = true;
+        
+        // গেম অনুযায়ী ইনিশিয়াল ডাটা সেট করা
+        let initialState = {
+            game: window.activeMpGame,
+            hostId: currentUser.uid,
+            hostName: currentUser.displayName,
+            status: 'waiting',
+            rematch: { host: false, guest: false }
+        };
+
+        if(window.activeMpGame === 'ludogoti') {
+            window.ludoMyPicks = [];
+            initialState.players = { [currentUser.uid]: { name: currentUser.displayName, picks: '', ready: false } };
+            initialState.result = 0;
+            initialState.status = 'lobby'; 
+        }
+        else if(window.activeMpGame === 'tictactoe') {
+            initialState.tttState = { p1Ready: false, p2Ready: false, board: ['', '', '', '', '', '', '', '', ''], turn: 'host', winner: null };
+        }
+        else if(window.activeMpGame === 'rps') {
+            initialState.rpsState = { p1Ready: false, p2Ready: false, p1Move: '', p2Move: '', result: '' };
+        }
+        else if(window.activeMpGame === 'evenodd') {
+            initialState.eoState = { p1Ready: false, p2Ready: false, p1Pick: '', p2Pick: '', result: 0 };
+        }
+        else if(window.activeMpGame === 'mptoss') {
+            initialState.tossState = { p1Ready: false, p2Ready: false, p1Pick: '', p2Pick: '', result: '' };
+        }
+
+        // ডাটাবেসে রুম তৈরি
+        database.ref('mpRooms/' + code).set(initialState);
+        
+        // স্ক্রিন আপডেট
+        document.getElementById('displayRoomCode').innerText = code;
+        document.querySelectorAll('.mp-screen').forEach(el => el.classList.remove('active'));
+        
+        if(window.activeMpGame === 'ludogoti') {
+            document.getElementById('ludoRoomCodeDisp').innerText = code;
+            document.getElementById('mpLudoScreen').classList.add('active');
+            document.getElementById('ludoPreGame').style.display = 'block';
+            document.getElementById('ludoInGame').style.display = 'none';
+        } else {
+            document.getElementById('mpWaiting').classList.add('active');
+        }
+
+        // রিয়েল-টাইম লিসেনার চালু
+        database.ref('mpRooms/' + code).on('value', window.handleRoomUpdates);
+    };
+
+    // ২. Unified Room Joiner (সব গেমের জন্য একটাই জয়েন ফাংশন)
+    window.joinRoom = function() {
+        if(!currentUser) { showToast('Please login first!', 'warning'); return; }
+        const code = document.getElementById('joinCodeInput').value;
+        if(code.length !== 4) { showToast('Enter 4 digit code!', 'error'); return; }
+
+        database.ref('mpRooms/' + code).once('value', snap => {
+            if(!snap.exists()) { showToast('Invalid code!', 'error'); return; }
+            const data = snap.val();
+            
+            window.currentMpRoom = code;
+            window.isHost = false;
+            window.activeMpGame = data.game;
+
+            if(data.game === 'ludogoti') {
+                if(data.status !== 'lobby') { showToast('Game already started!', 'error'); return; }
+                const pCount = Object.keys(data.players || {}).length;
+                if(pCount >= 3) { showToast('Room is full (Max 3 players)!', 'error'); return; }
+
+                window.ludoMyPicks = [];
+                database.ref('mpRooms/' + code + '/players/' + currentUser.uid).set({
+                    name: currentUser.displayName, picks: '', ready: false
+                });
+
+                document.getElementById('ludoRoomCodeDisp').innerText = code;
+                document.querySelectorAll('.mp-screen').forEach(el => el.classList.remove('active'));
+                document.getElementById('mpLudoScreen').classList.add('active');
+                document.getElementById('ludoPreGame').style.display = 'block';
+                document.getElementById('ludoInGame').style.display = 'none';
+                
+                database.ref('mpRooms/' + code).on('value', window.handleRoomUpdates);
+            } else {
+                if(data.status !== 'waiting') { showToast('Room is full or already started!', 'error'); return; }
+                
+                database.ref('mpRooms/' + code).update({
+                    guestId: currentUser.uid,
+                    guestName: currentUser.displayName,
+                    status: 'playing'
+                });
+
+                document.querySelectorAll('.mp-screen').forEach(el => el.classList.remove('active'));
+                database.ref('mpRooms/' + code).on('value', window.handleRoomUpdates);
+            }
+        });
+    };
+
+    // ৩. Unified Data Router (সঠিক গেমের কাছে ডাটা পাঠানো)
+    window.handleRoomUpdates = function(snap) {
+        const data = snap.val();
+        if(!data || data.status === 'cancelled') {
+            if(document.querySelector('.mp-screen.active')) {
+                showToast('Room closed by host!', 'info');
+                if(typeof window.cancelRoom === 'function') window.cancelRoom(); 
+            }
+            return;
+        }
+
+        // লুডু গেমের আপডেট লিসেনার
+        if(data.game === 'ludogoti' && typeof window.handleLudoUpdates === 'function') {
+            window.handleLudoUpdates(snap);
+            return;
+        }
+
+        // অন্যান্য সব গেমের আপডেট লিসেনার
+        if(data.status === 'playing') {
+            if(data.game === 'tictactoe' && typeof renderTicTacToe === 'function') renderTicTacToe(data);
+            if(data.game === 'rps' && typeof renderRpsPlay === 'function') renderRpsPlay(data);
+            if(data.game === 'friendfind' && typeof renderFriendFind === 'function') renderFriendFind(data);
+            if(data.game === 'evenodd' && typeof renderEvenOdd === 'function') renderEvenOdd(data);
+            if(data.game === 'mptoss' && typeof renderMpToss === 'function') renderMpToss(data);
+        }
+    };
+
+    console.log("✅ Master Multiplayer Router Loaded Successfully!");
+}, 6000); // সবার শেষে রান করার জন্য সময় একটু বাড়িয়ে দেওয়া হয়েছে
+</script>
+  <script>
+setTimeout(() => {
+    // ১. লক স্ক্রিনের ডিজাইন (CSS) এবং HTML যুক্ত করা
+    const lockStyle = document.createElement('style');
+    lockStyle.innerHTML = `
+        #dailyLockOverlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: radial-gradient(circle at center, #2a0808 0%, #050505 100%); z-index: 999999999; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
+        .lock-box { background: rgba(0,0,0,0.85); border: 2px solid #ff1f44; border-radius: 20px; padding: 40px 20px; max-width: 400px; width: 100%; text-align: center; box-shadow: 0 0 50px rgba(255, 31, 68, 0.3); backdrop-filter: blur(10px); }
+        .lock-icon { font-size: 60px; margin-bottom: 15px; animation: pulseLock 2s infinite; }
+        .lock-box h2 { color: #ff1f44; font-size: 24px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; }
+        .lock-box p { color: #ccc; font-size: 14px; line-height: 1.5; margin-bottom: 25px; }
+        @keyframes pulseLock { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+    `;
+    document.head.appendChild(lockStyle);
+
+    document.body.insertAdjacentHTML('beforeend', `
+        <div id="dailyLockOverlay">
+            <div class="lock-box">
+                <div class="lock-icon">🛑</div>
+                <h2>Daily Limit Reached!</h2>
+                <p>আপনি আজকের জন্য সর্বোচ্চ <strong>১০,০০০</strong> কয়েন জেতার লিমিট পার করেছেন।<br><br>রাত ১২:০০ টার পর আপনার অ্যাকাউন্টটি অটোমেটিক আনলক হয়ে যাবে।</p>
+                <button onclick="auth.signOut().then(() => location.reload())" style="background: linear-gradient(135deg, #ff1f44, #c0392b); color: #fff; padding: 12px 30px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%;">লগ আউট করুন</button>
+            </div>
+        </div>
+    `);
+
+    // ২. আজকের তারিখ বের করার ফাংশন
+    function getTodayString() {
+        const now = new Date();
+        // Indian Standard Time (IST) অনুযায়ী তারিখ যেন ঠিক থাকে
+        return now.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' });
+    }
+
+    // ৩. লক স্ক্রিন দেখানোর ফাংশন
+    function showDailyLock() {
+        document.getElementById('dailyLockOverlay').style.display = 'flex';
+        // ব্যাকগ্রাউন্ড মিউজিক চললে সেটা বন্ধ করে দেওয়া
+        if (typeof forceStopAllBg === 'function') forceStopAllBg();
+    }
+
+    // ৪. মূল add() ফাংশন ওভাররাইড করে লিমিট ট্র্যাকিং করা
+    const originalAdd = window.add;
+    window.add = function(amount) {
+        // আগে অরিজিনাল ফাংশন রান করে কয়েন দিয়ে দিন
+        if (originalAdd) originalAdd(amount); 
+        
+        if (!currentUser) return;
+        const today = getTodayString();
+        const userRef = database.ref('users/' + currentUser.uid);
+        
+        // ফায়ারবেস থেকে আজকের ইনকাম চেক করা
+        userRef.once('value').then(snap => {
+            let data = snap.val() || {};
+            let todayEarned = (data.lastPlayDate === today) ? (data.todayEarned || 0) : 0;
+            let newTotal = todayEarned + amount;
+            
+            // ডাটাবেস আপডেট করা
+            userRef.update({
+                todayEarned: newTotal,
+                lastPlayDate: today,
+                dailyLocked: newTotal >= 10000 // ১০ হাজার বা তার বেশি হলে লক true হবে
+            }).then(() => {
+                if (newTotal >= 10000) {
+                    showDailyLock();
+                }
+            });
+        });
+    };
+
+    // ৫. লগইন করার সময় বা পেজ রিলোড দিলে স্ট্যাটাস চেক করা
+    window.checkDailyLockStatus = function(uid) {
+        const today = getTodayString();
+        database.ref('users/' + uid).once('value').then(snap => {
+            let data = snap.val();
+            if (data && data.dailyLocked) {
+                if (data.lastPlayDate === today) {
+                    // আজও একই দিন, তাই লক থাকবে
+                    showDailyLock();
+                } else {
+                    // রাত ১২টা পার হয়ে নতুন দিন শুরু হয়েছে, অটোমেটিক আনলক
+                    database.ref('users/' + uid).update({ 
+                        dailyLocked: false, 
+                        todayEarned: 0,
+                        lastPlayDate: today
+                    });
+                }
+            }
+        });
+    };
+
+    // ৬. setupLoggedInUser হুক করা (যাতে লগইন করার সাথে সাথে চেক হয়)
+    const originalSetupUser = window.setupLoggedInUser;
+    window.setupLoggedInUser = function(user, username) {
+        if (originalSetupUser) originalSetupUser(user, username);
+        checkDailyLockStatus(user.uid);
+    };
+
+    // যদি ইউজার আগে থেকেই লগইন অবস্থায় থাকে, তবে চেক করে নেওয়া
+    if (window.currentUser) {
+        checkDailyLockStatus(window.currentUser.uid);
+    }
+
+}, 6500); // পেজের অন্যান্য সব স্ক্রিপ্ট লোড হওয়ার পর এটি রান করবে
+</script>
 </body>
 </html>
