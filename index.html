@@ -2467,146 +2467,7 @@ setTimeout(() => {
         }
     }
 
-    // =====================================
-    // 🎲 LUDO GOTI LOGIC (100 Bet, 70% Win, 30% Charge)
-    // =====================================
-    function renderLudoPlay(data) {
-        document.getElementById('mpWaiting').classList.remove('active');
-        document.getElementById('mpLobby').classList.remove('active');
-        const screen = document.getElementById('mpLudoScreen');
-        if(!screen.classList.contains('active')) screen.classList.add('active');
-
-        document.getElementById('ludoP1').innerText = data.hostName;
-        document.getElementById('ludoP2').innerText = data.guestName;
-
-        const myPicks = isHost ? data.ludoState.p1Picks : data.ludoState.p2Picks;
-        const enemyPicks = isHost ? data.ludoState.p2Picks : data.ludoState.p1Picks;
-        const bothReady = data.ludoState.p1Ready && data.ludoState.p2Ready;
-
-        // UI Reset
-        if(!myPicks && !bothReady) {
-            document.getElementById('ludoNumbers').style.display = 'flex';
-            document.getElementById('ludoPlayArea').style.display = 'none';
-            document.getElementById('mpRetryArea').style.display = 'none';
-            
-            // Disable numbers enemy already picked
-            document.querySelectorAll('.num-btn').forEach(btn => {
-                btn.classList.remove('selected', 'disabled');
-                if(enemyPicks.includes(btn.innerText)) btn.classList.add('disabled');
-            });
-        }
-
-        // Both Ready -> Roll Dice
-        if(bothReady) {
-            document.getElementById('ludoNumbers').style.display = 'none';
-            document.getElementById('ludoConfirmBtn').style.display = 'none';
-            document.getElementById('ludoPlayArea').style.display = 'block';
-            
-            if(data.ludoState.result === 0 && isHost) {
-                // Host rolls the dice after 1 sec
-                setTimeout(() => {
-                    const res = Math.floor(Math.random() * 6) + 1;
-                    database.ref('mpRooms/' + currentMpRoom + '/ludoState').update({ result: res });
-                }, 1500);
-            }
-            
-            const dice = document.getElementById('ludoDice');
-            const resText = document.getElementById('ludoResult');
-            
-            if(data.ludoState.result === 0) {
-                dice.classList.add('rolling'); resText.innerText = 'Rolling...';
-            } else {
-                dice.classList.remove('rolling');
-                dice.innerText = data.ludoState.result;
-                
-                // Payout Logic (70% of 200 = 140)
-                const winNum = data.ludoState.result.toString();
-                let iWon = myPicks.includes(winNum);
-                let enemyWon = enemyPicks.includes(winNum);
-                
-                if(iWon) { resText.innerText = '🎉 You Won 140 🪙!'; resText.style.color = '#2ecc71'; }
-                else if(enemyWon) { resText.innerText = '😞 You Lost!'; resText.style.color = '#e74c3c'; }
-                else { resText.innerText = '⚖️ Draw! 100 🪙 Refunded'; resText.style.color = '#aaa'; }
-                
-                document.getElementById('mpRetryArea').style.display = 'flex';
-            }
-        }
-        
-        // Handle Rematch State
-        if(data.rematch.host || data.rematch.guest) {
-            document.getElementById('retryStatus').innerText = 'Friend wants to play again...';
-        }
-        if(data.rematch.host && data.rematch.guest) {
-            // Restart Match
-            ludoPicks = [];
-            database.ref('mpRooms/' + currentMpRoom).update({
-                ludoState: { p1Ready: false, p2Ready: false, p1Picks: '', p2Picks: '', result: 0 },
-                rematch: { host: false, guest: false }
-            });
-        }
-    }
-
-    window.toggleLudoNum = function(n) {
-        if(ludoPicks.includes(n)) {
-            ludoPicks = ludoPicks.filter(x => x !== n);
-            event.target.classList.remove('selected');
-        } else {
-            if(ludoPicks.length >= 3) return; // Max 3
-            if(event.target.classList.contains('disabled')) return; // Enemy picked
-            ludoPicks.push(n);
-            event.target.classList.add('selected');
-        }
-        document.getElementById('ludoConfirmBtn').style.display = ludoPicks.length === 3 ? 'block' : 'none';
-    };
-
-    window.confirmLudoPicks = function() {
-        if(coins < 100) { showToast('Not enough coins! Need 100.', 'error'); return; }
-        
-        // Deduct 100 entry fee instantly 
-        window.deduct(100); 
-        
-        document.getElementById('ludoConfirmBtn').style.display = 'none';
-        document.getElementById('ludoInstruction').innerText = 'Waiting for friend...';
-        
-        const updateData = isHost 
-            ? { p1Ready: true, p1Picks: ludoPicks.join(',') } 
-            : { p2Ready: true, p2Picks: ludoPicks.join(',') };
-            
-        database.ref('mpRooms/' + currentMpRoom + '/ludoState').update(updateData);
-        
-        // Setup Payout Trigger on Firebase Listener later
-        window.tempLudoBetDeducted = true;
-    };
-
-    // Auto Add Winnings Logic (Ensured it only triggers once per roll via local state)
-    let processedResult = 0;
-    database.ref('mpRooms').on('value', snap => {
-         if(currentMpRoom && snap.child(currentMpRoom).exists()) {
-             let data = snap.child(currentMpRoom).val();
-             if(data.game === 'ludogoti' && data.ludoState && data.ludoState.result > 0) {
-                 if(processedResult !== data.ludoState.result && window.tempLudoBetDeducted) {
-                     processedResult = data.ludoState.result;
-                     const winNum = data.ludoState.result.toString();
-                     const myPicks = isHost ? data.ludoState.p1Picks : data.ludoState.p2Picks;
-                     
-                     if(myPicks.includes(winNum)) {
-                         window.add(140); // 70% of 200 pool
-                         showToast('💰 +140 Coins Added!', 'success');
-                     } else {
-                         // Check Draw condition (if neither picked it)
-                         const enemyPicks = isHost ? data.ludoState.p2Picks : data.ludoState.p1Picks;
-                         if(!enemyPicks.includes(winNum)) {
-                             window.add(100); // Refund
-                             showToast('Refunded 100 Coins', 'info');
-                         }
-                     }
-                     window.tempLudoBetDeducted = false;
-                 }
-             } else {
-                 processedResult = 0; // Reset on new round
-             }
-         }
-    });
+    
 
     // =====================================
     // 🤝 FRIEND FIND LOGIC (Sync Display)
@@ -3061,6 +2922,283 @@ setTimeout(() => {
     }
 
 }, 2000); // 이전 স্ক্রিপ্টগুলো লোড হওয়ার পরে রান করবে
+</script>
+  <script>
+setTimeout(() => {
+    // 1. Premium CSS for 2 or 3 Player Ludo
+    const style = document.createElement('style');
+    style.innerHTML = `
+        .ludo-players { display: flex; justify-content: space-around; background: rgba(255,215,0,0.1); padding: 10px; border-radius: 15px; margin-bottom: 15px; border: 1px solid rgba(255,215,0,0.2); flex-wrap: wrap; gap: 5px; }
+        .lp-badge { background: rgba(0,0,0,0.5); padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: bold; border: 1px solid #333; transition: 0.3s; }
+        .lp-badge.active { border-color: #2ecc71; color: #2ecc71; box-shadow: 0 0 10px rgba(46,204,113,0.3); }
+        .ludo-lobby-list { text-align: left; background: rgba(0,0,0,0.4); padding: 12px; border-radius: 10px; margin: 15px 0; min-height: 80px; }
+        .ludo-lobby-list div { padding: 8px; border-bottom: 1px dashed rgba(255,255,255,0.1); font-size: 14px; font-weight: bold; color: #fff; }
+        .ludo-lobby-list div:last-child { border-bottom: none; }
+    `;
+    document.head.appendChild(style);
+
+    // 2. Redesign Ludo Screen
+    const ludoScreen = document.getElementById('mpLudoScreen');
+    if(ludoScreen) {
+        ludoScreen.innerHTML = `
+            <div style="width: 100%; max-width: 500px; text-align:center;">
+                <div class="mp-box" style="background: rgba(0,0,0,0.85); border: 1px solid #ffd700; box-shadow: 0 0 30px rgba(255,215,0,0.15);">
+                    <h2 style="color:#ffd700; margin-bottom:10px; text-transform: uppercase; letter-spacing: 2px;">🎲 Premium Ludo</h2>
+                    
+                    <!-- Ludo Lobby Area -->
+                    <div id="ludoPreGame">
+                        <p style="color:#ccc; font-size:13px; margin-bottom:5px;">Share code to invite (Max 3 players)</p>
+                        <div class="mp-code" id="ludoRoomCodeDisp" style="color:#3498db; border:1px solid #3498db;">----</div>
+                        <div class="ludo-lobby-list" id="ludoJoinedPlayers">Loading players...</div>
+                        <button id="ludoStartBtn" onclick="startLudoGame()" style="background:linear-gradient(135deg, #2ecc71, #27ae60); width:100%; display:none; padding:15px; font-size:16px;">🚀 Start Game</button>
+                        <button class="btn-danger" onclick="cancelRoom()" style="width:100%; margin-top:10px; padding:12px;">Cancel</button>
+                    </div>
+
+                    <!-- Ludo Play Area -->
+                    <div id="ludoInGame" style="display:none;">
+                        <div class="ludo-players" id="ludoPlayerBar"></div>
+                        <div class="bet-badge" id="ludoBetInfo" style="margin-bottom:15px; background:linear-gradient(135deg, #f39c12, #d35400); font-size:13px; padding:6px 12px;">Bet: 50 🪙</div>
+                        
+                        <p style="font-size:13px; color:#ccc; margin-bottom:10px;" id="ludoInstruction">Pick your numbers.</p>
+                        <div class="number-picker" id="ludoNumbers">
+                            ${[1,2,3,4,5,6].map(n => `<button class="num-btn" id="lnBtn_${n}" onclick="selectLudoNum(${n})">${n}</button>`).join('')}
+                        </div>
+                        
+                        <button id="ludoConfirmBtn" onclick="confirmLudoPicks()" style="background:#2ecc71; width:100%; display:none; padding:12px; margin-top:10px;">✅ Confirm Picks</button>
+                        
+                        <div id="ludoPlayArea" style="display:none; margin-top:20px;">
+                            <div class="ludo-dice-box" id="ludoDice">🎲</div>
+                            <div id="ludoResult" style="font-size:22px; font-weight:bold; color:#ffd700; margin-top:15px;">Rolling...</div>
+                        </div>
+
+                        <div id="mpRetryArea" style="display:none; margin-top:20px;">
+                            <button onclick="cancelRoom()" class="btn-danger" style="width:100%; padding:12px;">🚪 Exit Room</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // 3. Custom Room Generator for Ludo
+    const originalGenerateRoom = window.generateRoom;
+    window.generateRoom = function() {
+        if(window.activeMpGame === 'ludogoti') {
+            const code = Math.floor(1000 + Math.random() * 9000).toString();
+            window.currentMpRoom = code;
+            window.isHost = true;
+            window.ludoMyPicks = [];
+            
+            database.ref('mpRooms/' + code).set({
+                game: 'ludogoti',
+                hostId: currentUser.uid,
+                status: 'lobby',
+                players: { [currentUser.uid]: { name: currentUser.displayName, picks: '', ready: false } },
+                result: 0
+            });
+
+            document.getElementById('ludoRoomCodeDisp').innerText = code;
+            document.querySelectorAll('.mp-screen').forEach(el => el.classList.remove('active'));
+            document.getElementById('mpLudoScreen').classList.add('active');
+            document.getElementById('ludoPreGame').style.display = 'block';
+            document.getElementById('ludoInGame').style.display = 'none';
+
+            database.ref('mpRooms/' + code).on('value', handleLudoUpdates);
+        } else {
+            if(originalGenerateRoom) originalGenerateRoom();
+        }
+    };
+
+    // 4. Custom Room Joiner for Ludo
+    const originalJoinRoom = window.joinRoom;
+    window.joinRoom = function() {
+        const code = document.getElementById('joinCodeInput').value;
+        if(code.length !== 4) { showToast('Enter 4 digit code!', 'error'); return; }
+
+        database.ref('mpRooms/' + code).once('value', snap => {
+            if(!snap.exists()) { showToast('Invalid code!', 'error'); return; }
+            const data = snap.val();
+            
+            if(data.game === 'ludogoti') {
+                if(data.status !== 'lobby') { showToast('Game already started!', 'error'); return; }
+                const pCount = Object.keys(data.players || {}).length;
+                if(pCount >= 3) { showToast('Room is full (Max 3 players)!', 'error'); return; }
+
+                window.currentMpRoom = code;
+                window.isHost = false;
+                window.ludoMyPicks = [];
+
+                database.ref('mpRooms/' + code + '/players/' + currentUser.uid).set({
+                    name: currentUser.displayName, picks: '', ready: false
+                });
+
+                document.getElementById('ludoRoomCodeDisp').innerText = code;
+                document.querySelectorAll('.mp-screen').forEach(el => el.classList.remove('active'));
+                document.getElementById('mpLudoScreen').classList.add('active');
+                document.getElementById('ludoPreGame').style.display = 'block';
+                document.getElementById('ludoInGame').style.display = 'none';
+
+                database.ref('mpRooms/' + code).on('value', handleLudoUpdates);
+            } else {
+                if(originalJoinRoom) originalJoinRoom();
+            }
+        });
+    };
+
+    // 5. 2 & 3 Player Game Engine
+    window.ludoMaxPicks = 3;
+    window.tempLudoBetDeducted = false;
+    window.ludoProcessedWinner = false;
+
+    window.startLudoGame = function() {
+        database.ref('mpRooms/' + currentMpRoom).update({ status: 'playing' });
+    };
+
+    window.handleLudoUpdates = function(snap) {
+        const data = snap.val();
+        if(!data) {
+            showToast('Room closed!', 'info');
+            document.getElementById('mpLudoScreen').classList.remove('active');
+            if(document.getElementById('mpLobby')) document.getElementById('mpLobby').classList.add('active');
+            return;
+        }
+
+        const players = data.players || {};
+        const pKeys = Object.keys(players);
+        const pCount = pKeys.length;
+
+        if(data.status === 'lobby') {
+            let html = '';
+            pKeys.forEach(uid => {
+                html += `<div>👤 ${players[uid].name} ${uid === data.hostId ? '👑 (Host)' : ''}</div>`;
+            });
+            document.getElementById('ludoJoinedPlayers').innerHTML = html;
+
+            if(window.isHost) {
+                const startBtn = document.getElementById('ludoStartBtn');
+                if(pCount >= 2) { startBtn.style.display = 'block'; }
+                else { startBtn.style.display = 'none'; }
+            } else {
+                document.getElementById('ludoStartBtn').style.display = 'none';
+            }
+        } 
+        else if(data.status === 'playing') {
+            document.getElementById('ludoPreGame').style.display = 'none';
+            document.getElementById('ludoInGame').style.display = 'block';
+
+            // Set rules based on player count
+            window.ludoMaxPicks = pCount === 3 ? 2 : 3;
+            let betAmount = 50;
+            let winAmount = pCount === 3 ? 140 : 90; 
+            
+            document.getElementById('ludoBetInfo').innerText = `Bet: ${betAmount} 🪙 | Win: ${winAmount} 🪙 | Pick ${window.ludoMaxPicks} Nums`;
+
+            let pbHtml = '';
+            let allReady = true;
+            let allPickedNums = [];
+            
+            pKeys.forEach(uid => {
+                const p = players[uid];
+                if(!p.ready) allReady = false;
+                if(p.picks) {
+                    p.picks.split(',').forEach(n => { if(uid !== currentUser.uid) allPickedNums.push(parseInt(n)); });
+                }
+                pbHtml += `<div class="lp-badge ${p.ready ? 'active' : ''}">${p.name.substring(0,6)}.. ${p.ready ? '✅' : '⏳'}</div>`;
+            });
+            document.getElementById('ludoPlayerBar').innerHTML = pbHtml;
+
+            if(!players[currentUser.uid].ready) {
+                document.getElementById('ludoNumbers').style.display = 'flex';
+                for(let i=1; i<=6; i++) {
+                    const btn = document.getElementById('lnBtn_' + i);
+                    btn.className = 'num-btn';
+                    if(window.ludoMyPicks.includes(i)) btn.classList.add('selected');
+                    if(allPickedNums.includes(i)) btn.classList.add('disabled');
+                }
+            }
+
+            if(allReady) {
+                document.getElementById('ludoNumbers').style.display = 'none';
+                document.getElementById('ludoInstruction').style.display = 'none';
+                document.getElementById('ludoPlayArea').style.display = 'block';
+
+                if(data.result === 0 && window.isHost) {
+                    setTimeout(() => {
+                        database.ref('mpRooms/' + currentMpRoom).update({ result: Math.floor(Math.random() * 6) + 1 });
+                    }, 1500);
+                }
+
+                const dice = document.getElementById('ludoDice');
+                const resText = document.getElementById('ludoResult');
+
+                if(data.result === 0) {
+                    dice.classList.add('rolling'); resText.innerText = 'Rolling...';
+                } else {
+                    dice.classList.remove('rolling');
+                    dice.innerText = data.result;
+
+                    const winNum = data.result.toString();
+                    const myPicksArray = players[currentUser.uid].picks ? players[currentUser.uid].picks.split(',') : [];
+                    const iWon = myPicksArray.includes(winNum);
+                    
+                    let someoneWon = false;
+                    pKeys.forEach(uid => {
+                        if(players[uid].picks && players[uid].picks.split(',').includes(winNum)) someoneWon = true;
+                    });
+
+                    if(iWon) {
+                        resText.innerHTML = `🎉 You Won ${winAmount} 🪙!`; resText.style.color = '#2ecc71';
+                        if(window.tempLudoBetDeducted && !window.ludoProcessedWinner) {
+                            window.add(winAmount); window.ludoProcessedWinner = true;
+                        }
+                    } else if(someoneWon) {
+                        resText.innerText = '😞 You Lost!'; resText.style.color = '#e74c3c';
+                        window.ludoProcessedWinner = true;
+                    } else {
+                        resText.innerText = '⚖️ Draw! 50 🪙 Refunded'; resText.style.color = '#aaa';
+                        if(window.tempLudoBetDeducted && !window.ludoProcessedWinner) {
+                            window.add(50); window.ludoProcessedWinner = true;
+                        }
+                    }
+                    document.getElementById('mpRetryArea').style.display = 'flex';
+                }
+            }
+        }
+    };
+
+    window.selectLudoNum = function(n) {
+        const btn = document.getElementById('lnBtn_' + n);
+        if(btn.classList.contains('disabled')) return;
+
+        if(window.ludoMyPicks.includes(n)) {
+            window.ludoMyPicks = window.ludoMyPicks.filter(x => x !== n);
+            btn.classList.remove('selected');
+        } else {
+            if(window.ludoMyPicks.length >= window.ludoMaxPicks) {
+                showToast(`You can only pick ${window.ludoMaxPicks} numbers!`, 'warning');
+                return;
+            }
+            window.ludoMyPicks.push(n);
+            btn.classList.add('selected');
+        }
+        
+        document.getElementById('ludoConfirmBtn').style.display = window.ludoMyPicks.length === window.ludoMaxPicks ? 'block' : 'none';
+    };
+
+    window.confirmLudoPicks = function() {
+        if(coins < 50) { showToast('Need 50 coins to play!', 'error'); return; }
+        window.deduct(50);
+        window.tempLudoBetDeducted = true;
+        
+        document.getElementById('ludoConfirmBtn').style.display = 'none';
+        document.getElementById('ludoInstruction').innerText = 'Waiting for other players...';
+
+        database.ref('mpRooms/' + currentMpRoom + '/players/' + currentUser.uid).update({
+            picks: window.ludoMyPicks.join(','), ready: true
+        });
+    };
+
+}, 4000);
 </script>
 </body>
 </html>
