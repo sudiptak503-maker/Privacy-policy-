@@ -2641,5 +2641,426 @@ setTimeout(() => {
 
 }, 1500);
 </script>
+  <script>
+setTimeout(() => {
+    // ১. গেম দুটির জন্য প্রফেশনাল CSS ইনজেক্ট করা হচ্ছে
+    const style = document.createElement('style');
+    style.innerHTML = `
+        /* Tic-Tac-Toe CSS */
+        .ttt-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 220px; margin: 20px auto; }
+        .ttt-cell { height: 65px; background: rgba(0,0,0,0.6); border: 2px solid rgba(255,215,0,0.3); border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 35px; cursor: pointer; transition: 0.2s; box-shadow: inset 0 0 10px rgba(255,215,0,0.1); }
+        .ttt-cell:active { transform: scale(0.9); }
+        .ttt-cell.x { color: #3498db; text-shadow: 0 0 15px rgba(52,152,219,0.5); }
+        .ttt-cell.o { color: #e74c3c; text-shadow: 0 0 15px rgba(231,76,60,0.5); }
+        .ttt-cell.disabled { pointer-events: none; opacity: 0.8; }
+        
+        /* RPS CSS */
+        .rps-options { display: flex; gap: 15px; justify-content: center; margin: 25px 0; }
+        .rps-btn { font-size: 40px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,215,0,0.3); border-radius: 50%; width: 80px; height: 80px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .rps-btn:active { transform: scale(0.9); }
+        .rps-btn.selected { border-color: #ffd700; transform: scale(1.15); background: rgba(255,215,0,0.2); box-shadow: 0 0 25px rgba(255,215,0,0.5); }
+        .rps-btn.disabled { pointer-events: none; opacity: 0.5; }
+        
+        .bet-badge { background: linear-gradient(135deg, #f39c12, #d35400); color: #fff; padding: 5px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; margin-bottom: 15px; display: inline-block; border: 1px solid #ffd700; }
+    `;
+    document.head.appendChild(style);
+
+    // ২. নতুন গেম স্ক্রিনগুলো HTML-এ যুক্ত করা হচ্ছে
+    document.body.insertAdjacentHTML('beforeend', `
+        <!-- Tic-Tac-Toe Screen -->
+        <div id="mpTicTacToeScreen" class="mp-screen">
+            <div style="width: 100%; max-width: 500px; text-align:center;">
+                <div class="player-bar">
+                    <span id="tttP1" style="color:#3498db;">Player 1 (X)</span>
+                    <span style="color:#ffd700; font-size:12px;">VS</span>
+                    <span id="tttP2" style="color:#e74c3c;">Player 2 (O)</span>
+                </div>
+                
+                <div class="mp-box" style="background: rgba(0,0,0,0.8);">
+                    <h3 style="color:#ffd700; margin-bottom:5px;">⭕ Tic-Tac-Toe ❌</h3>
+                    <div class="bet-badge">Bet: 5 🪙 | Win: 9 🪙</div>
+                    
+                    <button id="tttReadyBtn" onclick="readyForTtt()" style="background:#2ecc71; width:100%; margin-bottom: 15px;">Bet 5 🪙 & Ready</button>
+                    <p style="font-size:12px; color:#aaa; margin-bottom: 10px;" id="tttStatus">Waiting for both players to bet...</p>
+                    
+                    <div class="ttt-grid" id="tttGrid" style="opacity: 0.5; pointer-events: none;">
+                        ${[0,1,2,3,4,5,6,7,8].map(i => `<div class="ttt-cell" id="ttt_${i}" onclick="makeTttMove(${i})"></div>`).join('')}
+                    </div>
+
+                    <div id="tttRetryArea" style="display:none; margin-top:20px; gap:10px; flex-wrap:wrap;">
+                        <button onclick="voteRetry()" style="flex:1; background:#3498db; padding:10px;">🔄 Rematch</button>
+                        <button onclick="cancelRoom()" class="btn-danger" style="flex:1; padding:10px;">🚪 Leave</button>
+                        <div id="tttRetryStatus" style="width:100%; font-size:11px; color:#aaa; margin-top:5px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rock Paper Scissors Screen -->
+        <div id="mpRpsScreen" class="mp-screen">
+            <div style="width: 100%; max-width: 500px; text-align:center;">
+                <div class="player-bar">
+                    <span id="rpsP1" style="color:#3498db;">Player 1</span>
+                    <span style="color:#ffd700; font-size:12px;">VS</span>
+                    <span id="rpsP2" style="color:#e74c3c;">Player 2</span>
+                </div>
+                
+                <div class="mp-box" style="background: rgba(0,0,0,0.8);">
+                    <h3 style="color:#ffd700; margin-bottom:5px;">✌️ Rock Paper Scissors 👊</h3>
+                    <div class="bet-badge">Bet: 5 🪙 | Win: 9 🪙</div>
+                    
+                    <p style="font-size:13px; color:#ccc;" id="rpsInstruction">Pick your move to place a bet.</p>
+                    
+                    <div class="rps-options" id="rpsOptions">
+                        <div class="rps-btn" onclick="selectRps('rock')">👊</div>
+                        <div class="rps-btn" onclick="selectRps('paper')">✋</div>
+                        <div class="rps-btn" onclick="selectRps('scissors')">✌️</div>
+                    </div>
+                    
+                    <div id="rpsResultArea" style="display:none; margin-top: 15px;">
+                        <div style="display:flex; justify-content: space-around; align-items:center; font-size:45px; margin: 15px 0;">
+                            <div id="myRpsMove" style="transform: scaleX(-1);">❔</div>
+                            <div style="font-size:20px; color:#ffd700;">VS</div>
+                            <div id="enemyRpsMove">❔</div>
+                        </div>
+                        <div id="rpsWinnerStatus" style="font-size:20px; font-weight:bold; color:#ffd700; margin-bottom: 15px;">Result...</div>
+                    </div>
+
+                    <div id="rpsRetryArea" style="display:none; margin-top:10px; gap:10px; flex-wrap:wrap;">
+                        <button onclick="voteRetry()" style="flex:1; background:#3498db; padding:10px;">🔄 Rematch</button>
+                        <button onclick="cancelRoom()" class="btn-danger" style="flex:1; padding:10px;">🚪 Leave</button>
+                        <div id="rpsRetryStatus" style="width:100%; font-size:11px; color:#aaa; margin-top:5px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `);
+
+    // ৩. হোম স্ক্রিনে নতুন গেমের আইকন যোগ
+    const homeGrid = document.querySelector('.home-grid');
+    if(homeGrid) {
+        homeGrid.insertAdjacentHTML('beforeend', `
+            <div class="game-icon-card" onclick="openMpLobby('tictactoe')">
+                <div class="g-icon" style="border-color:#3498db;"><span>❌</span></div>
+                <div class="g-name">Tic-Tac-Toe</div>
+            </div>
+            <div class="game-icon-card" onclick="openMpLobby('rps')">
+                <div class="g-icon" style="border-color:#f39c12;"><span>✌️</span></div>
+                <div class="g-name">Roshambo</div>
+            </div>
+        `);
+    }
+
+    // ৪. মাল্টিপ্লেয়ার রাউটার আপডেট (যেন নতুন গেম সাপোর্ট করে)
+    window.handleRoomUpdates = function(snap) {
+        const data = snap.val();
+        if(!data || data.status === 'cancelled') {
+            if(document.querySelector('.mp-screen.active')) {
+                showToast('Room closed by host!', 'info');
+                cancelRoom(); 
+            }
+            return;
+        }
+
+        if(data.status === 'playing') {
+            // আগের গেমগুলো ঠিক রাখার জন্য
+            if(activeMpGame === 'ludogoti' && typeof renderLudoPlay === 'function') renderLudoPlay(data);
+            if(activeMpGame === 'friendfind' && typeof renderFriendFind === 'function') renderFriendFind(data);
+            
+            // নতুন গেম
+            if(activeMpGame === 'tictactoe') renderTicTacToe(data);
+            if(activeMpGame === 'rps') renderRpsPlay(data);
+        }
+    };
+
+    // ফায়ারবেস আপডেট লিসেনার ফিক্স (আগের generate/joinRoom ফাংশন ওভাররাইড করা হচ্ছে)
+    const oldGenerateRoom = window.generateRoom;
+    window.generateRoom = function() {
+        const code = Math.floor(1000 + Math.random() * 9000).toString();
+        currentMpRoom = code;
+        isHost = true;
+        
+        // গেম অনুযায়ী স্টেট তৈরি
+        let initialState = {};
+        if(activeMpGame === 'ludogoti') initialState = { ludoState: { p1Ready: false, p2Ready: false, p1Picks: '', p2Picks: '', result: 0 } };
+        if(activeMpGame === 'tictactoe') initialState = { tttState: { p1Ready: false, p2Ready: false, board: ['', '', '', '', '', '', '', '', ''], turn: 'host', winner: null } };
+        if(activeMpGame === 'rps') initialState = { rpsState: { p1Ready: false, p2Ready: false, p1Move: '', p2Move: '', result: '' } };
+
+        database.ref('mpRooms/' + code).set({
+            game: activeMpGame,
+            hostId: currentUser.uid,
+            hostName: currentUser.displayName,
+            status: 'waiting',
+            rematch: { host: false, guest: false },
+            ...initialState
+        });
+
+        document.getElementById('displayRoomCode').innerText = code;
+        document.querySelectorAll('.mp-screen').forEach(el => el.classList.remove('active'));
+        document.getElementById('mpWaiting').classList.add('active');
+
+        database.ref('mpRooms/' + code).on('value', handleRoomUpdates);
+    };
+
+    const oldJoinRoom = window.joinRoom;
+    window.joinRoom = function() {
+        const code = document.getElementById('joinCodeInput').value;
+        if(code.length !== 4) { showToast('Enter 4 digit code!', 'error'); return; }
+
+        database.ref('mpRooms/' + code).once('value', snap => {
+            if(snap.exists() && snap.val().status === 'waiting') {
+                currentMpRoom = code;
+                isHost = false;
+                activeMpGame = snap.val().game;
+                
+                database.ref('mpRooms/' + code).update({
+                    guestId: currentUser.uid,
+                    guestName: currentUser.displayName,
+                    status: 'playing'
+                });
+
+                document.querySelectorAll('.mp-screen').forEach(el => el.classList.remove('active'));
+                database.ref('mpRooms/' + code).on('value', handleRoomUpdates);
+            } else {
+                showToast('Invalid or full code!', 'error');
+            }
+        });
+    };
+
+    // ==========================================
+    // ⭕ TIC-TAC-TOE গেম লজিক (Bet 5 -> Win 9)
+    // ==========================================
+    window.tempTttBetDeducted = false;
+    let processedTttWinner = false;
+
+    window.readyForTtt = function() {
+        if(coins < 5) { showToast('Need 5 coins to play!', 'error'); return; }
+        window.deduct(5); // ৫ কয়েন কেটে নেওয়া হলো
+        window.tempTttBetDeducted = true;
+        
+        document.getElementById('tttReadyBtn').style.display = 'none';
+        
+        const updateKey = isHost ? 'p1Ready' : 'p2Ready';
+        database.ref('mpRooms/' + currentMpRoom + '/tttState').update({ [updateKey]: true });
+    };
+
+    window.makeTttMove = function(index) {
+        database.ref('mpRooms/' + currentMpRoom + '/tttState').once('value', snap => {
+            let state = snap.val();
+            let isMyTurn = (isHost && state.turn === 'host') || (!isHost && state.turn === 'guest');
+            
+            if(!isMyTurn || state.board[index] !== '' || state.winner) return;
+
+            state.board[index] = isHost ? 'X' : 'O';
+            state.turn = isHost ? 'guest' : 'host';
+            
+            // Win Logic Check
+            const winPatterns = [[0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]];
+            let winner = null;
+            
+            for(let p of winPatterns) {
+                if(state.board[p[0]] && state.board[p[0]] === state.board[p[1]] && state.board[p[1]] === state.board[p[2]]) {
+                    winner = state.board[p[0]] === 'X' ? 'host' : 'guest';
+                    break;
+                }
+            }
+            if(!winner && !state.board.includes('')) winner = 'draw';
+            
+            if(winner) state.winner = winner;
+            
+            database.ref('mpRooms/' + currentMpRoom + '/tttState').update(state);
+        });
+    };
+
+    function renderTicTacToe(data) {
+        document.getElementById('mpWaiting').classList.remove('active');
+        document.getElementById('mpLobby').classList.remove('active');
+        document.getElementById('mpTicTacToeScreen').classList.add('active');
+
+        document.getElementById('tttP1').innerText = data.hostName + " (X)";
+        document.getElementById('tttP2').innerText = data.guestName + " (O)";
+        
+        const state = data.tttState;
+        const bothReady = state.p1Ready && state.p2Ready;
+
+        if(!bothReady) {
+            document.getElementById('tttGrid').style.opacity = '0.5';
+            document.getElementById('tttGrid').style.pointerEvents = 'none';
+            document.getElementById('tttRetryArea').style.display = 'none';
+            
+            if(isHost ? state.p1Ready : state.p2Ready) {
+                document.getElementById('tttStatus').innerText = 'Waiting for opponent to bet...';
+                document.getElementById('tttReadyBtn').style.display = 'none';
+            } else {
+                document.getElementById('tttStatus').innerText = 'Ready? Place 5 🪙 bet.';
+                document.getElementById('tttReadyBtn').style.display = 'block';
+            }
+            return;
+        }
+
+        // Both Ready - Show Game
+        document.getElementById('tttReadyBtn').style.display = 'none';
+        document.getElementById('tttGrid').style.opacity = '1';
+        
+        let isMyTurn = (isHost && state.turn === 'host') || (!isHost && state.turn === 'guest');
+        
+        if(!state.winner) {
+            document.getElementById('tttStatus').innerText = isMyTurn ? '👉 Your Turn!' : '⏳ Opponent is thinking...';
+            document.getElementById('tttStatus').style.color = isMyTurn ? '#2ecc71' : '#f39c12';
+            document.getElementById('tttGrid').style.pointerEvents = isMyTurn ? 'auto' : 'none';
+        } else {
+            document.getElementById('tttGrid').style.pointerEvents = 'none';
+        }
+
+        // Update Board UI
+        for(let i=0; i<9; i++) {
+            const cell = document.getElementById('ttt_' + i);
+            cell.innerText = state.board[i];
+            cell.className = 'ttt-cell ' + (state.board[i] === 'X' ? 'x' : (state.board[i] === 'O' ? 'o' : ''));
+        }
+
+        // Payout System
+        if(state.winner) {
+            document.getElementById('tttRetryArea').style.display = 'flex';
+            let statusEl = document.getElementById('tttStatus');
+            
+            if(state.winner === 'draw') {
+                statusEl.innerText = '⚖️ Match Draw! 5 🪙 Refunded.';
+                statusEl.style.color = '#aaa';
+                if(window.tempTttBetDeducted && !processedTttWinner) {
+                    window.add(5); // Refund
+                    processedTttWinner = true;
+                }
+            } else {
+                let didIWin = (isHost && state.winner === 'host') || (!isHost && state.winner === 'guest');
+                if(didIWin) {
+                    statusEl.innerText = '🎉 YOU WON! 9 🪙 Added.';
+                    statusEl.style.color = '#2ecc71';
+                    if(window.tempTttBetDeducted && !processedTttWinner) {
+                        window.add(9); // 9 কয়েন পুরস্কার
+                        processedTttWinner = true;
+                    }
+                } else {
+                    statusEl.innerText = '😞 YOU LOST!';
+                    statusEl.style.color = '#e74c3c';
+                    processedTttWinner = true;
+                }
+            }
+        }
+
+        // Rematch Sync
+        document.getElementById('tttRetryStatus').innerText = (data.rematch.host || data.rematch.guest) ? 'Friend wants a rematch...' : '';
+        if(data.rematch.host && data.rematch.guest) {
+            window.tempTttBetDeducted = false;
+            processedTttWinner = false;
+            database.ref('mpRooms/' + currentMpRoom).update({
+                tttState: { p1Ready: false, p2Ready: false, board: ['', '', '', '', '', '', '', '', ''], turn: 'host', winner: null },
+                rematch: { host: false, guest: false }
+            });
+            // সেলগুলো ক্লিয়ার করে দিন
+            for(let i=0; i<9; i++) document.getElementById('ttt_' + i).innerText = '';
+        }
+    }
+
+
+    // ==========================================
+    // ✌️ ROCK PAPER SCISSORS (Bet 5 -> Win 9)
+    // ==========================================
+    window.tempRpsBetDeducted = false;
+    let processedRpsWinner = false;
+
+    window.selectRps = function(move) {
+        if(coins < 5) { showToast('Need 5 coins to play!', 'error'); return; }
+        
+        window.deduct(5); // ৫ কয়েন ফি
+        window.tempRpsBetDeducted = true;
+
+        document.querySelectorAll('.rps-btn').forEach(b => b.classList.add('disabled'));
+        event.target.classList.add('selected');
+        document.getElementById('rpsInstruction').innerText = 'Waiting for opponent...';
+
+        const updateData = isHost ? { p1Ready: true, p1Move: move } : { p2Ready: true, p2Move: move };
+        database.ref('mpRooms/' + currentMpRoom + '/rpsState').update(updateData);
+    };
+
+    function renderRpsPlay(data) {
+        document.getElementById('mpWaiting').classList.remove('active');
+        document.getElementById('mpLobby').classList.remove('active');
+        document.getElementById('mpRpsScreen').classList.add('active');
+
+        document.getElementById('rpsP1').innerText = data.hostName;
+        document.getElementById('rpsP2').innerText = data.guestName;
+        
+        const state = data.rpsState;
+        const bothReady = state.p1Ready && state.p2Ready;
+
+        const emojis = { 'rock': '👊', 'paper': '✋', 'scissors': '✌️' };
+
+        if(bothReady) {
+            document.getElementById('rpsOptions').style.display = 'none';
+            document.getElementById('rpsResultArea').style.display = 'block';
+            document.getElementById('rpsRetryArea').style.display = 'flex';
+            document.getElementById('rpsInstruction').innerText = 'Round Complete!';
+
+            let myMove = isHost ? state.p1Move : state.p2Move;
+            let enemyMove = isHost ? state.p2Move : state.p1Move;
+
+            document.getElementById('myRpsMove').innerText = emojis[myMove];
+            document.getElementById('enemyRpsMove').innerText = emojis[enemyMove];
+
+            let statusEl = document.getElementById('rpsWinnerStatus');
+            
+            // Logic: Rock beats Scissors, Scissors beats Paper, Paper beats Rock
+            if(myMove === enemyMove) {
+                statusEl.innerText = '⚖️ Draw! 5 🪙 Refunded.';
+                statusEl.style.color = '#aaa';
+                if(window.tempRpsBetDeducted && !processedRpsWinner) {
+                    window.add(5); // রিফান্ড
+                    processedRpsWinner = true;
+                }
+            } else {
+                let iWon = (myMove === 'rock' && enemyMove === 'scissors') || 
+                           (myMove === 'scissors' && enemyMove === 'paper') || 
+                           (myMove === 'paper' && enemyMove === 'rock');
+                           
+                if(iWon) {
+                    statusEl.innerText = '🎉 YOU WON! +9 🪙';
+                    statusEl.style.color = '#2ecc71';
+                    if(window.tempRpsBetDeducted && !processedRpsWinner) {
+                        window.add(9); // ৯ কয়েন পুরস্কার
+                        processedRpsWinner = true;
+                    }
+                } else {
+                    statusEl.innerText = '😞 YOU LOST!';
+                    statusEl.style.color = '#e74c3c';
+                    processedRpsWinner = true;
+                }
+            }
+        }
+
+        // Rematch Sync
+        document.getElementById('rpsRetryStatus').innerText = (data.rematch.host || data.rematch.guest) ? 'Friend wants a rematch...' : '';
+        if(data.rematch.host && data.rematch.guest) {
+            window.tempRpsBetDeducted = false;
+            processedRpsWinner = false;
+            
+            document.querySelectorAll('.rps-btn').forEach(b => {
+                b.classList.remove('disabled');
+                b.classList.remove('selected');
+            });
+            document.getElementById('rpsOptions').style.display = 'flex';
+            document.getElementById('rpsResultArea').style.display = 'none';
+            document.getElementById('rpsRetryArea').style.display = 'none';
+            document.getElementById('rpsInstruction').innerText = 'Pick your move to place a bet.';
+            
+            database.ref('mpRooms/' + currentMpRoom).update({
+                rpsState: { p1Ready: false, p2Ready: false, p1Move: '', p2Move: '', result: '' },
+                rematch: { host: false, guest: false }
+            });
+        }
+    }
+
+}, 2000); // 이전 স্ক্রিপ্টগুলো লোড হওয়ার পরে রান করবে
+</script>
 </body>
 </html>
