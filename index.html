@@ -702,18 +702,23 @@ function loadUserData(uid) {
     getUserRef(uid).on('value', snapshot => {
         const data = snapshot.val();
         if (data) {
-            coins = data.coins || 10;
-            money = data.money || 0;
+            // 0 কে falsy ভ্যালু হিসেবে স্কিপ করা ঠেকাতে !== undefined ব্যবহার করা হলো
+            coins = data.coins !== undefined ? data.coins : 10;
+            money = data.money !== undefined ? data.money : 0;
+            
             // শুধু DOM আপডেট করুন, saveUserData() কল করবেন না (লুপ বন্ধ করা হয়েছে)
             document.getElementById('coinDisplay').innerText = Math.floor(coins);
             document.getElementById('moneyDisplay').innerText = Math.floor(money);
         } else {
-            getUserRef(uid).set({ coins: 1000, money: 0, createdAt: Date.now(), isGuest: isGuest });
-            coins = 1000; money = 0;
-            updateUI(); // প্রথমবার কল হবে
+            // নতুন ইউজার হলে ডিফল্ট ১০ কয়েন দেওয়া হলো
+            getUserRef(uid).set({ coins: 10, money: 0, createdAt: Date.now(), isGuest: isGuest });
+            coins = 10; 
+            money = 0;
+            updateUI(); 
         }
     });
 }
+
 
 function updateUI() {
     document.getElementById('coinDisplay').innerText = Math.floor(coins);
@@ -2174,43 +2179,55 @@ setTimeout(() => {
     `;
     document.head.appendChild(style);
 
-    // 2. Override History Function with New Layout
-    window.openHistory = function() {
-        if(!currentUser) { showToast('Please login first', 'warning'); return; }
-        document.getElementById('historyModal').style.display = 'flex';
-        const list = document.getElementById('userHistoryList');
-        list.innerHTML = '<div style="text-align:center; color:#ccc; font-size:12px; padding: 15px 0;">Loading records...</div>';
+    // Override History Function with New Layout (Fixed)
+window.openHistory = function() {
+    if(!currentUser) { showToast('Please login first', 'warning'); return; }
+    document.getElementById('historyModal').style.display = 'flex';
+    const list = document.getElementById('userHistoryList');
+    list.innerHTML = '<div style="text-align:center; color:#ccc; font-size:12px; padding: 15px 0;">Loading records...</div>';
 
-        let historyArr = [];
-        database.ref('coinAddRequests').orderByChild('userId').equalTo(currentUser.uid).once('value').then(snap1 => {
-            snap1.forEach(c => historyArr.push({...c.val(), type: 'Coin Buy'}));
-            database.ref('withdrawRequests').orderByChild('userId').equalTo(currentUser.uid).once('value').then(snap2 => {
-                snap2.forEach(c => historyArr.push({...c.val(), type: 'Withdraw'}));
-
-                historyArr.sort((a,b) => b.timestamp - a.timestamp);
-                if(historyArr.length === 0) { list.innerHTML = '<div style="text-align:center; color:#888; font-size:12px; padding: 15px 0;">No history found.</div>'; return; }
-
-                let html = '';
-                historyArr.forEach(h => {
-                    let colorClass = h.status === 'approved' ? 'status-approved' : (h.status === 'rejected' ? 'status-rejected' : 'status-pending');
-                    let amt = h.type === 'Withdraw' ? `₹${h.amount}` : `🪙${h.coinsToAdd}`;
-                    let icon = h.type === 'Withdraw' ? '💸' : '🪙';
-                    
-                    // Professional Date Format (e.g., "Oct 12, 02:30 PM")
-                    let dateStr = new Date(h.timestamp).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit', hour12: true });
-
-                    html += `<div class="history-item">
-                        <div>
-                            <div class="h-title">${icon} ${h.type} <span>(${amt})</span></div>
-                            <div class="h-date">🕒 ${dateStr}</div>
-                        </div>
-                        <div class="status ${colorClass}">${h.status.toUpperCase()}</div>
-                    </div>`;
-                });
-                list.innerHTML = html;
-            });
+    let historyArr = [];
+    database.ref('coinAddRequests').orderByChild('userId').equalTo(currentUser.uid).once('value').then(snap1 => {
+        // ফিক্স: {} ব্যবহার করা হয়েছে যাতে লুপ বন্ধ না হয়
+        snap1.forEach(c => { 
+            historyArr.push({...c.val(), type: 'Coin Buy'}); 
         });
-    };
+        
+        database.ref('withdrawRequests').orderByChild('userId').equalTo(currentUser.uid).once('value').then(snap2 => {
+            // ফিক্স: {} ব্যবহার করা হয়েছে যাতে লুপ বন্ধ না হয়
+            snap2.forEach(c => { 
+                historyArr.push({...c.val(), type: 'Withdraw'}); 
+            });
+
+            historyArr.sort((a,b) => b.timestamp - a.timestamp);
+            
+            if(historyArr.length === 0) { 
+                list.innerHTML = '<div style="text-align:center; color:#888; font-size:12px; padding: 15px 0;">No history found.</div>'; 
+                return; 
+            }
+
+            let html = '';
+            historyArr.forEach(h => {
+                let colorClass = h.status === 'approved' ? 'status-approved' : (h.status === 'rejected' ? 'status-rejected' : 'status-pending');
+                let amt = h.type === 'Withdraw' ? `₹${h.amount}` : `🪙${h.coinsToAdd}`;
+                let icon = h.type === 'Withdraw' ? '💸' : '🪙';
+                
+                // Professional Date Format (e.g., "Oct 12, 02:30 PM")
+                let dateStr = new Date(h.timestamp).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit', hour12: true });
+
+                html += `<div class="history-item">
+                    <div>
+                        <div class="h-title">${icon} ${h.type} <span>(${amt})</span></div>
+                        <div class="h-date">🕒 ${dateStr}</div>
+                    </div>
+                    <div class="status ${colorClass}">${h.status.toUpperCase()}</div>
+                </div>`;
+            });
+            list.innerHTML = html;
+        });
+    });
+};
+
 }, 2000); // Trigger slightly after the previous injections
 </script>
   <script>
