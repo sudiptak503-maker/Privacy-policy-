@@ -3383,8 +3383,7 @@ if(data.status === 'playing') {
     if(data.game === 'evenodd' && typeof window.renderEvenOdd === 'function') window.renderEvenOdd(data);
     if(data.game === 'mptoss' && typeof window.renderMpToss === 'function') window.renderMpToss(data);
 }
-
-
+ };
     // ৪. Cancel Room & Remove Listeners (বাগ-ফ্রি করার জন্য লিসেনার ক্লিনআপ)
     window.cancelRoom = function() {
         if(window.currentMpRoom) {
@@ -6188,6 +6187,85 @@ setTimeout(() => {
 
 }, 2500); // 2.5s delay to ensure it attaches after the Master Multiplay Router and UI loads
 </script>
-  
+  <script>
+setTimeout(() => {
+    // ==========================================
+    // 🍪 TEMPORARY AUTO-LOGIN FIX (COOKIE HACK)
+    // ==========================================
+    
+    // কুকি সেট করার ফাংশন
+    function setCookie(name, value, days) {
+        let expires = "";
+        if (days) {
+            let date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+    }
+
+    // কুকি রিড করার ফাংশন
+    function getCookie(name) {
+        let nameEQ = name + "=";
+        let ca = document.cookie.split(';');
+        for(let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
+
+    // লগইন সফল হলে কুকিতে ডেটা সেভ করা
+    const originalSetup = window.setupLoggedInUser;
+    window.setupLoggedInUser = function(user, username) {
+        const userIn = document.getElementById('loginUserId').value.trim();
+        const passIn = document.getElementById('loginUserPass').value.trim();
+        
+        // শুধু নতুন লগইনের সময়ই কুকি আপডেট হবে
+        if(userIn && passIn) {
+            // btoa() দিয়ে সামান্য এনকোড করে রাখা হলো
+            setCookie("stargame_auth_temp", btoa(userIn + ":" + passIn), 30); // 30 দিন সেভ থাকবে
+        }
+        if(originalSetup) originalSetup(user, username);
+    };
+
+    // লগআউট করলে কুকি মুছে ফেলা
+    const originalLogout = window.logoutUser;
+    window.logoutUser = function() {
+        setCookie("stargame_auth_temp", "", -1); // কুকি ডিলিট
+        if(originalLogout) originalLogout();
+    };
+
+    // অ্যাপ ওপেন হওয়ার পর অটোমেটিক লগইন চেক করা
+    const savedAuth = getCookie("stargame_auth_temp");
+    if(savedAuth && !window.currentUser) {
+        try {
+            const decoded = atob(savedAuth).split(':');
+            if(decoded.length === 2) {
+                // ইনপুট ফিল্ডে ইউজারনেম ও পাসওয়ার্ড বসানো
+                document.getElementById('loginUserId').value = decoded[0];
+                document.getElementById('loginUserPass').value = decoded[1];
+                
+                // স্ট্যাটাস টেক্সট আপডেট
+                const statusEl = document.getElementById('loginStatus');
+                if(statusEl) {
+                    statusEl.textContent = '⏳ Auto-logging in...';
+                    statusEl.style.color = '#ffd700';
+                }
+                
+                // অটোমেটিক লগইন বাটনের কাজ করে দেওয়া
+                setTimeout(() => {
+                    if(typeof window.processUserLogin === 'function') {
+                        window.processUserLogin();
+                    }
+                }, 800);
+            }
+        } catch(e) {
+            console.log("Auto-login failed:", e);
+        }
+    }
+}, 1500); // পেজ লোড হওয়ার ১.৫ সেকেন্ড পর এটি চেক করবে
+</script>
 </body>
 </html>
