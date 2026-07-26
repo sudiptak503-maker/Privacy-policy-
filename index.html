@@ -1083,7 +1083,7 @@ function toss3D(choice) {
     playSound('spin'); res.innerText = 'Tossing...';
     coin.style.transition = 'none'; coin.style.transform = 'rotateY(0deg)'; void coin.offsetWidth; 
     let isWin = (Math.random() * 100) < currentWinRate; let isHead = isWin ? (choice === 'Head') : (choice !== 'Head');
-    const multiplier = getMultiplier('cointoss', betAmount); const winAmt = betAmount * 2 * multiplier;
+    const multiplier = getMultiplier('cointoss', betAmount); const winAmt = betAmount * 2;
     if(isWin) add(winAmt); else { playSound('lose'); addGameHistory('Toss', 'lose', betAmount, betAmount); }
     setTimeout(() => { coin.style.transition = 'transform 2s ease-out'; coin.style.transform = `rotateY(${isHead ? 1800 : 1980}deg)`; }, 20);
     setTimeout(() => { res.innerHTML = isWin ? `🎉 You won! ${winAmt} 🪙` : `😞 You lost ${betAmount} 🪙!`; }, 2050);
@@ -1098,7 +1098,7 @@ function initCracken() {
         cells.forEach(c => c.classList.remove('highlight-win'));
         let isWin = (Math.random() * 100) < currentWinRate;
         const multiplier = getMultiplier('cracken', betAmount);
-        let winAmount = isWin ? (betAmount * 2 * multiplier) : 0;
+        let winAmount = isWin ? (betAmount * 2) : 0;
         if (isWin) add(winAmount);
         let interval = setInterval(() => { cells.forEach(c => c.innerText = ['🍒','🍋','🍊','🍉','💎'][Math.floor(Math.random()*5)]); }, 100);
         setTimeout(() => {
