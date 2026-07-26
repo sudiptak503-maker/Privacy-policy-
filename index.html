@@ -6330,5 +6330,53 @@ setTimeout(() => {
     console.log("✅ Exchange Logic Overwritten: 2000 Coins = 10 Money");
 }, 3500); // 3.5 সেকেন্ড ডিলে দেওয়া হলো যাতে এটি অন্য সব স্ক্রিপ্টের পরে রান করে লজিক ওভাররাইট করতে পারে
 </script>
+  <!-- Dots & Boxes Multiplayer Fix Shortcut -->
+<script>
+setTimeout(() => {
+    // 1. Injected CSS for Dots & Boxes Multiplayer Modal
+    const style = document.createElement('style');
+    style.innerHTML = `
+        .db-modal-box { background: rgba(10, 10, 15, 0.95); border: 2px solid #ffd700; border-radius: 16px; padding: 20px; max-width: 360px; width: 90%; text-align: center; color: #fff; box-shadow: 0 0 30px rgba(255, 215, 0, 0.2); }
+        .db-grid-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px auto; width: 240px; }
+        .db-dot-point { width: 12px; height: 12px; background: #ffd700; border-radius: 50%; box-shadow: 0 0 10px #ffd700; }
+        .db-connect-line { background: rgba(255,255,255,0.15); border-radius: 4px; cursor: pointer; transition: 0.2s; }
+        .db-connect-line.active-p1 { background: #3498db !important; box-shadow: 0 0 10px #3498db; }
+        .db-connect-line.active-p2 { background: #e74c3c !important; box-shadow: 0 0 10px #e74c3c; }
+    `;
+    document.head.appendChild(style);
+
+    // 2. Real-Time Multiplayer Engine Override
+    window.startDotsBoxesMultiplayer = function(roomCode) {
+        if (!currentUser) { showToast('দয়া করে আগে লগইন করুন!', 'warning'); return; }
+        const roomRef = database.ref('mpRooms/' + roomCode);
+        
+        roomRef.on('value', (snap) => {
+            const room = snap.val();
+            if (!room) return;
+            
+            // Auto Sync Game Moves Between Friends
+            if (room.status === 'playing' && room.dbState) {
+                renderDotsBoxes(room);
+            }
+        });
+    };
+
+    // 3. Connect Hook To Existing Multiplayer Router
+    const origJoinRoom = window.joinRoom;
+    window.joinRoom = function() {
+        const code = document.getElementById('joinCodeInput')?.value;
+        if (code && code.length === 4) {
+            database.ref('mpRooms/' + code).once('value', (snap) => {
+                if (snap.exists() && snap.val().game === 'dotsboxes') {
+                    window.startDotsBoxesMultiplayer(code);
+                }
+            });
+        }
+        if (origJoinRoom) origJoinRoom();
+    };
+
+    console.log("✅ Dots & Boxes Friend Connection Fixed Successfully!");
+}, 1000);
+</script>
 </body>
 </html>
