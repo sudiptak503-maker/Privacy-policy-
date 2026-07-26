@@ -10,14 +10,30 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+/* নতুন ফন্ট ইমপোর্ট */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap');
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Orbitron', sans-serif; user-select: none; }
+/* ফন্ট পরিবর্তন করা হলো */
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    font-family: 'Poppins', sans-serif; /* Orbitron পরিবর্তন করে Poppins করা হলো */
+    touch-action: pan-y;
+}
+
+/* টেক্সটগুলোকে আরও কালারফুল করতে নির্দিষ্ট ক্লাসে নিচের মতো Gradient যোগ করতে পারেন */
+.colorful-text {
+    background: linear-gradient(135deg, #ffd700, #ffeb73, #ff8c00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
+}
+
         
         body {
             background: linear-gradient(135deg, #050505, #1a1500, #332600, #050505);
             background-size: 400% 400%;
-            animation: diamondGlow 12s ease infinite;
             min-height: 100vh;
             color: #fff;
             overflow-x: hidden;
@@ -40,7 +56,7 @@
 
         /* Login Section */
         .login-section {
-            padding: 15px 20px; background: rgba(255,255,255,0.03); backdrop-filter: blur(10px);
+            padding: 15px 20px; background: rgba(255,255,255,0.03); background: rgba(0,0,0,0.8);
             border-bottom: 1px solid rgba(255,215,0,0.2); margin-bottom: 20px; display: flex;
             justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
         }
@@ -52,7 +68,7 @@
 
         .wallet-container {
             display: flex; justify-content: space-between; align-items: center; padding: 15px 20px;
-            background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border-top: 1px solid rgba(255,215,0,0.2);
+            background: rgba(255,255,255,0.03); background: rgba(0,0,0,0.8); border-top: 1px solid rgba(255,215,0,0.2);
             border-bottom: 1px solid rgba(255,215,0,0.2); margin-bottom: 20px; z-index: 10; position: relative; flex-wrap: wrap; gap: 10px;
         }
         .wallet-box { display: flex; flex-direction: column; align-items: center; }
@@ -71,7 +87,7 @@
 
         .full-screen-game { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: linear-gradient(135deg, #0f0b01, #291c04); z-index: 100; display: none; flex-direction: column; overflow-y: auto; padding: 20px; }
         .full-screen-game.active { display: flex; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 200; display: none; justify-content: center; align-items: center; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); : blur(5px); z-index: 200; display: none; justify-content: center; align-items: center; }
         .modal-content { background: linear-gradient(145deg, #222, #111); border: 1px solid #ffd700; border-radius: 15px; padding: 30px; width: 90%; max-width: 450px; box-shadow: 0 0 30px rgba(255,215,0,0.2); text-align: center; }
         .modal-content h3 { color: #ffd700; margin-bottom: 15px; font-size: 22px;}
         .modal-content input { width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.3); background: rgba(0,0,0,0.5); color: #fff; font-size: 16px; }
@@ -113,7 +129,7 @@
         .premium-buy-btn span { color: #ffd700; }
 
         .toast-container { position: fixed; top: 20px; right: 20px; z-index: 99999; display: flex; flex-direction: column; gap: 12px; max-width: 420px; width: 100%; pointer-events: none; }
-        .toast { background: rgba(18, 18, 30, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255, 215, 0, 0.25); border-radius: 16px; padding: 18px 24px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(255, 215, 0, 0.05); display: flex; align-items: center; gap: 14px; transform: translateX(120%); animation: toastSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; pointer-events: auto; }
+        .toast { background: rgba(18, 18, 30, 0.95); : blur(16px); border: 1px solid rgba(255, 215, 0, 0.25); border-radius: 16px; padding: 18px 24px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(255, 215, 0, 0.05); display: flex; align-items: center; gap: 14px; transform: translateX(120%); animation: toastSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; pointer-events: auto; }
         .toast.removing { transform: translateX(120%); opacity: 0; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
         @keyframes toastSlideIn { 0% { transform: translateX(120%); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
         .toast-icon { font-size: 28px; flex-shrink: 0; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(255,255,255,0.05); }
@@ -156,7 +172,7 @@
 
         /* Login Overlay */
         #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #050505, #1a1500, #332600); z-index: 9999999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
-        #loginOverlay .auth-box { background: rgba(255,255,255,0.05); backdrop-filter: blur(15px); border: 1px solid rgba(255,215,0,0.3); border-radius: 20px; padding: 40px 30px; max-width: 400px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.8); }
+        #loginOverlay .auth-box { background: rgba(255,255,255,0.05); : blur(15px); border: 1px solid rgba(255,215,0,0.3); border-radius: 20px; padding: 40px 30px; max-width: 400px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.8); }
         #loginOverlay .auth-box h2 { color: #ffd700; font-size: 28px; margin-bottom: 8px; }
         #loginOverlay .auth-box p { color: #aaa; font-size: 14px; margin-bottom: 25px; }
         #loginOverlay .auth-box .auth-input { width: 100%; padding: 14px; border-radius: 10px; border: 1px solid rgba(255,215,0,0.3); background: rgba(0,0,0,0.4); color: #fff; font-size: 16px; margin-bottom: 12px; outline: none; }
@@ -206,7 +222,7 @@
         @keyframes gtPulse { 0% { transform: scale(1); box-shadow: 0 0 30px rgba(255, 215, 0, 0.2); } 100% { transform: scale(1.05); box-shadow: 0 0 50px rgba(255, 215, 0, 0.5); } }
         @keyframes gtLoadRun { 0% { left: -50%; } 100% { left: 100%; } }
 
-        .animated-result { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); padding: 30px 50px; border-radius: 20px; border: 2px solid rgba(46, 204, 113, 0.4); z-index: 9999; text-align: center; font-size: 28px; font-weight: 700; pointer-events: none; opacity: 0; box-shadow: 0 0 60px rgba(46, 204, 113, 0.15); display: none; }
+        .animated-result { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); background: rgba(0,0,0,0.85);  padding: 30px 50px; border-radius: 20px; border: 2px solid rgba(46, 204, 113, 0.4); z-index: 9999; text-align: center; font-size: 28px; font-weight: 700; pointer-events: none; opacity: 0; box-shadow: 0 0 60px rgba(46, 204, 113, 0.15); display: none; }
         .animated-result.show { display: block; animation: resultPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
         .animated-result.hide { animation: resultFade 0.5s ease forwards; }
         @keyframes resultPop { 0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; } 60% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
@@ -363,11 +379,11 @@
     <div class="modal-overlay" id="exchangeModal">
         <div class="modal-content">
             <h3>Coin Exchange</h3>
-            <p style="color:#ccc; font-size:14px; margin-bottom:15px;">1000 Coins = 10 INR</p>
+            <p style="color:#ccc; font-size:14px; margin-bottom:15px;">2000 Coins = 10 INR</p>
             <div class="exchange-coin-input">
                 <span class="coin-badge">🪙</span>
                 <label>Enter coins:</label>
-                <input type="number" id="customExchangeCoins" value="1000" min="1000" step="100" placeholder="1000">
+                <input type="number" id="customExchangeCoins" value="2000" min="2000" step="100" placeholder="2000">
                 <span class="rate-info">= ₹<span id="customExchangeMoneyDisplay">10</span></span>
                 <button onclick="calculateCustomExchange()" style="padding:8px 20px; font-size:13px; border-radius:8px; background:#2ecc71; color:#fff; border:none; cursor:pointer;">Exchange</button>
             </div>
@@ -499,18 +515,6 @@
     <div id="animatedResult" class="animated-result">
         <span class="result-emoji" id="resultEmoji">🎉</span>
         <div id="resultText">You won <span class="result-amount" id="resultAmount">0</span> coins!</div>
-    </div>
-
-    <div id="loadingOverlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:radial-gradient(circle at center, #2a2000 0%, #050505 100%); z-index:99999999; display:flex; flex-direction:column; justify-content:center; align-items:center; overflow:hidden; transition:opacity 0.8s ease;">
-        <div class="gold-spinner-container">
-            <div class="gold-spinner"></div>
-            <div class="gold-spinner-inner"></div>
-        </div>
-        <div class="gold-logo-text">STAR GAME</div>
-        <div class="pro-loading-text">Loading Premium Experience...</div>
-        <div class="pro-progress-bg">
-            <div class="pro-progress-bar" id="loadingProgressBar"></div>
-        </div>
     </div>
 <script>
 // ==========================================
@@ -807,12 +811,16 @@ function forceRefreshLeaderboard() { loadLeaderboard(); showToast('🔄 Leaderbo
 // ==========================================
 // 9. WIN RATE SYSTEM
 // ==========================================
+// আগের কোডটি মুছে এটি বসান
 function loadWinRate() {
-    database.ref('gameSettings/winRate').once('value').then(snapshot => {
+    database.ref('gameSettings/winRate').on('value', snapshot => {
         const val = snapshot.val();
-        currentWinRate = (val !== null) ? val : 50; window.winRate = currentWinRate; updateRateUI();
+        currentWinRate = (val !== null) ? val : 50; 
+        window.winRate = currentWinRate; 
+        updateRateUI();
     });
 }
+
 function saveWinRate(rate) { currentWinRate = rate; window.winRate = rate; database.ref('gameSettings/winRate').set(rate); updateRateUI(); showToast(`✅ Win rate updated to ${rate}%`, 'success'); }
 function updateRateUI() {
     const s = document.getElementById('winRateSlider'), d = document.getElementById('winRateDisplay'), st = document.getElementById('winRateStatus');
@@ -1052,7 +1060,7 @@ function initRocket() {
                 betBtn.disabled = false; cashBtn.disabled = true; betActive = false; playSound('lose');
                 addGameHistory('Aviator', 'lose', betAmount, betAmount);
             }
-        }, 50);
+        }, 40);
     };
 
     cashBtn.onclick = function() {
@@ -1607,27 +1615,49 @@ function openExchange() { document.getElementById('exchangeModal').style.display
 function openWithdraw() { document.getElementById('withdrawModal').style.display = 'flex'; }
 function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); }
 
-function calculateCustomExchange() {
+window.calculateCustomExchange = function() {
     const coinInput = document.getElementById('customExchangeCoins');
     if (!coinInput) return;
     const coinsToExchange = parseInt(coinInput.value) || 0;
-    if (coinsToExchange < 1000) { showToast('⚠️ Minimum 1000 coins required!', 'warning'); return; }
+    
+    // ১০০০ এর বদলে ২০০০ করা হলো
+    if (coinsToExchange < 2000) { showToast('⚠️ Minimum 2000 coins required!', 'warning'); return; }
     if (coinsToExchange > coins) { showToast(`⚠️ You have only ${coins} coins!`, 'error'); return; }
-    
-    const exchangeUnits = Math.floor(coinsToExchange / 1000);
-    const moneyToAdd = exchangeUnits * 10;
-    const coinsToDeduct = exchangeUnits * 1000;
-    
-    coins -= coinsToDeduct; money += moneyToAdd;
-    updateUI(); saveUserData();
-    showToast(`✅ ${moneyToAdd} INR added!`, 'success');
-    closeModals();
-}
+
+    const currMonth = new Date().getMonth() + "-" + new Date().getFullYear();
+    const userRef = database.ref('users/' + currentUser.uid);
+
+    userRef.once('value').then(snap => {
+        let data = snap.val() || {};
+        let exchangeCount = (data.lastExchangeMonth === currMonth) ? (data.exchangeCount || 0) : 0;
+
+        if (exchangeCount >= 3) {
+            showToast('⚠️ লিমিট শেষ! আপনি এই মাসে আর এক্সচেঞ্জ করতে পারবেন না (সর্বোচ্চ ৩ বার)।', 'error');
+            return;
+        }
+
+        // ক্যালকুলেশন আপডেট (২০০০ কয়েনে ১০ টাকা)
+        const exchangeUnits = Math.floor(coinsToExchange / 2000);
+        const moneyToAdd = exchangeUnits * 10;
+        const coinsToDeduct = exchangeUnits * 2000;
+
+        userRef.update({
+            coins: (data.coins || 0) - coinsToDeduct,
+            money: (data.money || 0) + moneyToAdd,
+            exchangeCount: exchangeCount + 1,
+            lastExchangeMonth: currMonth
+        }).then(() => {
+            showToast(`✅ এক্সচেঞ্জ সফল! (এই মাসে ${exchangeCount + 1}/3 বার করা হয়েছে)`, 'success');
+            closeModals();
+        });
+    });
+};
+
 
 // ==========================================
 // 19. ADMIN SYSTEM
 // ==========================================
-let adminPassword = '0786';
+let adminPassword = '0789';
 let lockClicks = 0; let lockTimeout;
 document.getElementById('adminLock').addEventListener('click', () => {
     lockClicks++; clearTimeout(lockTimeout);
@@ -1815,12 +1845,6 @@ document.addEventListener('visibilitychange', function() {
 // ==========================================
 // 24. LOADING SYSTEM
 // ==========================================
-let loadingProgress = 0;
-let loadInterval = setInterval(() => {
-    if (loadingProgress < 90) { loadingProgress += 10; document.getElementById('loadingProgressBar').style.width = loadingProgress + '%'; }
-    else { clearInterval(loadInterval); document.getElementById('loadingOverlay').style.display = 'none'; }
-}, 300);
-
 // ==========================================
 // 25. INIT
 // ==========================================
@@ -2279,7 +2303,7 @@ setTimeout(() => {
     style.innerHTML = `
         .mp-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: radial-gradient(circle at center, #1a1a2e, #050505); z-index: 300; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; transition: 0.3s; }
         .mp-screen.active { display: flex; animation: fadeIn 0.3s; }
-        .mp-box { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,215,0,0.3); border-radius: 20px; padding: 30px; width: 100%; max-width: 400px; text-align: center; backdrop-filter: blur(10px); }
+        .mp-box { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,215,0,0.3); border-radius: 20px; padding: 30px; width: 100%; max-width: 400px; text-align: center; background: rgba(0,0,0,0.8); }
         .mp-code { font-size: 40px; font-weight: 900; color: #2ecc71; letter-spacing: 5px; margin: 20px 0; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; }
         .mp-input { width: 100%; padding: 15px; font-size: 24px; text-align: center; border-radius: 10px; border: 2px solid #ffd700; background: #111; color: #fff; margin-bottom: 20px; letter-spacing: 5px; font-weight: bold; }
         .player-bar { display: flex; justify-content: space-between; background: rgba(255,215,0,0.1); padding: 10px 20px; border-radius: 50px; width: 100%; margin-bottom: 20px; border: 1px solid rgba(255,215,0,0.2); }
@@ -2489,7 +2513,7 @@ setTimeout(() => {
     // =====================================
     // 🤝 FRIEND FIND LOGIC (Sync Display)
     // =====================================
-    function renderFriendFind(data) {
+ window.renderFriendFind = function(data) {
         document.getElementById('mpWaiting').classList.remove('active');
         document.getElementById('mpLobby').classList.remove('active');
         document.getElementById('mpFriendScreen').classList.add('active');
@@ -2750,7 +2774,7 @@ setTimeout(() => {
         });
     };
 
-    function renderTicTacToe(data) {
+    window.renderTicTacToe = function(data) {
         document.getElementById('mpWaiting').classList.remove('active');
         document.getElementById('mpLobby').classList.remove('active');
         document.getElementById('mpTicTacToeScreen').classList.add('active');
@@ -2861,7 +2885,7 @@ setTimeout(() => {
         database.ref('mpRooms/' + currentMpRoom + '/rpsState').update(updateData);
     };
 
-    function renderRpsPlay(data) {
+    window.renderRpsPlay = function(data) {
         document.getElementById('mpWaiting').classList.remove('active');
         document.getElementById('mpLobby').classList.remove('active');
         document.getElementById('mpRpsScreen').classList.add('active');
@@ -3228,55 +3252,64 @@ setTimeout(() => {
         if(!currentUser) { showToast('Please login first!', 'warning'); return; }
         
         const code = Math.floor(1000 + Math.random() * 9000).toString();
-        window.currentMpRoom = code;
-        window.isHost = true;
         
-        // গেম অনুযায়ী ইনিশিয়াল ডাটা সেট করা
-        let initialState = {
-            game: window.activeMpGame,
-            hostId: currentUser.uid,
-            hostName: currentUser.displayName,
-            status: 'waiting',
-            rematch: { host: false, guest: false }
-        };
+        // একই কোড আগে থেকে আছে কিনা চেক করা (রুম ক্ল্যাশ এড়ানোর জন্য)
+        database.ref('mpRooms/' + code).once('value', snap => {
+            if(snap.exists()) {
+                window.generateRoom(); // থাকলে আবার নতুন কোড বানাবে
+                return;
+            }
+            
+            window.currentMpRoom = code;
+            window.isHost = true;
+            
+            // গেম অনুযায়ী ইনিশিয়াল ডাটা সেট করা
+            let initialState = {
+                game: window.activeMpGame,
+                hostId: currentUser.uid,
+                hostName: currentUser.displayName,
+                status: 'waiting',
+                rematch: { host: false, guest: false }
+            };
 
-        if(window.activeMpGame === 'ludogoti') {
-            window.ludoMyPicks = [];
-            initialState.players = { [currentUser.uid]: { name: currentUser.displayName, picks: '', ready: false } };
-            initialState.result = 0;
-            initialState.status = 'lobby'; 
-        }
-        else if(window.activeMpGame === 'tictactoe') {
-            initialState.tttState = { p1Ready: false, p2Ready: false, board: ['', '', '', '', '', '', '', '', ''], turn: 'host', winner: null };
-        }
-        else if(window.activeMpGame === 'rps') {
-            initialState.rpsState = { p1Ready: false, p2Ready: false, p1Move: '', p2Move: '', result: '' };
-        }
-        else if(window.activeMpGame === 'evenodd') {
-            initialState.eoState = { p1Ready: false, p2Ready: false, p1Pick: '', p2Pick: '', result: 0 };
-        }
-        else if(window.activeMpGame === 'mptoss') {
-            initialState.tossState = { p1Ready: false, p2Ready: false, p1Pick: '', p2Pick: '', result: '' };
-        }
+            if(window.activeMpGame === 'ludogoti') {
+                window.ludoMyPicks = [];
+                initialState.players = { [currentUser.uid]: { name: currentUser.displayName, picks: '', ready: false } };
+                initialState.result = 0;
+                initialState.status = 'lobby'; 
+            }
+            else if(window.activeMpGame === 'tictactoe') {
+                initialState.tttState = { p1Ready: false, p2Ready: false, board: ['', '', '', '', '', '', '', '', ''], turn: 'host', winner: null };
+            }
+            else if(window.activeMpGame === 'rps') {
+                initialState.rpsState = { p1Ready: false, p2Ready: false, p1Move: '', p2Move: '', result: '' };
+            }
+            else if(window.activeMpGame === 'evenodd') {
+                initialState.eoState = { p1Ready: false, p2Ready: false, p1Pick: '', p2Pick: '', result: 0 };
+            }
+            else if(window.activeMpGame === 'mptoss') {
+                initialState.tossState = { p1Ready: false, p2Ready: false, p1Pick: '', p2Pick: '', result: '' };
+            }
 
-        // ডাটাবেসে রুম তৈরি
-        database.ref('mpRooms/' + code).set(initialState);
-        
-        // স্ক্রিন আপডেট
-        document.getElementById('displayRoomCode').innerText = code;
-        document.querySelectorAll('.mp-screen').forEach(el => el.classList.remove('active'));
-        
-        if(window.activeMpGame === 'ludogoti') {
-            document.getElementById('ludoRoomCodeDisp').innerText = code;
-            document.getElementById('mpLudoScreen').classList.add('active');
-            document.getElementById('ludoPreGame').style.display = 'block';
-            document.getElementById('ludoInGame').style.display = 'none';
-        } else {
-            document.getElementById('mpWaiting').classList.add('active');
-        }
+            // ডাটাবেসে রুম তৈরি
+            database.ref('mpRooms/' + code).set(initialState);
+            
+            // স্ক্রিন আপডেট
+            document.getElementById('displayRoomCode').innerText = code;
+            document.querySelectorAll('.mp-screen').forEach(el => el.classList.remove('active'));
+            
+            if(window.activeMpGame === 'ludogoti') {
+                document.getElementById('ludoRoomCodeDisp').innerText = code;
+                document.getElementById('mpLudoScreen').classList.add('active');
+                document.getElementById('ludoPreGame').style.display = 'block';
+                document.getElementById('ludoInGame').style.display = 'none';
+            } else {
+                document.getElementById('mpWaiting').classList.add('active');
+            }
 
-        // রিয়েল-টাইম লিসেনার চালু
-        database.ref('mpRooms/' + code).on('value', window.handleRoomUpdates);
+            // নির্দিষ্ট এই রুমটির জন্যই রিয়েল-টাইম লিসেনার চালু করা হলো
+            database.ref('mpRooms/' + code).on('value', window.handleRoomUpdates);
+        });
     };
 
     // ২. Unified Room Joiner (সব গেমের জন্য একটাই জয়েন ফাংশন)
@@ -3342,18 +3375,36 @@ setTimeout(() => {
             return;
         }
 
-        // অন্যান্য সব গেমের আপডেট লিসেনার
-        if(data.status === 'playing') {
-            if(data.game === 'tictactoe' && typeof renderTicTacToe === 'function') renderTicTacToe(data);
-            if(data.game === 'rps' && typeof renderRpsPlay === 'function') renderRpsPlay(data);
-            if(data.game === 'friendfind' && typeof renderFriendFind === 'function') renderFriendFind(data);
-            if(data.game === 'evenodd' && typeof renderEvenOdd === 'function') renderEvenOdd(data);
-            if(data.game === 'mptoss' && typeof renderMpToss === 'function') renderMpToss(data);
+// অন্যান্য সব গেমের আপডেট লিসেনার
+if(data.status === 'playing') {
+    if(data.game === 'tictactoe' && typeof window.renderTicTacToe === 'function') window.renderTicTacToe(data);
+    if(data.game === 'rps' && typeof window.renderRpsPlay === 'function') window.renderRpsPlay(data);
+    if(data.game === 'friendfind' && typeof window.renderFriendFind === 'function') window.renderFriendFind(data);
+    if(data.game === 'evenodd' && typeof window.renderEvenOdd === 'function') window.renderEvenOdd(data);
+    if(data.game === 'mptoss' && typeof window.renderMpToss === 'function') window.renderMpToss(data);
+}
+
+
+    // ৪. Cancel Room & Remove Listeners (বাগ-ফ্রি করার জন্য লিসেনার ক্লিনআপ)
+    window.cancelRoom = function() {
+        if(window.currentMpRoom) {
+            // অন্য গেমে যাতে ল্যাগ না করে তাই লিসেনার বন্ধ করা হচ্ছে
+            database.ref('mpRooms/' + window.currentMpRoom).off('value', window.handleRoomUpdates); 
+            
+            if(window.isHost) {
+                database.ref('mpRooms/' + window.currentMpRoom).remove();
+            } else {
+                database.ref('mpRooms/' + window.currentMpRoom).update({ status: 'cancelled' });
+            }
         }
+        window.currentMpRoom = null;
+        window.activeMpGame = null;
+        document.querySelectorAll('.mp-screen').forEach(el => el.classList.remove('active'));
     };
 
     console.log("✅ Master Multiplayer Router Loaded Successfully!");
-}, 6000); // সবার শেষে রান করার জন্য সময় একটু বাড়িয়ে দেওয়া হয়েছে
+}, 6000);
+
 </script>
   <script>
 setTimeout(() => {
@@ -3361,7 +3412,7 @@ setTimeout(() => {
     const lockStyle = document.createElement('style');
     lockStyle.innerHTML = `
         #dailyLockOverlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: radial-gradient(circle at center, #2a0808 0%, #050505 100%); z-index: 999999999; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
-        .lock-box { background: rgba(0,0,0,0.85); border: 2px solid #ff1f44; border-radius: 20px; padding: 40px 20px; max-width: 400px; width: 100%; text-align: center; box-shadow: 0 0 50px rgba(255, 31, 68, 0.3); backdrop-filter: blur(10px); }
+        .lock-box { background: rgba(0,0,0,0.85); border: 2px solid #ff1f44; border-radius: 20px; padding: 40px 20px; max-width: 400px; width: 100%; text-align: center; box-shadow: 0 0 50px rgba(255, 31, 68, 0.3); background: rgba(0,0,0,0.8); }
         .lock-icon { font-size: 60px; margin-bottom: 15px; animation: pulseLock 2s infinite; }
         .lock-box h2 { color: #ff1f44; font-size: 24px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; }
         .lock-box p { color: #ccc; font-size: 14px; line-height: 1.5; margin-bottom: 25px; }
@@ -3374,7 +3425,7 @@ setTimeout(() => {
             <div class="lock-box">
                 <div class="lock-icon">🛑</div>
                 <h2>Daily Limit Reached!</h2>
-                <p>আপনি আজকের জন্য সর্বোচ্চ <strong>১০,০০০</strong> কয়েন জেতার লিমিট পার করেছেন।<br><br>রাত ১২:০০ টার পর আপনার অ্যাকাউন্টটি অটোমেটিক আনলক হয়ে যাবে।</p>
+                <p>আপনি আজকের জন্য সর্বোচ্চ <strong>১,০০,০০০</strong> কয়েন জেতার লিমিট পার করেছেন।<br><br>রাত ১২:০০ টার পর আপনার অ্যাকাউন্টটি অটোমেটিক আনলক হয়ে যাবে।</p>
                 <button onclick="auth.signOut().then(() => location.reload())" style="background: linear-gradient(135deg, #ff1f44, #c0392b); color: #fff; padding: 12px 30px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%;">লগ আউট করুন</button>
             </div>
         </div>
@@ -3414,9 +3465,9 @@ setTimeout(() => {
             userRef.update({
                 todayEarned: newTotal,
                 lastPlayDate: today,
-                dailyLocked: newTotal >= 10000 // ১০ হাজার বা তার বেশি হলে লক true হবে
+                dailyLocked: newTotal >= 100000 // ১০ হাজার বা তার বেশি হলে লক true হবে
             }).then(() => {
-                if (newTotal >= 10000) {
+                if (newTotal >= 100000) {
                     showDailyLock();
                 }
             });
@@ -3458,5 +3509,2685 @@ setTimeout(() => {
 
 }, 6500); // পেজের অন্যান্য সব স্ক্রিপ্ট লোড হওয়ার পর এটি রান করবে
 </script>
+    <!-- ========================================== -->
+    <!-- 6-SECOND PREMIUM STARTUP LOADER -->
+    <!-- ========================================== -->
+    <style>
+        #premiumStartLoader {
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100vw; height: 100vh;
+            background: linear-gradient(135deg, #0a0800 0%, #050505 100%);
+            z-index: 9999999999; /* সবকিছুর ওপরে থাকবে */
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.6s ease-in-out;
+        }
+        
+        /* মেইন অ্যাপ টাইটেল অ্যানিমেশন */
+        .loader-brand {
+            font-size: 40px; font-weight: 900; letter-spacing: 5px;
+            background: linear-gradient(to right, #fff, #ffd700, #ffeb73, #fff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-transform: uppercase; margin-bottom: 5px;
+            text-shadow: 0 0 20px rgba(255,215,0,0.4);
+            opacity: 0;
+            animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        
+        /* প্লে মোর, উইন মোর - সাবটাইটেল অ্যানিমেশন */
+        .loader-subtitle {
+            font-size: 14px; color: #ffd700; letter-spacing: 3px; 
+            text-transform: uppercase; font-weight: 600;
+            opacity: 0; transform: translateY(20px);
+            animation: slideUpFade 1s ease forwards 0.5s; /* আধা সেকেন্ড পর আসবে */
+            margin-bottom: 40px;
+        }
+
+        /* প্রগ্রেস বার ডিজাইন */
+        .loader-progress-container {
+            width: 70%; max-width: 300px;
+            text-align: center;
+            opacity: 0;
+            animation: fadeInProg 1s ease forwards 1s; /* ১ সেকেন্ড পর বার আসবে */
+        }
+        .loader-progress-bg {
+            width: 100%; height: 6px; background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px; overflow: hidden; border: 1px solid rgba(255, 215, 0, 0.2);
+            position: relative;
+        }
+        .loader-progress-fill {
+            height: 100%; width: 0%;
+            background: linear-gradient(90deg, #d4af37, #ffd700, #fff);
+            border-radius: 10px; box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+        }
+        .loader-percent {
+            color: #ffd700; font-size: 14px; font-weight: 700; 
+            margin-top: 10px; font-family: monospace; letter-spacing: 1px;
+        }
+
+        /* অ্যানিমেশন কিফ্রেম */
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes slideUpFade {
+            0% { transform: translateY(20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes fadeInProg {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+    </style>
+
+    <div id="premiumStartLoader">
+        <div class="loader-brand">STAR GAME</div>
+        <div class="loader-subtitle">Play More, Win More</div>
+        
+        <div class="loader-progress-container">
+            <div class="loader-progress-bg">
+                <div class="loader-progress-fill" id="loaderFill"></div>
+            </div>
+            <div class="loader-percent" id="loaderPercent">0%</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loader = document.getElementById('premiumStartLoader');
+            const fill = document.getElementById('loaderFill');
+            const percentText = document.getElementById('loaderPercent');
+            
+            let progress = 0;
+            const totalDuration = 6000; // ঠিক ৬ সেকেন্ড (6000ms)
+            const intervalTime = 60; // প্রতি ৬০ মিলি-সেকেন্ডে আপডেট হবে
+            const step = 100 / (totalDuration / intervalTime); // ক্যালকুলেশন
+
+            let progInterval = setInterval(() => {
+                progress += step;
+                
+                if(progress >= 100) {
+                    progress = 100;
+                    clearInterval(progInterval);
+                    
+                    // ১০০% হওয়ার পর স্ক্রিনটি সুন্দরভাবে রিমুভ হবে
+                    setTimeout(() => {
+                        if (loader) {
+                            loader.style.opacity = '0'; // ফেড আউট
+                            setTimeout(() => {
+                                loader.remove();
+                            }, 600); // ট্রানজিশন শেষ হওয়ার পর ডিলিট
+                        }
+                    }, 200); 
+                }
+                
+                // উইডথ এবং পারসেন্টেজ আপডেট
+                if(fill) fill.style.width = progress + '%';
+                if(percentText) percentText.innerText = Math.floor(progress) + '%';
+                
+            }, intervalTime);
+        });
+    </script>
+    <!-- ========================================== -->
+    <!-- 🌟 PREMIUM DASHBOARD ADMIN PANEL (SCROLL FIXED) 🌟 -->
+    <!-- ========================================== -->
+    <style>
+        /* স্ক্রলিং এবং টাচ ফিক্স (ডানে-বামে স্লাইডের জন্য) */
+        #adminModal * { touch-action: auto !important; } 
+
+        /* ওভাররাইড সিএসএস (নতুন ড্যাশবোর্ড ডিজাইন) */
+        #adminModal .modal-content {
+            background: linear-gradient(145deg, #121218, #0a0a0d) !important;
+            border: 1px solid #ffd700 !important;
+            border-radius: 15px !important;
+            padding: 20px 15px !important; /* প্যাডিং কমানো হয়েছে */
+            width: 95% !important;
+            max-width: 900px !important;
+            max-height: 90vh !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch !important; /* স্মুথ ভার্টিকাল স্ক্রল */
+            box-shadow: 0 15px 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(255,215,0,0.1) !important;
+        }
+        #adminModal .modal-content::-webkit-scrollbar { width: 4px; }
+        #adminModal .modal-content::-webkit-scrollbar-thumb { background: #ffd700; border-radius: 10px; }
+
+        /* ড্যাশবোর্ড মেনু গ্রিড */
+        #adminMenuOptions { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); 
+            gap: 12px; margin-bottom: 20px; margin-top: 15px;
+        }
+        .admin-menu-card {
+            background: linear-gradient(145deg, #1e1e24, #111115);
+            border: 1px solid rgba(255,215,0,0.2);
+            border-radius: 12px; padding: 20px 10px;
+            text-align: center; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.5);
+        }
+        .admin-menu-card:hover { 
+            transform: translateY(-3px); border-color: #ffd700; 
+            background: rgba(255,215,0,0.05);
+        }
+        .admin-menu-icon { font-size: 30px; margin-bottom: 8px; display: block; }
+        .admin-menu-title { color: #ffd700; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+        
+        /* সাব-পেজ ডিজাইন */
+        .admin-sub-page { display: none; animation: slideInPage 0.3s ease-out; }
+        @keyframes slideInPage { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        
+        .back-to-menu-btn {
+            background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2);
+            padding: 8px 15px; border-radius: 6px; cursor: pointer;
+            margin-bottom: 15px; font-size: 12px; font-weight: bold;
+            display: inline-flex; align-items: center; gap: 5px; transition: 0.2s;
+        }
+        .back-to-menu-btn:hover { background: rgba(255,215,0,0.2); border-color: #ffd700; color: #ffd700; }
+
+        /* প্যানেল ও টেবিল সিএসএস */
+        #adminModal .admin-panel {
+            background: rgba(0,0,0,0.4); border: 1px solid rgba(255,215,0,0.15); 
+            border-radius: 12px; padding: 15px; margin-bottom: 15px;
+        }
+        #adminModal .admin-panel h4 {
+            color: #ffd700; font-size: 16px; margin-bottom: 15px; 
+            display: flex; align-items: center; gap: 8px; 
+            border-bottom: 1px solid rgba(255,215,0,0.1); padding-bottom: 8px;
+        }
+        #adminModal .table-responsive {
+            width: 100%; overflow-x: auto; border-radius: 8px; 
+            border: 1px solid rgba(255,255,255,0.05); 
+            -webkit-overflow-scrolling: touch !important; /* স্মুথ হরাইজন্টাল স্ক্রল */
+        }
+        #adminModal .table-responsive::-webkit-scrollbar { height: 5px; }
+        #adminModal .table-responsive::-webkit-scrollbar-thumb { background: rgba(255,215,0,0.5); border-radius: 10px; }
+        
+        #adminModal .admin-table {
+            width: 100%; min-width: 500px !important; border-collapse: collapse; text-align: left; 
+        }
+        #adminModal .admin-table th {
+            background: rgba(255,215,0,0.1); color: #ffd700; padding: 10px; 
+            font-size: 11px; font-weight: 700; text-transform: uppercase; 
+            white-space: nowrap; border: none !important;
+        }
+        #adminModal .admin-table td {
+            padding: 10px; color: #ddd; border-bottom: 1px solid rgba(255,255,255,0.05); 
+            font-size: 12px; vertical-align: middle; white-space: nowrap; border: none !important;
+        }
+        #adminModal .admin-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+        
+        #adminModal .admin-btn {
+            padding: 6px 10px; border-radius: 4px; font-size: 11px; font-weight: 700; 
+            cursor: pointer; border: none; transition: 0.2s; color: #fff; margin-right: 4px;
+        }
+        #adminModal .admin-btn:hover { transform: translateY(-2px); }
+        #adminModal .admin-btn.approve { background: #2ecc71; }
+        #adminModal .admin-btn.reject { background: #e74c3c; }
+        #adminModal .admin-btn.ban { background: #8e44ad; }
+        
+        #adminModal .danger-zone { 
+            background: rgba(231,76,60,0.05); border: 1px solid rgba(231,76,60,0.3); 
+            padding: 15px; border-radius: 10px; text-align: center; margin-top: 15px;
+        }
+    </style>
+
+    <script>
+        // ড্যাশবোর্ড নেভিগেশন কন্ট্রোলার
+        window.openAdminMenu = function() {
+            document.querySelectorAll('.admin-sub-page').forEach(el => el.style.display = 'none');
+            const menu = document.getElementById('adminMainMenu');
+            if(menu) {
+                menu.style.display = 'block';
+                menu.style.animation = 'slideInPage 0.3s ease-out';
+            }
+        };
+
+        window.openAdminSub = function(id) {
+            const menu = document.getElementById('adminMainMenu');
+            if(menu) menu.style.display = 'none';
+            document.querySelectorAll('.admin-sub-page').forEach(el => el.style.display = 'none');
+            const subPage = document.getElementById('adminSub_' + id);
+            if(subPage) subPage.style.display = 'block';
+        };
+
+        // পেজ লোড হওয়ার সাথে সাথে পুরোনো অ্যাডমিন প্যানেল রিপ্লেস করে দেবে
+        document.addEventListener('DOMContentLoaded', () => {
+            const oldAdminPanel = document.getElementById('adminModal');
+            if (oldAdminPanel) {
+                oldAdminPanel.outerHTML = `
+                <div class="modal-overlay" id="adminModal" style="display:none; justify-content:center; align-items:flex-start; padding-top:20px;">
+                    <div class="modal-content">
+                        
+                        <!-- 🏠 MAIN DASHBOARD MENU -->
+                        <div id="adminMainMenu">
+                            <h3 style="color:#ffd700; font-size:20px; margin-bottom: 5px; letter-spacing: 1px; text-align:center;">
+                                <span style="font-size: 24px; display:block; margin-bottom:5px;">👑</span> Master Admin
+                            </h3>
+                            <p style="color:#aaa; text-align:center; font-size:11px; margin-bottom:20px;">Select an option to manage</p>
+                            
+                            <div id="adminMenuOptions">
+                                <div class="admin-menu-card" onclick="openAdminSub('users')">
+                                    <span class="admin-menu-icon">👥</span>
+                                    <span class="admin-menu-title">Users List</span>
+                                </div>
+                                <div class="admin-menu-card" onclick="openAdminSub('withdraw')">
+                                    <span class="admin-menu-icon">💸</span>
+                                    <span class="admin-menu-title">Withdrawals</span>
+                                </div>
+                                <div class="admin-menu-card" onclick="openAdminSub('coinadd')">
+                                    <span class="admin-menu-icon">🪙</span>
+                                    <span class="admin-menu-title">Recharges</span>
+                                </div>
+                                <div class="admin-menu-card" onclick="openAdminSub('settings')">
+                                    <span class="admin-menu-icon">⚙️</span>
+                                    <span class="admin-menu-title">Settings</span>
+                                </div>
+                            </div>
+
+                            <button class="close-btn" style="background: #333; padding: 12px; font-size: 13px; border-radius: 8px; font-weight: bold; transition: 0.3s; width: 100%; border: none; color: #fff; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.3);" onclick="closeModals()">✕ Close Panel</button>
+                        </div>
+
+                        <!-- 📄 SUB-PAGE: USERS -->
+                        <div id="adminSub_users" class="admin-sub-page">
+                            <button class="back-to-menu-btn" onclick="openAdminMenu()">⬅ Back to Menu</button>
+                            <div class="admin-panel">
+                                <h4>📋 Users List</h4>
+                                <div class="table-responsive">
+                                    <table class="admin-table" id="userListTable">
+                                        <thead><tr><th>User Name</th><th>Coins 🪙</th><th>Money 💵</th><th>Actions ⚙️</th></tr></thead>
+                                        <tbody id="userListBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 📄 SUB-PAGE: WITHDRAWALS -->
+                        <div id="adminSub_withdraw" class="admin-sub-page">
+                            <button class="back-to-menu-btn" onclick="openAdminMenu()">⬅ Back to Menu</button>
+                            <div class="admin-panel">
+                                <h4>💸 Pending Withdrawals</h4>
+                                <div class="table-responsive">
+                                    <table class="admin-table">
+                                        <thead><tr><th>User Name</th><th>UPI ID</th><th>Amount (₹)</th><th>Actions ⚙️</th></tr></thead>
+                                        <tbody id="adminWithdrawTable"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 📄 SUB-PAGE: RECHARGES -->
+                        <div id="adminSub_coinadd" class="admin-sub-page">
+                            <button class="back-to-menu-btn" onclick="openAdminMenu()">⬅ Back to Menu</button>
+                            <div class="admin-panel">
+                                <h4>🪙 Pending Recharges</h4>
+                                <div class="table-responsive">
+                                    <table class="admin-table">
+                                        <thead><tr><th>User Name</th><th>UTR Number</th><th>Coins Add</th><th>Actions ⚙️</th></tr></thead>
+                                        <tbody id="adminCoinAddTable"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 📄 SUB-PAGE: SETTINGS & DANGER ZONE -->
+                        <div id="adminSub_settings" class="admin-sub-page">
+                            <button class="back-to-menu-btn" onclick="openAdminMenu()">⬅ Back to Menu</button>
+                            <div class="admin-panel">
+                                <h4>⚙️ Global Settings</h4>
+                                <div style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255,215,0,0.2); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                                    <label style="color: #ffd700; font-size: 12px; font-weight: 700; display: block; margin-bottom: 8px;">🎯 Win Rate Control</label>
+                                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                        <input type="range" id="winRateSlider" min="10" max="90" value="50" step="5" style="flex: 1; accent-color: #ffd700;">
+                                        <span id="winRateDisplay" style="color: #fff; font-size: 15px; font-weight: bold; min-width: 40px;">50%</span>
+                                    </div>
+                                    <div style="text-align: left; margin-bottom: 12px;">
+                                        <span id="winRateStatus" style="font-size: 10px; padding: 4px 8px; background: rgba(243,156,18,0.2); color: #f39c12; border-radius: 20px;">🟡 Medium</span>
+                                    </div>
+                                    <div style="display: flex; gap: 8px;">
+                                        <button onclick="applyWinRate()" style="flex:1; padding:10px; background:linear-gradient(135deg, #2ecc71, #27ae60); color:#fff; border:none; border-radius:6px; cursor:pointer; font-size: 11px; font-weight: bold;">💾 Apply</button>
+                                        <button onclick="resetWinRate()" style="flex:1; padding:10px; background:linear-gradient(135deg, #e67e22, #d35400); color:#fff; border:none; border-radius:6px; cursor:pointer; font-size: 11px; font-weight: bold;">🔄 Reset</button>
+                                    </div>
+                                </div>
+                                
+                                <button onclick="forceRefreshLeaderboard()" style="width:100%; padding:12px; background:linear-gradient(135deg, #3498db, #2980b9); color:#fff; border:none; border-radius:6px; cursor:pointer; font-size: 12px; font-weight: bold; margin-bottom: 10px;">🔄 Refresh Leaderboard</button>
+                            </div>
+
+                            <div class="danger-zone">
+                                <h4 style="color: #ff4444; font-size: 14px; margin-bottom: 5px;">⚠️ Danger Zone</h4>
+                                <p style="color: #ff8888; font-size: 11px; margin-bottom: 12px;">Delete all app & Firebase data. This action cannot be undone.</p>
+                                <button onclick="forceDeleteAllData()" style="width:100%; padding:12px; background:linear-gradient(135deg, #c0392b, #a10000); color:#fff; border:none; border-radius:6px; cursor:pointer; font-size: 12px; font-weight: 900;">🗑️ Format All Data</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>`;
+            }
+        });
+    </script>
+    <script>
+setTimeout(() => {
+    // ১. বটম নেভিগেশন, প্রোফাইল, কামিং সুন এবং মেম্বারশিপের CSS
+    const navStyle = document.createElement('style');
+    navStyle.innerHTML = `
+        /* Bottom Navigation Bar - Initially Hidden */
+        #bottomNavBar { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(10, 10, 15, 0.95); backdrop-filter: blur(10px); border-top: 1px solid rgba(255,215,0,0.2); justify-content: space-around; align-items: center; height: 65px; z-index: 90; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #888; font-size: 11px; font-weight: 600; cursor: pointer; transition: 0.3s; flex: 1; padding: 5px 0; }
+        .nav-item.active { color: #ffd700; text-shadow: 0 0 10px rgba(255,215,0,0.5); transform: translateY(-3px); }
+        .nav-icon { font-size: 22px; margin-bottom: 3px; transition: 0.3s; }
+        .nav-item:active .nav-icon { transform: scale(0.8); }
+
+        /* Profile Screen */
+        #profileScreen { display: none; padding: 30px 20px 100px; min-height: 100vh; background: linear-gradient(135deg, #050505, #1a1500, #332600); position: relative; z-index: 10; animation: fadeIn 0.3s ease; }
+        .prof-card { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,215,0,0.3); border-radius: 15px; padding: 30px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .prof-avatar { width: 90px; height: 90px; background: linear-gradient(135deg, #ffd700, #f0a500); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 45px; font-weight: 900; color: #111; margin: 0 auto 15px; border: 4px solid rgba(255,215,0,0.3); }
+
+        /* Coming Soon Screen */
+        #comingSoonScreen { display: none; flex-direction: column; justify-content: center; align-items: center; padding: 20px 20px 100px; min-height: 100vh; background: linear-gradient(135deg, #050505, #001a33, #000); position: relative; z-index: 10; text-align: center; animation: fadeIn 0.3s ease; }
+        .cs-icon { font-size: 80px; margin-bottom: 20px; animation: bounceFloat 2s infinite ease-in-out; }
+        @keyframes bounceFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+
+        /* Membership Modal */
+        .daily-claim-box { background: linear-gradient(145deg, rgba(46, 204, 113, 0.15), rgba(0,0,0,0.5)); border: 1px solid #2ecc71; border-radius: 12px; padding: 20px; margin-bottom: 20px; text-align: center; box-shadow: 0 5px 15px rgba(46,204,113,0.2); }
+        .mem-card { background: linear-gradient(145deg, #1a1a24, #0a0a0d); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 18px; margin-bottom: 15px; text-align: left; display: flex; flex-direction: column; position: relative; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .mem-card h4 { margin-bottom: 8px; font-size: 20px; text-transform: uppercase; font-weight: 900; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+        .mem-price { position: absolute; top: 15px; right: 15px; font-size: 16px; font-weight: 900; background: rgba(0,0,0,0.6); padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); }
+        .mem-details { font-size: 13px; color: #ccc; margin-bottom: 12px; line-height: 1.6; }
+        .mem-details b { color: #fff; font-size: 14px; }
+        .mem-buy-btn { padding: 10px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; width: 100%; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+        .mem-buy-btn:active { transform: scale(0.95); }
+
+        /* Theme Colors for Membership */
+        .mem-bronze { border-color: #cd7f32; } .mem-bronze h4 { color: #cd7f32; } .mem-bronze .mem-buy-btn { background: linear-gradient(135deg, #cd7f32, #8B4513); color: white; }
+        .mem-silver { border-color: #c0c0c0; } .mem-silver h4 { color: #c0c0c0; } .mem-silver .mem-buy-btn { background: linear-gradient(135deg, #bdc3c7, #2c3e50); color: white; }
+        .mem-gold { border-color: #ffd700; } .mem-gold h4 { color: #ffd700; } .mem-gold .mem-buy-btn { background: linear-gradient(135deg, #f1c40f, #f39c12); color: #111; }
+        .mem-diamond { border-color: #00ffff; } .mem-diamond h4 { color: #00ffff; } .mem-diamond .mem-buy-btn { background: linear-gradient(135deg, #00ffff, #008080); color: #111; }
+    `;
+    document.head.appendChild(navStyle);
+
+    // ২. HTML UI যুক্ত করা (বটম নেভ, প্রোফাইল, কামিং সুন এবং মেম্বারশিপ)
+    document.body.insertAdjacentHTML('beforeend', `
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav" id="bottomNavBar">
+            <div class="nav-item active" id="nav_home" onclick="switchNav('home')">
+                <div class="nav-icon">🏠</div><span>Home</span>
+            </div>
+            <div class="nav-item" id="nav_tournament" onclick="switchNav('tournament')">
+                <div class="nav-icon">🏆</div><span>Tournament</span>
+            </div>
+            <div class="nav-item" id="nav_buycoin" onclick="switchNav('buycoin')">
+                <div class="nav-icon">🪙</div><span>Buy Coin</span>
+            </div>
+            <div class="nav-item" id="nav_membership" onclick="switchNav('membership')">
+                <div class="nav-icon">👑</div><span>Membership</span>
+            </div>
+            <div class="nav-item" id="nav_profile" onclick="switchNav('profile')">
+                <div class="nav-icon">👤</div><span>Profile</span>
+            </div>
+        </div>
+
+        <!-- Profile Screen -->
+        <div id="profileScreen">
+            <h2 style="text-align:center; color:#ffd700; margin-bottom:25px; text-transform:uppercase; letter-spacing:2px;">My Profile</h2>
+            <div class="prof-card">
+                <div class="prof-avatar" id="pfAvatar">U</div>
+                <h3 id="pfName" style="font-size: 26px; color: #fff; margin-bottom: 5px;">User</h3>
+                <p id="pfEmail" style="color: #aaa; font-size: 13px; margin-bottom: 25px;">user@tempuser.com</p>
+                
+                <div style="display:flex; justify-content:space-around; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin-bottom: 25px; border: 1px solid rgba(255,215,0,0.1);">
+                    <div>
+                        <div style="font-size:12px; color:#aaa; text-transform:uppercase; margin-bottom:5px;">Balance (Coins)</div>
+                        <div style="font-size:22px; font-weight:900; color:#ffd700;" id="pfCoins">0 🪙</div>
+                    </div>
+                    <div style="width:1px; background:rgba(255,255,255,0.1);"></div>
+                    <div>
+                        <div style="font-size:12px; color:#aaa; text-transform:uppercase; margin-bottom:5px;">Wallet (Money)</div>
+                        <div style="font-size:22px; font-weight:900; color:#2ecc71;" id="pfMoney">₹0</div>
+                    </div>
+                </div>
+                
+                <button onclick="logoutUser()" style="width:100%; padding:15px; background:linear-gradient(135deg, #e74c3c, #c0392b); color:#fff; border-radius:10px; font-weight:bold; font-size:16px; border:none; box-shadow:0 5px 15px rgba(231,76,60,0.4);">🚪 Logout Account</button>
+            </div>
+        </div>
+
+        <!-- Coming Soon Screen (For Tournament) -->
+        <div id="comingSoonScreen">
+            <button class="back-btn" onclick="switchNav('home')" style="position:absolute; top:20px; left:20px; z-index:20;">⬅ Back to Home</button>
+            <div class="cs-icon">🚧</div>
+            <h2 style="color:#ffd700; font-size: 30px; margin-bottom: 10px; text-transform:uppercase; letter-spacing:2px;">Coming Soon</h2>
+            <p style="color:#aaa; font-size:15px; max-width: 300px; line-height: 1.5;">Great things are on the way! We are working hard to bring this feature to you soon.</p>
+        </div>
+
+        <!-- Membership Modal -->
+        <div class="modal-overlay" id="membershipModal" style="z-index: 250;">
+            <div class="modal-content" style="max-height: 85vh; overflow-y: auto; padding: 20px; width: 95%; max-width: 450px;">
+                <h3 style="color:#ffd700; margin-bottom: 15px; font-size: 24px;">👑 VIP Memberships</h3>
+                
+                <!-- Daily Login Claim Box -->
+                <div class="daily-claim-box">
+                    <h4 style="color:#2ecc71; margin-bottom:8px; font-size: 18px;">🎁 Daily Login Reward</h4>
+                    <p style="font-size:13px; color:#aaa; margin-bottom:12px; line-height:1.4;" id="memStatusText">Loading membership status...</p>
+                    <button onclick="claimDailyReward()" style="background:linear-gradient(135deg, #2ecc71, #27ae60); color:#fff; border:none; padding:12px 20px; border-radius:8px; font-weight:900; cursor:pointer; width:100%; font-size:15px; box-shadow: 0 4px 10px rgba(46,204,113,0.3);" id="claimDailyBtn">Claim Today's Reward</button>
+                </div>
+
+                <!-- Pack: Bronze -->
+                <div class="mem-card mem-bronze">
+                    <div class="mem-price">₹50</div>
+                    <h4>🥉 Bronze</h4>
+                    <div class="mem-details">Total Profit: <b>4,100 Coins</b><br>Instant Bonus: 2,000 Coins<br>Daily Login: 300 Coins (7 Days)</div>
+                    <button class="mem-buy-btn" onclick="buyMembership('bronze')">Purchase Bronze</button>
+                </div>
+
+                <!-- Pack: Silver -->
+                <div class="mem-card mem-silver">
+                    <div class="mem-price">₹100</div>
+                    <h4>🥈 Silver</h4>
+                    <div class="mem-details">Total Profit: <b>8,200 Coins</b><br>Instant Bonus: 4,000 Coins<br>Daily Login: 700 Coins (7 Days)</div>
+                    <button class="mem-buy-btn" onclick="buyMembership('silver')">Purchase Silver</button>
+                </div>
+
+                <!-- Pack: Gold -->
+                <div class="mem-card mem-gold">
+                    <div class="mem-price">₹200</div>
+                    <h4>🥇 Gold</h4>
+                    <div class="mem-details">Total Profit: <b>16,400 Coins</b><br>Instant Bonus: 8,000 Coins<br>Daily Login: 1,400 Coins (7 Days)</div>
+                    <button class="mem-buy-btn" onclick="buyMembership('gold')">Purchase Gold</button>
+                </div>
+
+                <!-- Pack: Diamond -->
+                <div class="mem-card mem-diamond">
+                    <div class="mem-price">₹400</div>
+                    <h4>💎 Diamond</h4>
+                    <div class="mem-details">Total Profit: <b>32,800 Coins</b><br>Instant Bonus: 10,000 Coins<br>Daily Login: 760 Coins (30 Days)</div>
+                    <button class="mem-buy-btn" onclick="buyMembership('diamond')">Purchase Diamond</button>
+                </div>
+                
+                <button class="close-btn" style="margin-top: 15px;" onclick="closeModals()">Close</button>
+            </div>
+        </div>
+    `);
+
+    // ৩. নেভিগেশন লজিক
+    window.switchNav = function(tab) {
+        // UI Reset
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        const activeTab = document.getElementById('nav_' + tab);
+        if(activeTab) activeTab.classList.add('active');
+
+        // Close everything initially
+        document.getElementById('homeScreen').style.display = 'none';
+        document.getElementById('profileScreen').style.display = 'none';
+        document.getElementById('comingSoonScreen').style.display = 'none';
+        if(typeof closeModals === 'function') closeModals();
+
+        // Handle specific tabs
+        if(tab === 'home') {
+            document.getElementById('homeScreen').style.display = 'block';
+        } 
+        else if(tab === 'profile') {
+            document.getElementById('profileScreen').style.display = 'block';
+            updateProfileUI(); // প্রোফাইলের ডেটা আপডেট করা
+        }
+        else if(tab === 'buycoin') {
+            document.getElementById('homeScreen').style.display = 'block'; // ব্যাকগ্রাউন্ডে হোম থাকবে
+            document.getElementById('addCoinsModal').style.display = 'flex';
+        }
+        else if(tab === 'tournament') {
+            document.getElementById('comingSoonScreen').style.display = 'flex'; // কামিং সুন পেজ শো করবে
+        }
+        else if(tab === 'membership') {
+            document.getElementById('homeScreen').style.display = 'block';
+            document.getElementById('membershipModal').style.display = 'flex';
+            checkMembershipStatus(); // ডাটাবেস থেকে বর্তমান মেম্বারশিপ চেক করা
+        }
+    };
+
+    // Profile UI Update Function
+    function updateProfileUI() {
+        if(currentUser) {
+            document.getElementById('pfName').innerText = currentUser.displayName || 'User';
+            document.getElementById('pfAvatar').innerText = (currentUser.displayName || 'U').charAt(0).toUpperCase();
+            document.getElementById('pfEmail').innerText = currentUser.displayName + '@tempuser.com';
+            document.getElementById('pfCoins').innerText = Math.floor(coins) + ' 🪙';
+            document.getElementById('pfMoney').innerText = '₹' + Math.floor(money);
+        }
+    }
+    
+    // Main UI আপডেটের সময় Profile-ও আপডেট হবে
+    const originalUpdateUI = window.updateUI;
+    window.updateUI = function() {
+        if (originalUpdateUI) originalUpdateUI();
+        updateProfileUI(); 
+    };
+
+    // ৪. মেম্বারশিপ লজিক (কিনলে টাকা কাটা হবে এবং কয়েন দেওয়া হবে)
+    const memPlans = {
+        bronze: { name: 'Bronze Pack', price: 50, instant: 2000, daily: 300, days: 7 },
+        silver: { name: 'Silver Pack', price: 100, instant: 4000, daily: 700, days: 7 },
+        gold: { name: 'Gold Pack', price: 200, instant: 8000, daily: 1400, days: 7 },
+        diamond: { name: 'Diamond Pack', price: 400, instant: 10000, daily: 760, days: 30 }
+    };
+
+    window.buyMembership = function(planKey) {
+        if (!currentUser) { showToast('Please login first!', 'warning'); return; }
+        const plan = memPlans[planKey];
+        
+        // অ্যাপের লজিক অনুযায়ী Money (₹) থেকে টাকা কাটা হবে
+        if (money < plan.price) {
+            showToast(`⚠️ Insufficient Money! You need ₹${plan.price} to buy ${plan.name}.`, 'error');
+            return;
+        }
+
+        // টাকা কাটা এবং ইনস্ট্যান্ট কয়েন অ্যাড করা
+        money -= plan.price;
+        coins += plan.instant;
+        updateUI();
+        
+        // ডাটাবেসে মেম্বারশিপ সেভ করা
+        const userRef = database.ref('users/' + currentUser.uid);
+        userRef.update({
+            money: money,
+            coins: coins,
+            membership: {
+                plan: plan.name,
+                dailyReward: plan.daily,
+                daysLeft: plan.days,
+                lastClaimDate: '' // নতুন কেনা হয়েছে, তাই এখনো ক্লাইম হয়নি
+            }
+        }).then(() => {
+            showToast(`✅ ${plan.name} Activated! ${plan.instant} coins added instantly.`, 'success');
+            if(typeof playSound === 'function') playSound('win');
+            checkMembershipStatus();
+        });
+    };
+
+    // ৫. ডেইলি লগইন রিওয়ার্ড ক্লাইম
+    window.checkMembershipStatus = function() {
+        if (!currentUser) return;
+        const today = new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' });
+        const userRef = database.ref('users/' + currentUser.uid);
+        
+        userRef.once('value').then(snap => {
+            const data = snap.val();
+            const btn = document.getElementById('claimDailyBtn');
+            const statusTxt = document.getElementById('memStatusText');
+            
+            if(data && data.membership && data.membership.daysLeft > 0) {
+                const mem = data.membership;
+                if(mem.lastClaimDate === today) {
+                    statusTxt.innerHTML = `<b style="color:#ffd700;">${mem.plan}</b> Active.<br>⏳ Today's reward already claimed. Come back tomorrow! (${mem.daysLeft} days left)`;
+                    btn.style.background = '#555';
+                    btn.innerText = 'Already Claimed';
+                    btn.disabled = true;
+                } else {
+                    statusTxt.innerHTML = `<b style="color:#ffd700;">${mem.plan}</b> Active.<br>🎁 You have <b>${mem.dailyReward} Coins</b> pending for today! (${mem.daysLeft} days left)`;
+                    btn.style.background = 'linear-gradient(135deg, #2ecc71, #27ae60)';
+                    btn.innerText = `Claim ${mem.dailyReward} Coins`;
+                    btn.disabled = false;
+                }
+            } else {
+                statusTxt.innerHTML = `You don't have any active membership.<br>Purchase a pack below to get daily rewards.`;
+                btn.style.background = '#555';
+                btn.innerText = 'No Active Membership';
+                btn.disabled = true;
+            }
+        });
+    };
+
+    window.claimDailyReward = function() {
+        if (!currentUser) return;
+        const today = new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' });
+        const userRef = database.ref('users/' + currentUser.uid);
+        
+        userRef.once('value').then(snap => {
+            const data = snap.val();
+            if(data && data.membership && data.membership.daysLeft > 0) {
+                if(data.membership.lastClaimDate !== today) {
+                    const reward = data.membership.dailyReward;
+                    const newDaysLeft = data.membership.daysLeft - 1;
+                    
+                    coins += reward; // ব্যালেন্সে কয়েন যোগ
+                    updateUI();
+                    
+                    userRef.update({
+                        coins: coins,
+                        'membership/daysLeft': newDaysLeft,
+                        'membership/lastClaimDate': today
+                    }).then(() => {
+                        showToast(`🎉 Successfully claimed ${reward} coins!`, 'success');
+                        if(typeof playSound === 'function') playSound('win');
+                        checkMembershipStatus();
+                    });
+                }
+            }
+        });
+    };
+
+    // ৬. মডাল বন্ধ করার সময় নেভিগেশন বার রিসেট করা
+    const oldCloseModals = window.closeModals;
+    window.closeModals = function() {
+        if(oldCloseModals) oldCloseModals();
+        const memModal = document.getElementById('membershipModal');
+        if(memModal) memModal.style.display = 'none';
+        
+        // যদি প্রোফাইল বা কামিং সুন পেজে না থাকি, তবে হোম সিলেক্টেড রাখবো
+        if(document.getElementById('profileScreen').style.display === 'none' && 
+           document.getElementById('comingSoonScreen').style.display === 'none') {
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            const navHome = document.getElementById('nav_home');
+            if(navHome) navHome.classList.add('active');
+        }
+    };
+
+    // =====================================
+    // ৭. লগইন স্ট্যাটাস অনুযায়ী নেভিগেশন বার হাইড/শো করা
+    // =====================================
+    const originalSetupUser = window.setupLoggedInUser;
+    window.setupLoggedInUser = function(user, username) {
+        if (originalSetupUser) originalSetupUser(user, username);
+        const navBar = document.getElementById('bottomNavBar');
+        if(navBar) navBar.style.display = 'flex'; // লগইন হলে নেভবার দেখাবে
+    };
+
+    const originalLogoutUser = window.logoutUser;
+    window.logoutUser = function() {
+        if (originalLogoutUser) originalLogoutUser();
+        const navBar = document.getElementById('bottomNavBar');
+        if(navBar) navBar.style.display = 'none'; // লগআউট হলে লুকাবে
+        
+        // লগআউট করার পর কোনো স্ক্রিন খোলা থাকলে সেটা বন্ধ করে লগইন পেজে আনা
+        document.getElementById('profileScreen').style.display = 'none';
+        document.getElementById('comingSoonScreen').style.display = 'none';
+    };
+
+    // পেজ রিলোড এর সময় যদি ইউজার অটোমেটিক লগইন থাকে, তাহলে নেভবার শো করাবে
+    if (window.currentUser) {
+        const navBar = document.getElementById('bottomNavBar');
+        if(navBar) navBar.style.display = 'flex';
+    }
+
+}, 200); // 200ms ডিলে দেওয়া হলো যাতে পেজের মূল লোডিংয়ে কোনো বাধা না পড়ে
+</script>
+<script>
+setTimeout(() => {
+    // ==========================================
+    // 👑 MEMBERSHIP PAYMENT MODAL UI 
+    // ==========================================
+    document.body.insertAdjacentHTML('beforeend', `
+        <div class="modal-overlay" id="memPaymentModal" style="z-index: 9999; display:none; justify-content:center; align-items:center;">
+            <div class="modal-content" style="max-width: 400px; padding: 25px; background: linear-gradient(145deg, #121218, #0a0a0d); border: 1px solid #ffd700; box-shadow: 0 10px 40px rgba(0,0,0,0.8);">
+                <h3 style="color:#ffd700; margin-bottom: 10px; font-size: 22px;">💳 Membership Payment</h3>
+                <p style="color:#aaa; font-size:12px; margin-bottom:20px; line-height: 1.5;">অনুগ্রহ করে নিচের UPI ID তে নির্দিষ্ট এমাউন্ট পেমেন্ট করে Transaction ID (UTR) দিন।</p>
+                
+                <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(255,215,0,0.3); margin-bottom: 20px;">
+                    <div style="font-size:11px; color:#aaa; text-transform:uppercase; margin-bottom:4px;">Pay To UPI ID:</div>
+                    <div style="font-size:18px; font-weight:bold; color:#2ecc71; user-select:all; letter-spacing: 1px;">8391921082@ibl</div>
+                    
+                    <div style="margin-top:15px; font-size:11px; color:#aaa; text-transform:uppercase; margin-bottom:4px;">Amount to Pay:</div>
+                    <div style="font-size:24px; font-weight:900; color:#ffd700;" id="memPayAmountDisp">₹0</div>
+                </div>
+                
+                <input type="number" id="memUtrInput" placeholder="12-Digit UTR Number" maxlength="12" style="width:100%; padding:14px; border-radius:8px; border:1px solid rgba(255,215,0,0.3); background:rgba(0,0,0,0.5); color:#fff; font-size:15px; margin-bottom:15px; text-align:center;">
+                
+                <button onclick="submitMemPayment()" style="width:100%; padding:14px; background:linear-gradient(135deg, #2ecc71, #27ae60); color:#fff; border:none; border-radius:8px; font-weight:bold; font-size:15px; margin-bottom:10px; cursor:pointer; box-shadow: 0 4px 15px rgba(46,204,113,0.3);">✅ Submit Verification</button>
+                <button class="close-btn" onclick="closeMemPaymentModal()" style="width:100%; padding:14px; border:none; border-radius:8px; font-size:14px; cursor:pointer;">Cancel</button>
+            </div>
+        </div>
+    `);
+
+    // ==========================================
+    // 🛠️ ADMIN PANEL NEW TABS INJECTION
+    // ==========================================
+    const adminMenuOptions = document.getElementById('adminMenuOptions');
+    if(adminMenuOptions) {
+        adminMenuOptions.insertAdjacentHTML('beforeend', `
+            <div class="admin-menu-card" onclick="openAdminSub('memberships')">
+                <span class="admin-menu-icon">👑</span>
+                <span class="admin-menu-title">Memberships</span>
+            </div>
+            <div class="admin-menu-card" onclick="openAdminSub('tournaments')">
+                <span class="admin-menu-icon">🏆</span>
+                <span class="admin-menu-title">Tournaments</span>
+            </div>
+        `);
+    }
+
+    const adminModalContent = document.querySelector('#adminModal .modal-content');
+    if(adminModalContent) {
+        adminModalContent.insertAdjacentHTML('beforeend', `
+            <!-- SUB-PAGE: MEMBERSHIPS -->
+            <div id="adminSub_memberships" class="admin-sub-page">
+                <button class="back-to-menu-btn" onclick="openAdminMenu()">⬅ Back to Menu</button>
+                <div class="admin-panel">
+                    <h4>👑 Pending Membership Requests</h4>
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead><tr><th>User</th><th>Plan (₹)</th><th>UTR</th><th>Actions ⚙️</th></tr></thead>
+                            <tbody id="adminMemReqTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-PAGE: TOURNAMENTS -->
+            <div id="adminSub_tournaments" class="admin-sub-page">
+                <button class="back-to-menu-btn" onclick="openAdminMenu()">⬅ Back to Menu</button>
+                <div class="admin-panel" style="text-align:center; padding: 40px 20px;">
+                    <span style="font-size:50px;">🚧</span>
+                    <h4 style="justify-content:center; margin-top:15px; color:#ffd700;">Tournament Management</h4>
+                    <p style="color:#aaa; font-size:13px;">This feature is currently under development and will be available in the next update.</p>
+                </div>
+            </div>
+        `);
+    }
+
+    // ==========================================
+    // ⚙️ OVERRIDE MEMBERSHIP PURCHASE LOGIC
+    // ==========================================
+    window.memPlansData = {
+        bronze: { name: 'Bronze', price: 50, instant: 2000, daily: 300, days: 7 },
+        silver: { name: 'Silver', price: 100, instant: 4000, daily: 700, days: 7 },
+        gold: { name: 'Gold', price: 200, instant: 8000, daily: 1400, days: 7 },
+        diamond: { name: 'Diamond', price: 400, instant: 10000, daily: 760, days: 30 }
+    };
+    
+    window.selectedMemPlan = null;
+
+    // ১. Buy বাটনে ক্লিক করলে Payment Modal আসবে
+    window.buyMembership = function(planKey) {
+        if (!currentUser) { showToast('Please login first!', 'warning'); return; }
+        
+        window.selectedMemPlan = window.memPlansData[planKey];
+        document.getElementById('memPayAmountDisp').innerText = '₹' + window.selectedMemPlan.price;
+        document.getElementById('memUtrInput').value = '';
+        
+        document.getElementById('membershipModal').style.display = 'none'; // আগের মডাল লুকানো
+        document.getElementById('memPaymentModal').style.display = 'flex'; // পেমেন্ট মডাল ওপেন
+    };
+
+    // ২. Cancel করলে আগের মডাল ফেরত আসবে
+    window.closeMemPaymentModal = function() {
+        document.getElementById('memPaymentModal').style.display = 'none';
+        document.getElementById('membershipModal').style.display = 'flex';
+    };
+
+    // ৩. UTR সাবমিট করে অ্যাডমিনের কাছে পাঠানো
+    window.submitMemPayment = function() {
+        if(!window.selectedMemPlan) return;
+        const utr = document.getElementById('memUtrInput').value.trim();
+        
+        if(utr.length !== 12 || isNaN(utr)) {
+            showToast('⚠️ দয়া করে সঠিক ১২ ডিজিটের UTR/Transaction ID দিন!', 'error');
+            return;
+        }
+
+        database.ref('membershipRequests').push().set({
+            userId: currentUser.uid,
+            userName: currentUser.displayName || 'User',
+            planName: window.selectedMemPlan.name,
+            price: window.selectedMemPlan.price,
+            instant: window.selectedMemPlan.instant,
+            daily: window.selectedMemPlan.daily,
+            days: window.selectedMemPlan.days,
+            utr: utr,
+            status: 'pending',
+            timestamp: Date.now()
+        }).then(() => {
+            showToast('✅ আপনার রিকোয়েস্ট সফলভাবে পাঠানো হয়েছে! অ্যাডমিন এপ্রুভ করলে মেম্বারশিপ এক্টিভ হবে।', 'success');
+            document.getElementById('memPaymentModal').style.display = 'none';
+        });
+    };
+
+    // ==========================================
+    // ⚙️ UPDATE ADMIN DATA LOADING & APPROVAL LOGIC
+    // ==========================================
+    const origLoadAdminData = window.loadAdminData;
+    window.loadAdminData = function() {
+        if(origLoadAdminData) origLoadAdminData(); // লোড উইথড্র, কয়েন অ্যাড, ইউজার লিস্ট
+        
+        // Load Membership Requests
+        database.ref('membershipRequests').on('value', snap => {
+            let html = '';
+            snap.forEach(child => {
+                let d = child.val();
+                if(d.status === 'pending') {
+                    html += `<tr>
+                        <td>${d.userName}</td>
+                        <td style="color:#ffd700;">${d.planName} (₹${d.price})</td>
+                        <td>${d.utr}</td>
+                        <td>
+                            <button class="admin-btn approve" onclick="approveMemReq('${child.key}', '${d.userId}', '${d.planName}', ${d.instant}, ${d.daily}, ${d.days})">✅</button>
+                            <button class="admin-btn reject" onclick="rejectMemReq('${child.key}')">❌</button>
+                        </td>
+                    </tr>`;
+                }
+            });
+            const table = document.getElementById('adminMemReqTable');
+            if(table) table.innerHTML = html || '<tr><td colspan="4" style="color:#aaa; text-align:center; padding:15px;">No pending membership requests</td></tr>';
+        });
+    };
+
+    // মেম্বারশিপ অ্যাপ্রুভ করা (ইনস্ট্যান্ট কয়েন দেওয়া এবং মেম্বারশিপ অ্যাক্টিভ করা)
+    window.approveMemReq = function(reqKey, uid, planName, instantCoins, dailyCoins, daysLeft) {
+        database.ref('membershipRequests/' + reqKey).update({ status: 'approved' });
+        
+        const userRef = database.ref('users/' + uid);
+        userRef.once('value').then(snap => {
+            let user = snap.val();
+            if(user) {
+                let currentCoins = user.coins || 0;
+                userRef.update({
+                    coins: currentCoins + instantCoins, // ইনস্ট্যান্ট কয়েন দিয়ে দেওয়া হলো
+                    membership: {
+                        plan: planName + " Pack",
+                        dailyReward: dailyCoins,
+                        daysLeft: daysLeft,
+                        lastClaimDate: ''
+                    }
+                }).then(() => {
+                    showToast('✅ Membership Approved Successfully!', 'success');
+                });
+            }
+        });
+    };
+
+    // মেম্বারশিপ রিজেক্ট করা
+    window.rejectMemReq = function(reqKey) {
+        if(confirm('Are you sure you want to REJECT this membership request?')) {
+            database.ref('membershipRequests/' + reqKey).update({ status: 'rejected' }).then(() => {
+                showToast('❌ Membership Request Rejected!', 'error');
+            });
+        }
+    };
+
+    // ==========================================
+    // 📜 UPDATE USER HISTORY (SHOW MEMBERSHIP REQUESTS)
+    // ==========================================
+    window.openHistory = function() {
+        if(!currentUser) { showToast('Please login first', 'warning'); return; }
+        document.getElementById('historyModal').style.display = 'flex';
+        const list = document.getElementById('userHistoryList');
+        list.innerHTML = '<div style="text-align:center; color:#ccc; font-size:12px; padding: 15px 0;">Loading records...</div>';
+
+        let historyArr = [];
+        const uid = currentUser.uid;
+        
+        // 3টি টেবিল থেকে ডাটা কল করে মার্চ করা
+        Promise.all([
+            database.ref('coinAddRequests').orderByChild('userId').equalTo(uid).once('value'),
+            database.ref('withdrawRequests').orderByChild('userId').equalTo(uid).once('value'),
+            database.ref('membershipRequests').orderByChild('userId').equalTo(uid).once('value')
+        ]).then(snapshots => {
+            snapshots[0].forEach(c => historyArr.push({...c.val(), type: 'Coin Buy'}));
+            snapshots[1].forEach(c => historyArr.push({...c.val(), type: 'Withdraw'}));
+            snapshots[2].forEach(c => historyArr.push({...c.val(), type: 'VIP Plan'})); // মেম্বারশিপ ডাটা
+            
+            historyArr.sort((a,b) => b.timestamp - a.timestamp);
+            
+            if(historyArr.length === 0) { 
+                list.innerHTML = '<div style="text-align:center; color:#888; font-size:12px; padding: 15px 0;">No history found.</div>'; 
+                return; 
+            }
+
+            let html = '';
+            historyArr.forEach(h => {
+                let colorClass = h.status === 'approved' ? 'status-approved' : (h.status === 'rejected' ? 'status-rejected' : 'status-pending');
+                
+                let amt = '';
+                if(h.type === 'Withdraw') amt = `₹${h.amount}`;
+                else if(h.type === 'Coin Buy') amt = `🪙${h.coinsToAdd}`;
+                else amt = `₹${h.price}`; // VIP
+                
+                let icon = h.type === 'Withdraw' ? '💸' : (h.type === 'Coin Buy' ? '🪙' : '👑');
+                let dateStr = new Date(h.timestamp).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit', hour12: true });
+
+                html += `<div class="history-item">
+                    <div>
+                        <div class="h-title">${icon} ${h.type} <span>(${amt})</span></div>
+                        <div class="h-date">🕒 ${dateStr}</div>
+                    </div>
+                    <div class="status ${colorClass}">${h.status.toUpperCase()}</div>
+                </div>`;
+            });
+            list.innerHTML = html;
+        });
+    };
+
+    console.log("✅ Membership Ext. Payment & Admin Setup Loaded!");
+
+}, 8000); // ৮ সেকেন্ড ডিলে দেওয়া হয়েছে যাতে আগের সব কোড লোড হওয়ার পর এটি রান হয়
+</script>
+<script>
+setTimeout(() => {
+    // ==========================================
+    // 📱 TOP 3-DOT MENU UI & CSS
+    // ==========================================
+    const menuStyle = document.createElement('style');
+    menuStyle.innerHTML = `
+        /* Top Menu Container */
+        .top-menu-container { position: absolute; top: 25px; right: 20px; z-index: 105; }
+        
+        /* Menu Button (Three Dots) */
+        .top-menu-btn { 
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,215,0,0.3); 
+            border-radius: 8px; width: 40px; height: 40px; display: flex; 
+            justify-content: center; align-items: center; color: #ffd700; 
+            font-size: 24px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.5); 
+            transition: 0.2s; 
+        }
+        .top-menu-btn:active { transform: scale(0.9); background: rgba(255,215,0,0.2); }
+        
+        /* Dropdown Box */
+        .top-dropdown { 
+            display: none; position: absolute; top: 50px; right: 0; 
+            background: linear-gradient(145deg, #121218, #0a0a0d); 
+            border: 1px solid #ffd700; border-radius: 12px; width: 220px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8); overflow: hidden; 
+            animation: slideDown 0.2s ease-out; z-index: 110;
+        }
+        .top-dropdown.show { display: block; }
+        
+        /* Dropdown Items */
+        .dropdown-item { 
+            padding: 14px 15px; color: #ddd; font-size: 13px; font-weight: bold; 
+            border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; 
+            display: flex; align-items: center; gap: 10px; transition: 0.2s; 
+        }
+        .dropdown-item:hover { background: rgba(255,215,0,0.1); color: #ffd700; padding-left: 20px; }
+        .dropdown-item:last-child { border-bottom: none; }
+        
+        @keyframes slideDown { 
+            from { opacity: 0; transform: translateY(-10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+    `;
+    document.head.appendChild(menuStyle);
+
+    // ==========================================
+    // 🛠️ INJECT HTML INTO HOME SCREEN
+    // ==========================================
+    const homeScreen = document.getElementById('homeScreen');
+    if(homeScreen) {
+        homeScreen.insertAdjacentHTML('afterbegin', `
+            <div class="top-menu-container">
+                <div class="top-menu-btn" id="topMenuBtn" onclick="toggleTopMenu(event)">⋮</div>
+                <div class="top-dropdown" id="topDropdownMenu">
+                    <div class="dropdown-item" onclick="switchNav('profile'); toggleTopMenu()">👤 My Profile</div>
+                    <div class="dropdown-item" onclick="openHistory(); toggleTopMenu()">📜 Transaction History</div>
+                    <div class="dropdown-item" onclick="document.getElementById('exchangeModal').style.display='flex'; toggleTopMenu()">🔄 Exchange Coins</div>
+                    <div class="dropdown-item" onclick="openAdminPassPrompt(); toggleTopMenu()">🛠️ Admin Panel</div>
+                    <div class="dropdown-item" onclick="logoutUser(); toggleTopMenu()" style="color: #e74c3c;">🚪 Logout</div>
+                </div>
+            </div>
+        `);
+    }
+
+    // ==========================================
+    // ⚙️ MENU TOGGLE & LOGIC
+    // ==========================================
+    window.toggleTopMenu = function(e) {
+        if(e) e.stopPropagation();
+        const menu = document.getElementById('topDropdownMenu');
+        if(menu) menu.classList.toggle('show');
+    };
+
+    // মেনুর বাইরে ক্লিক করলে মেনু অটোমেটিক ক্লোজ হবে
+    window.addEventListener('click', function(e) {
+        const menu = document.getElementById('topDropdownMenu');
+        const btn = document.getElementById('topMenuBtn');
+        if(menu && menu.classList.contains('show') && e.target !== btn) {
+            menu.classList.remove('show');
+        }
+    });
+
+    // মেনু থেকে সরাসরি অ্যাডমিন প্যানেল খোলার ফাংশন
+    window.openAdminPassPrompt = function() {
+        if(!currentUser) { showToast('Please login first', 'warning'); return; }
+        document.getElementById('adminPassModal').style.display = 'flex';
+    };
+
+    // যেহেতু অ্যাডমিন প্যানেল মেনুতে চলে এসেছে, তাই নিচের লক (🔒) আইকনটি হাইড করা হলো
+    const oldAdminLock = document.getElementById('adminLock');
+    if(oldAdminLock) {
+        oldAdminLock.style.display = 'none';
+    }
+
+}, 500); // আগের সবগুলো স্ক্রিপ্ট ঠিকঠাক লোড হওয়ার পর এটি রান করবে
+</script>
+<script>
+setTimeout(() => {
+    // ==========================================
+    // 🎨 PREMIUM GAMES CSS
+    // ==========================================
+    const newGamesStyle = document.createElement('style');
+    newGamesStyle.innerHTML = `
+        .bet-toggle-btn { flex:1; padding:12px; font-weight:900; font-size:16px; border-radius:8px; cursor:pointer; transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1); letter-spacing: 1px; }
+        .bet-toggle-btn.active { background: linear-gradient(135deg, rgba(255,215,0,0.3), rgba(255,165,0,0.3)); border: 2px solid #ffd700; color: #ffd700; box-shadow: 0 0 15px rgba(255,215,0,0.4); transform: scale(1.05); }
+        .bet-toggle-btn.inactive { background: rgba(255,255,255,0.02); border: 2px solid rgba(255,255,255,0.1); color: #888; }
+        
+        /* Color Prediction */
+        .color-box { height: 85px; display:flex; justify-content:center; align-items:center; border-radius:12px; font-size:20px; font-weight:900; color:#fff; cursor:pointer; transition:0.3s; border:2px solid rgba(255,255,255,0.1); box-shadow: inset 0 0 20px rgba(0,0,0,0.5); text-transform: uppercase; letter-spacing: 1px; }
+        .color-box:active { transform:scale(0.95); }
+        .cb-red { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .cb-green { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .cb-violet { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+        .color-result-circle { width:60px; height:60px; border-radius:50%; margin:0 auto; display:inline-block; border:4px solid #fff; box-shadow:0 0 25px rgba(255,255,255,0.4), inset 0 0 10px rgba(0,0,0,0.5); transition: background 0.5s ease; }
+        
+        /* Plinko Canvas Container */
+        .plinko-canvas-container { position: relative; width: 100%; max-width: 340px; margin: 0 auto 15px; background: radial-gradient(circle at top, #222, #050505); border: 2px solid rgba(255,215,0,0.2); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 30px rgba(0,0,0,0.8); overflow: hidden; }
+        canvas#plinkoCanvas { display: block; width: 100%; }
+
+        /* Roulette Canvas Container */
+        .roulette-container { position:relative; width: 260px; height: 260px; margin: 20px auto 30px; }
+        canvas#rouletteCanvas { border-radius: 50%; box-shadow: 0 15px 35px rgba(0,0,0,0.9), 0 0 0 6px #222, 0 0 0 10px #ffd700; transition: transform 5s cubic-bezier(0.15, 0.85, 0.25, 1); }
+        .roulette-pointer { position:absolute; top:-22px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:18px solid transparent; border-right:18px solid transparent; border-top:35px solid #fff; z-index:10; filter:drop-shadow(0 6px 6px rgba(0,0,0,0.6)); }
+        .roulette-center { position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:40px; height:40px; background:radial-gradient(circle, #444, #111); border:3px solid #ffd700; border-radius:50%; z-index:5; box-shadow: 0 0 15px rgba(0,0,0,0.8); }
+        
+        .roulette-btn { flex:1; padding:16px 10px; font-weight:900; font-size:15px; border-radius:10px; color:#fff; cursor:pointer; border:1px solid rgba(255,255,255,0.2); transition:0.2s; text-transform:uppercase; box-shadow: inset 0 0 15px rgba(0,0,0,0.3); }
+        .roulette-btn:active { transform:scale(0.92); }
+
+        /* Lottery */
+        .lottery-grid { display:grid; grid-template-columns:repeat(5, 1fr); gap:10px; margin-bottom:20px; }
+        .lottery-num { background: linear-gradient(145deg, #222, #111); border:2px solid rgba(255,215,0,0.1); color:#fff; padding:15px 0; border-radius:12px; text-align:center; font-weight:900; font-size: 18px; cursor:pointer; transition:all 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .lottery-num.selected { background: linear-gradient(135deg, rgba(255,215,0,0.3), rgba(255,165,0,0.3)); border-color:#ffd700; color:#ffd700; transform:scale(1.15) translateY(-5px); box-shadow: 0 10px 20px rgba(255,215,0,0.3); }
+        
+        .action-play-btn { width:100%; padding: 16px; border-radius: 12px; font-size: 18px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; border: none; color: #fff; cursor: pointer; transition: 0.3s; box-shadow: 0 8px 20px rgba(0,0,0,0.5); }
+        .action-play-btn:active:not(:disabled) { transform: scale(0.96); }
+        .action-play-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    `;
+    document.head.appendChild(newGamesStyle);
+
+    // ==========================================
+    // 🏠 ADD GAMES TO HOME SCREEN WITH HEADLINE
+    // ==========================================
+    const homeGrid = document.querySelector('.home-grid');
+    if(homeGrid) {
+        const newSectionHtml = `
+            <div style="padding: 15px 20px 5px; position: relative; z-index: 10; margin-top: 10px;">
+                <h3 style="color: #ffd700; text-transform: uppercase; font-size: 16px; border-bottom: 1px solid rgba(255,215,0,0.2); padding-bottom: 8px; margin-bottom: 10px; text-shadow: 0 0 10px rgba(255,215,0,0.3); letter-spacing: 1px;">
+                    🎰 Casino & Prediction
+                </h3>
+            </div>
+            <div class="home-grid" style="padding-top: 0;">
+                <div class="game-icon-card" onclick="openNewGame('colorpred')">
+                    <div class="g-icon" style="border-color:#e74c3c; background: linear-gradient(145deg, rgba(231,76,60,0.1), rgba(0,0,0,0.8));"><span>🌈</span></div>
+                    <div class="g-name">Color Predict</div>
+                </div>
+                <div class="game-icon-card" onclick="openNewGame('plinko')">
+                    <div class="g-icon" style="border-color:#3498db; background: linear-gradient(145deg, rgba(52,152,219,0.1), rgba(0,0,0,0.8));"><span>🔽</span></div>
+                    <div class="g-name">Plinko</div>
+                </div>
+                <div class="game-icon-card" onclick="openNewGame('roulette')">
+                    <div class="g-icon" style="border-color:#f39c12; background: linear-gradient(145deg, rgba(243,156,18,0.1), rgba(0,0,0,0.8));"><span>🎡</span></div>
+                    <div class="g-name">Roulette</div>
+                </div>
+                <div class="game-icon-card" onclick="openNewGame('lottery')">
+                    <div class="g-icon" style="border-color:#2ecc71; background: linear-gradient(145deg, rgba(46,204,113,0.1), rgba(0,0,0,0.8));"><span>🎟️</span></div>
+                    <div class="g-name">Bingo</div>
+                </div>
+            </div>
+        `;
+        homeGrid.insertAdjacentHTML('afterend', newSectionHtml);
+    }
+
+    // ==========================================
+    // 🎮 NEW GAME ENGINE & UI ROUTER
+    // ==========================================
+    window.currentNewBetAmount = 10; 
+
+    window.openNewGame = function(name) {
+        if (!currentUser) { showToast('Please login first!', 'warning'); return; }
+        window.currentNewBetAmount = 10; 
+        
+        document.getElementById('homeScreen').style.display = 'none';
+        const gameArea = document.getElementById('gameArea');
+        const gameContent = document.getElementById('gameContent');
+        gameArea.classList.add('active');
+        
+        const titles = { colorpred: '🌈 Color Prediction', plinko: '🔽 Premium Plinko', roulette: '🎡 Casino Roulette', lottery: '🎟️ Bingo Lottery' };
+        
+        let html = `<div class="game-title" style="font-size:26px; letter-spacing:1px; margin-bottom:20px; font-weight:900;">${titles[name]}</div>`;
+        
+        // Strict Bet Selector (Only 10 and 50)
+        html += `
+            <div style="display:flex; gap:12px; justify-content:center; margin-bottom: 25px; padding: 0 10px;">
+                <button id="ngb_10" class="bet-toggle-btn active" onclick="setNewBet(10)">🪙 10 BET</button>
+                <button id="ngb_50" class="bet-toggle-btn inactive" onclick="setNewBet(50)">🪙 50 BET</button>
+            </div>
+        `;
+
+        if (name === 'colorpred') html += renderColorPred();
+        else if (name === 'plinko') html += renderPlinko();
+        else if (name === 'roulette') html += renderRoulette();
+        else if (name === 'lottery') html += renderLottery();
+
+        gameContent.innerHTML = html;
+
+        // Initialize Canvas logic for Plinko & Roulette
+        if (name === 'plinko') initPlinkoCanvas();
+        if (name === 'roulette') drawRouletteCanvas();
+
+        setTimeout(() => {
+            if (!document.getElementById('gameHistoryContainer')) {
+                const hDiv = document.createElement('div'); hDiv.id = 'gameHistoryContainer'; hDiv.className = 'game-history-container';
+                gameContent.appendChild(hDiv); renderGameHistory();
+            }
+        }, 100);
+    };
+
+    window.setNewBet = function(amt) {
+        window.currentNewBetAmount = amt;
+        document.getElementById('ngb_10').className = amt === 10 ? 'bet-toggle-btn active' : 'bet-toggle-btn inactive';
+        document.getElementById('ngb_50').className = amt === 50 ? 'bet-toggle-btn active' : 'bet-toggle-btn inactive';
+    };
+
+    // ==========================================
+    // 🌈 COLOR PREDICTION GAME
+    // ==========================================
+    function renderColorPred() {
+        return `
+            <div style="display:flex; gap:12px; margin-bottom:20px; padding:0 10px;">
+                <div class="color-box cb-red" style="flex:1;" onclick="playColorPred('red')">Red<br><span style="font-size:12px; color:rgba(255,255,255,0.7);">2x</span></div>
+                <div class="color-box cb-violet" style="flex:1;" onclick="playColorPred('violet')">Violet<br><span style="font-size:12px; color:rgba(255,255,255,0.7);">4x</span></div>
+                <div class="color-box cb-green" style="flex:1;" onclick="playColorPred('green')">Green<br><span style="font-size:12px; color:rgba(255,255,255,0.7);">2x</span></div>
+            </div>
+            <div class="result-box" id="cpStatus" style="font-size: 18px; padding: 20px;">Select a color to place bet</div>
+            <div id="cpResultVis" style="text-align:center; margin-top:25px; display:none;">
+                <p style="color:#aaa; font-size:14px; margin-bottom:15px; text-transform:uppercase; letter-spacing:2px;">Winning Color</p>
+                <div class="color-result-circle" id="cpResCircle"></div>
+            </div>
+        `;
+    }
+
+    let cpActive = false;
+    window.playColorPred = function(choice) {
+        if(cpActive) return;
+        const bet = window.currentNewBetAmount;
+        if (!window.deduct(bet)) return;
+        
+        cpActive = true;
+        const status = document.getElementById('cpStatus');
+        const resVis = document.getElementById('cpResultVis');
+        const circle = document.getElementById('cpResCircle');
+        
+        if(typeof playSound === 'function') playSound('spin');
+        status.innerHTML = '⏳ Analyzing Data...';
+        resVis.style.display = 'block';
+        
+        let strobe = setInterval(() => {
+            const cols = ['#e74c3c', '#2ecc71', '#9b59b6'];
+            circle.style.background = cols[Math.floor(Math.random() * 3)];
+        }, 150);
+
+        setTimeout(() => {
+            clearInterval(strobe);
+            let isWin = (Math.random() * 100) < (window.winRate || 50);
+            let colors = ['red', 'green', 'violet'];
+            let resultColor = '';
+
+            if (isWin) {
+                resultColor = choice;
+            } else {
+                let loseColors = colors.filter(c => c !== choice);
+                resultColor = loseColors[Math.floor(Math.random() * loseColors.length)];
+            }
+
+            let colorHex = resultColor === 'red' ? '#e74c3c' : (resultColor === 'green' ? '#2ecc71' : '#9b59b6');
+            circle.style.background = colorHex;
+
+            if (resultColor === choice) {
+                let multi = choice === 'violet' ? 4 : 2;
+                let winAmt = bet * multi;
+                window.add(winAmt);
+                status.innerHTML = '<span style="color:#2ecc71;">🎉 <strong>WIN!</strong> You got ' + winAmt + ' 🪙</span>';
+                if(typeof addGameHistory === 'function') addGameHistory('Color', 'win', winAmt, bet);
+            } else {
+                status.innerHTML = '<span style="color:#e74c3c;">😞 <strong>LOSS!</strong> Result was ' + resultColor.toUpperCase() + '</span>';
+                if(typeof playSound === 'function') playSound('lose');
+                if(typeof addGameHistory === 'function') addGameHistory('Color', 'lose', bet, bet);
+            }
+            cpActive = false;
+        }, 2500);
+    };
+
+    // ==========================================
+    // 🔽 PREMIUM PLINKO (CANVAS ENGINE)
+    // ==========================================
+    function renderPlinko() {
+        return `
+            <div class="plinko-canvas-container">
+                <canvas id="plinkoCanvas" width="340" height="380"></canvas>
+            </div>
+            <button onclick="playPlinko()" id="plinkoBtn" class="action-play-btn" style="background: linear-gradient(135deg, #3498db, #2980b9);">Drop Ball</button>
+            <div class="result-box" id="plinkoStatus" style="margin-top:20px; font-size:16px;">Waiting for drop...</div>
+        `;
+    }
+
+    let pCtx, pW, pH;
+    function initPlinkoCanvas() {
+        const canvas = document.getElementById('plinkoCanvas');
+        if(!canvas) return;
+        pCtx = canvas.getContext('2d');
+        pW = canvas.width;
+        pH = canvas.height;
+        drawPlinkoBoard(null, null);
+    }
+
+    function drawPlinkoBoard(ballX, ballY) {
+        if(!pCtx) return;
+        pCtx.clearRect(0,0,pW,pH);
+        
+        // Draw Pegs (Pyramid)
+        pCtx.fillStyle = '#fff';
+        const rows = 7;
+        const startY = 40;
+        const spacingY = 40;
+        const spacingX = 40;
+        for (let i = 0; i < rows; i++) {
+            let pegs = i + 3;
+            let startX = (pW - (pegs - 1) * spacingX) / 2;
+            for (let j = 0; j < pegs; j++) {
+                pCtx.beginPath();
+                pCtx.arc(startX + j * spacingX, startY + i * spacingY, 4.5, 0, Math.PI*2);
+                pCtx.fill();
+                pCtx.shadowColor = 'rgba(255,255,255,0.5)';
+                pCtx.shadowBlur = 8;
+                pCtx.fill();
+                pCtx.shadowBlur = 0;
+            }
+        }
+        
+        // Draw Multipliers at bottom
+        const mults = [0, 0.5, 2, 5, 2, 0.5, 0];
+        const slotW = pW / mults.length;
+        const bottomY = pH - 45;
+        
+        mults.forEach((m, idx) => {
+            pCtx.fillStyle = m===5 ? '#9b59b6' : m===2 ? '#2ecc71' : m===0.5 ? '#f39c12' : '#e74c3c';
+            pCtx.fillRect(idx * slotW + 2, bottomY, slotW - 4, 45); // Slot background
+            
+            pCtx.fillStyle = '#fff';
+            pCtx.font = '900 14px sans-serif';
+            pCtx.textAlign = 'center';
+            pCtx.fillText(m+'x', idx * slotW + slotW/2, pH - 18);
+        });
+        
+        // Draw Ball (if active)
+        if (ballX !== null) {
+            pCtx.beginPath();
+            pCtx.arc(ballX, ballY, 9, 0, Math.PI*2);
+            pCtx.fillStyle = '#ffd700';
+            pCtx.shadowColor = '#ffd700';
+            pCtx.shadowBlur = 15;
+            pCtx.fill();
+            pCtx.shadowBlur = 0;
+            // Highlight for 3D effect
+            pCtx.beginPath();
+            pCtx.arc(ballX-2, ballY-2, 3, 0, Math.PI*2);
+            pCtx.fillStyle = 'rgba(255,255,255,0.8)';
+            pCtx.fill();
+        }
+    }
+
+    let plinkoActive = false;
+    window.playPlinko = function() {
+        if(plinkoActive) return;
+        const bet = window.currentNewBetAmount;
+        if (!window.deduct(bet)) return;
+
+        plinkoActive = true;
+        document.getElementById('plinkoBtn').disabled = true;
+        const status = document.getElementById('plinkoStatus');
+        
+        if(typeof playSound === 'function') playSound('spin');
+        status.innerHTML = '🔽 Ball Dropping...';
+
+        let isWin = (Math.random() * 100) < (window.winRate || 50);
+        let slots = [0, 0.5, 2, 5, 2, 0.5, 0];
+        let targetIndex = 0;
+
+        if (isWin) {
+            targetIndex = Math.random() > 0.8 ? 3 : (Math.random() > 0.5 ? 2 : 4);
+        } else {
+            let loseIndices = [0, 1, 5, 6];
+            targetIndex = loseIndices[Math.floor(Math.random() * loseIndices.length)];
+        }
+
+        // Animate Canvas Ball
+        const startX = pW / 2;
+        const startY = 10;
+        const slotW = pW / slots.length;
+        const endX = (targetIndex * slotW) + (slotW / 2);
+        const endY = pH - 25;
+
+        // Create Path with Bounces
+        const path = [{x: startX, y: startY}];
+        const bounces = 6;
+        const bounceYSpacing = (endY - startY) / (bounces + 1);
+        
+        for(let i=1; i<=bounces; i++) {
+            let p = i / (bounces + 1);
+            let targetCurrX = startX + (endX - startX) * p;
+            let bounceX = targetCurrX + (Math.random() > 0.5 ? 15 : -15);
+            let bounceY = startY + i * bounceYSpacing;
+            path.push({x: bounceX, y: bounceY});
+        }
+        path.push({x: endX, y: endY});
+
+        let step = 0;
+        let progress = 0;
+        
+        function animateBall() {
+            if(step >= path.length - 1) {
+                // Animation Done
+                let multi = slots[targetIndex];
+                let winAmt = Math.floor(bet * multi);
+                
+                if (winAmt > 0) {
+                    window.add(winAmt);
+                    status.innerHTML = '<span style="color:#2ecc71;">🎉 <strong>' + multi + 'x Hit!</strong> You won ' + winAmt + ' 🪙</span>';
+                } else {
+                    status.innerHTML = '<span style="color:#e74c3c;">😞 <strong>0x Hit!</strong> You lost ' + bet + ' 🪙</span>';
+                    if(typeof playSound === 'function') playSound('lose');
+                    if(typeof addGameHistory === 'function') addGameHistory('Plinko', 'lose', bet, bet);
+                }
+                
+                plinkoActive = false;
+                document.getElementById('plinkoBtn').disabled = false;
+                return;
+            }
+            
+            progress += 0.07; // Animation speed
+            if(progress >= 1) {
+                progress = 0;
+                step++;
+                if(step >= path.length - 1) {
+                    drawPlinkoBoard(path[step].x, path[step].y);
+                    requestAnimationFrame(animateBall);
+                    return;
+                }
+            }
+            
+            let p1 = path[step];
+            let p2 = path[step+1];
+            
+            let x = p1.x + (p2.x - p1.x) * progress;
+            let y = p1.y + (p2.y - p1.y) * progress;
+            
+            // Add arc for bounce physics
+            let arc = Math.sin(progress * Math.PI) * 12; 
+            y -= arc;
+            
+            drawPlinkoBoard(x, y);
+            requestAnimationFrame(animateBall);
+        }
+        animateBall();
+    };
+
+    // ==========================================
+    // 🎡 PREMIUM ROULETTE (CANVAS ENGINE)
+    // ==========================================
+    function renderRoulette() {
+        return `
+            <div class="roulette-container">
+                <canvas id="rouletteCanvas" width="260" height="260"></canvas>
+                <div class="roulette-pointer"></div>
+                <div class="roulette-center"></div>
+            </div>
+            <div style="display:flex; gap:10px; margin-bottom: 20px; padding: 0 10px;">
+                <button class="roulette-btn" id="rBtnRed" style="background: linear-gradient(135deg, #e74c3c, #c0392b);" onclick="playRoulette('red')">Red (2x)</button>
+                <button class="roulette-btn" id="rBtnGreen" style="background: linear-gradient(135deg, #2ecc71, #27ae60);" onclick="playRoulette('green')">0 (14x)</button>
+                <button class="roulette-btn" id="rBtnBlack" style="background: linear-gradient(135deg, #34495e, #111);" onclick="playRoulette('black')">Black (2x)</button>
+            </div>
+            <div class="result-box" id="rStatus" style="font-size:16px;">Place a bet to spin</div>
+        `;
+    }
+
+    function drawRouletteCanvas() {
+        const canvas = document.getElementById('rouletteCanvas');
+        if(!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        const radius = cx;
+        
+        const segments = 15;
+        // Accurate Roulette Colors: 0 is Green, Others alternate Red/Black
+        const colors = ['#2ecc71', '#e74c3c', '#111', '#e74c3c', '#111', '#e74c3c', '#111', '#e74c3c', '#111', '#e74c3c', '#111', '#e74c3c', '#111', '#e74c3c', '#111'];
+        const labels = ['0', 'R', 'B', 'R', 'B', 'R', 'B', 'R', 'B', 'R', 'B', 'R', 'B', 'R', 'B'];
+        const anglePerSeg = (Math.PI * 2) / segments;
+        
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        
+        for(let i = 0; i < segments; i++) {
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.arc(cx, cy, radius, i * anglePerSeg, (i + 1) * anglePerSeg);
+            ctx.fillStyle = colors[i];
+            ctx.fill();
+            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = 'rgba(255,215,0,0.4)';
+            ctx.stroke();
+            
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(i * anglePerSeg + anglePerSeg / 2);
+            ctx.textAlign = "right";
+            ctx.textBaseline = "middle";
+            ctx.fillStyle = "#fff";
+            ctx.font = "900 18px sans-serif";
+            ctx.fillText(labels[i], radius - 15, 0);
+            ctx.restore();
+        }
+    }
+
+    let rActive = false;
+    let rRotation = 0;
+    window.playRoulette = function(choice) {
+        if(rActive) return;
+        const bet = window.currentNewBetAmount;
+        if (!window.deduct(bet)) return;
+
+        rActive = true;
+        const status = document.getElementById('rStatus');
+        const canvas = document.getElementById('rouletteCanvas');
+        
+        // Disable buttons while spinning
+        ['rBtnRed', 'rBtnGreen', 'rBtnBlack'].forEach(id => document.getElementById(id).disabled = true);
+        
+        if(typeof playSound === 'function') playSound('spin');
+        status.innerHTML = '🎡 Spinning...';
+
+        let isWin = (Math.random() * 100) < (window.winRate || 50);
+        let colors = ['red', 'black', 'green'];
+        let resultColor = '';
+
+        if (isWin) {
+            resultColor = choice;
+        } else {
+            let loseColors = colors.filter(c => c !== choice);
+            if(Math.random() > 0.1 && loseColors.includes('green')) {
+                loseColors = loseColors.filter(c => c !== 'green'); // Less chance to land on green randomly
+            }
+            resultColor = loseColors[Math.floor(Math.random() * loseColors.length)];
+        }
+
+        // Determine exact segment index
+        // 0 = Green, Odd = Red, Even = Black
+        let targetIndex = 0;
+        if (resultColor === 'red') {
+            const reds = [1,3,5,7,9,11,13];
+            targetIndex = reds[Math.floor(Math.random() * reds.length)];
+        } else if (resultColor === 'black') {
+            const blacks = [2,4,6,8,10,12,14];
+            targetIndex = blacks[Math.floor(Math.random() * blacks.length)];
+        } 
+
+        // Pointer is at TOP (270 deg or -90 deg visual)
+        // Center of segment `i` = i*24 + 12 deg.
+        let targetDeg = 270 - (targetIndex * 24 + 12);
+        
+        // Add multiple full spins (6 times)
+        rRotation -= (360 * 6); 
+        
+        // Add the remainder for specific target 
+        let currentRem = rRotation % 360;
+        let diff = targetDeg - currentRem;
+        while(diff > 0) diff -= 360;
+        
+        rRotation += diff;
+
+        canvas.style.transform = 'rotate(' + rRotation + 'deg)';
+
+        setTimeout(() => {
+            if (resultColor === choice) {
+                let multi = choice === 'green' ? 14 : 2;
+                let winAmt = bet * multi;
+                window.add(winAmt);
+                status.innerHTML = '<span style="color:#2ecc71;">🎉 <strong>WIN! (' + resultColor.toUpperCase() + ')</strong> Won ' + winAmt + ' 🪙</span>';
+                if(typeof addGameHistory === 'function') addGameHistory('Roulette', 'win', winAmt, bet);
+            } else {
+                status.innerHTML = '<span style="color:#e74c3c;">😞 <strong>LOSS! (' + resultColor.toUpperCase() + ')</strong></span>';
+                if(typeof playSound === 'function') playSound('lose');
+                if(typeof addGameHistory === 'function') addGameHistory('Roulette', 'lose', bet, bet);
+            }
+            rActive = false;
+            ['rBtnRed', 'rBtnGreen', 'rBtnBlack'].forEach(id => document.getElementById(id).disabled = false);
+        }, 5100); // 5s spin transition + 100ms buffer
+    };
+
+    // ==========================================
+    // 🎟️ BINGO / LOTTERY GAME
+    // ==========================================
+    function renderLottery() {
+        let gridHtml = '';
+        for(let i=1; i<=10; i++) {
+            gridHtml += `<div class="lottery-num" id="lotNum_${i}" onclick="selectLottery(${i})">${i}</div>`;
+        }
+        return `
+            <p style="color:#aaa; font-size:14px; text-align:center; margin-bottom:15px; letter-spacing:1px;">Select a lucky number (1-10)</p>
+            <div class="lottery-grid" style="padding: 0 10px;">` + gridHtml + `</div>
+            <div style="padding: 0 10px;">
+                <button onclick="playLottery()" id="lotBtn" class="action-play-btn" style="background: linear-gradient(135deg, #8e44ad, #6c3483); display:none;">Draw Ticket</button>
+            </div>
+            <div class="result-box" id="lotStatus" style="margin-top:20px; font-size:16px;">Pick a number to start</div>
+        `;
+    }
+
+    let lotActive = false;
+    window.selectedLotteryNum = null;
+
+    window.selectLottery = function(num) {
+        if(lotActive) return;
+        window.selectedLotteryNum = num;
+        for(let i=1; i<=10; i++) {
+            document.getElementById('lotNum_' + i).classList.remove('selected');
+        }
+        document.getElementById('lotNum_' + num).classList.add('selected');
+        document.getElementById('lotBtn').style.display = 'block';
+    };
+
+    window.playLottery = function() {
+        if(lotActive || !window.selectedLotteryNum) return;
+        const bet = window.currentNewBetAmount;
+        if (!window.deduct(bet)) return;
+
+        lotActive = true;
+        document.getElementById('lotBtn').disabled = true;
+        const status = document.getElementById('lotStatus');
+        
+        if(typeof playSound === 'function') playSound('spin');
+        
+        // Fast shuffle effect visually selecting random grids
+        let counter = 0;
+        let shuffleInt = setInterval(() => {
+            counter++;
+            let rnd = Math.floor(Math.random() * 10) + 1;
+            status.innerHTML = '🎟️ Drawing: <span style="font-size:24px; color:#ffd700;">' + rnd + '</span>';
+            
+            for(let i=1; i<=10; i++) document.getElementById('lotNum_'+i).style.borderColor = 'rgba(255,215,0,0.1)';
+            document.getElementById('lotNum_'+rnd).style.borderColor = '#3498db';
+        }, 100);
+
+        setTimeout(() => {
+            clearInterval(shuffleInt);
+            // Reset borders except the selected one
+            for(let i=1; i<=10; i++) {
+                let el = document.getElementById('lotNum_'+i);
+                el.style.borderColor = (i === window.selectedLotteryNum) ? '#ffd700' : 'rgba(255,215,0,0.1)';
+            }
+
+            let isWin = (Math.random() * 100) < ((window.winRate || 50) / 2); // Harder win rate
+            let resultNum = 0;
+
+            if (isWin) {
+                resultNum = window.selectedLotteryNum;
+            } else {
+                do {
+                    resultNum = Math.floor(Math.random() * 10) + 1;
+                } while (resultNum === window.selectedLotteryNum);
+            }
+
+            if (resultNum === window.selectedLotteryNum) {
+                let winAmt = bet * 9; 
+                window.add(winAmt);
+                status.innerHTML = '<span style="color:#2ecc71;">🎉 <strong>BINGO! (#' + resultNum + ')</strong> You won ' + winAmt + ' 🪙</span>';
+                if(typeof addGameHistory === 'function') addGameHistory('Bingo', 'win', winAmt, bet);
+            } else {
+                status.innerHTML = '<span style="color:#e74c3c;">😞 <strong>Result: #' + resultNum + '</strong> Better luck next time!</span>';
+                if(typeof playSound === 'function') playSound('lose');
+                if(typeof addGameHistory === 'function') addGameHistory('Bingo', 'lose', bet, bet);
+            }
+            
+            lotActive = false;
+            document.getElementById('lotBtn').disabled = false;
+        }, 3000);
+    };
+
+    console.log("✅ PREMIUM Casino & Prediction Extensions Loaded!");
+
+}, 1500); // 1.5s delay to ensure base UI exists before execution
+</script>
+<!-- 🏆 COMPLETE TOURNAMENT SECTION WITH HOURLY LEADERBOARD 🏆 -->
+<script>
+setTimeout(() => {
+    // ==========================================
+    // ১. টুর্নামেন্ট UI এর CSS
+    // ==========================================
+    const tourStyle = document.createElement('style');
+    tourStyle.innerHTML = `
+        .tour-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
+        .tour-card { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,215,0,0.3); border-radius: 12px; padding: 12px 10px; text-align: center; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; }
+        .tour-card:active { transform: scale(0.95); }
+        .tour-icon { font-size: 30px; margin-bottom: 5px; }
+        .tour-name { font-size: 12px; font-weight: 700; color: #fff; margin-bottom: 5px; }
+        .tour-fee { font-size: 11px; font-weight: bold; background: rgba(255,215,0,0.2); color: #ffd700; padding: 3px 8px; border-radius: 10px; display: inline-block; }
+        
+        /* New Official Tour Cards */
+        .ot-card { background: linear-gradient(145deg, #111, #222); border: 1px solid #3498db; border-radius: 12px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .ot-info { text-align: left; }
+        .ot-title { font-size: 16px; font-weight: 900; color: #ffd700; display: flex; align-items: center; gap: 5px; }
+        .ot-stats { font-size: 11px; color: #aaa; margin-top: 5px; }
+        .ot-stats span { color: #2ecc71; font-weight: bold; }
+        .ot-join-btn { background: linear-gradient(135deg, #2ecc71, #27ae60); color: #fff; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(46,204,113,0.3); }
+        .ot-join-btn:disabled { background: #555; color: #aaa; cursor: not-allowed; box-shadow: none; }
+        
+        /* Leaderboard Modal */
+        .tour-lb-header { display: flex; justify-content: space-between; background: rgba(255,215,0,0.1); padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 12px; font-weight: bold; color: #ffd700; }
+        .tour-lb-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; color: #fff; align-items: center; }
+        .tour-lb-item span:nth-child(1) { width: 30px; font-weight: 900; }
+        .tour-lb-item span:nth-child(2) { flex: 1; text-align: left; }
+        .tour-lb-item span:nth-child(3) { color: #2ecc71; font-weight: bold; }
+        
+        #tourLeaderboardModal { z-index: 9999; }
+    `;
+    document.head.appendChild(tourStyle);
+
+    // ==========================================
+    // ২. টুর্নামেন্ট স্ক্রিন ইনজেকশন
+    // ==========================================
+    const oldScreen = document.getElementById('tournamentScreen');
+    if(oldScreen) oldScreen.remove();
+
+    document.body.insertAdjacentHTML('beforeend', `
+        <div id="tournamentScreen" style="display: none; padding: 20px 15px 100px; min-height: 100vh; background: linear-gradient(135deg, #050505, #1a1500, #332600); position: relative; z-index: 10;">
+            <h2 style="text-align:center; color:#ffd700; margin-bottom:20px; text-transform:uppercase; letter-spacing:2px; font-size:22px;">🏆 Tournaments</h2>
+            
+            <!-- Game Tournament -->
+            <button class="action-play-btn" style="background: linear-gradient(135deg, #3498db, #2980b9); width: 100%; padding: 12px; font-size: 16px;" onclick="document.getElementById('tourGamesList').style.display = document.getElementById('tourGamesList').style.display === 'none' ? 'grid' : 'none';">
+                🎮 Game Tournament
+            </button>
+            <div id="tourGamesList" class="tour-grid" style="display:none;">
+                <div class="tour-card" style="border-color:#e74c3c;" onclick="joinNormalTour('ludogoti', 100)">
+                    <div class="tour-icon">🎲</div><div class="tour-name">Ludo</div><div class="tour-fee">Fee: 100🪙</div>
+                </div>
+                <div class="tour-card" style="border-color:#3498db;" onclick="joinNormalTour('tictactoe', 50)">
+                    <div class="tour-icon">⭕</div><div class="tour-name">Tic-Tac-Toe</div><div class="tour-fee">Fee: 50🪙</div>
+                </div>
+                <div class="tour-card" style="border-color:#f39c12;" onclick="joinNormalTour('rps', 50)">
+                    <div class="tour-icon">✌️</div><div class="tour-name">Roshambo</div><div class="tour-fee">Fee: 50🪙</div>
+                </div>
+            </div>
+
+            <!-- Hourly Official Tournament -->
+            <button class="action-play-btn" style="background: linear-gradient(135deg, #e67e22, #d35400); width: 100%; padding: 12px; font-size: 16px; margin-top: 20px;" onclick="document.getElementById('tourOfficialList').style.display = document.getElementById('tourOfficialList').style.display === 'none' ? 'block' : 'none';">
+                👑 Hourly Tournament
+            </button>
+            <div id="tourOfficialList" style="display:none; margin-top: 15px;">
+                <div style="background:rgba(0,0,0,0.5); padding:10px; border-radius:8px; text-align:center; font-size:12px; color:#aaa; margin-bottom:15px; border:1px solid rgba(255,215,0,0.2);">
+                    ⏰ প্রতি ১ ঘণ্টা অন্তর টুর্নামেন্ট রিসেট হবে। জয়েন করার পর আপনি অন্য গেম খেলে যা কয়েন জিতবেন তা এখানে যোগ হবে। টপ ৩ জন পুরস্কার পাবেন!
+                </div>
+                <div id="hourlyTiersContainer">Loading Tiers...</div>
+            </div>
+            
+            <button class="action-play-btn" style="background: linear-gradient(135deg, #2ecc71, #27ae60); width: 100%; padding: 12px; font-size: 16px; margin-top: 20px;" onclick="openHourlyLeaderboard()">
+                📊 Tournament Leaderboard
+            </button>
+        </div>
+
+        <!-- Leaderboard Modal -->
+        <div class="modal-overlay" id="tourLeaderboardModal">
+            <div class="modal-content" style="max-height: 80vh; overflow-y: auto; padding: 20px; width: 95%; max-width: 450px;">
+                <h3 style="color:#ffd700; margin-bottom: 5px; font-size: 20px;">📊 Hourly Leaderboard</h3>
+                <div style="font-size:11px; color:#aaa; margin-bottom:15px;">Select a tier to view top players</div>
+                
+                <select id="lbTierSelect" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ffd700; background:#222; color:#fff; margin-bottom:15px;" onchange="fetchTierLeaderboard()">
+                    <option value="100">Tier: 100 🪙</option>
+                    <option value="200">Tier: 200 🪙</option>
+                    <option value="300">Tier: 300 🪙</option>
+                    <option value="400">Tier: 400 🪙</option>
+                    <option value="500">Tier: 500 🪙</option>
+                    <option value="600">Tier: 600 🪙</option>
+                    <option value="700">Tier: 700 🪙</option>
+                    <option value="800">Tier: 800 🪙</option>
+                    <option value="900">Tier: 900 🪙</option>
+                    <option value="1000">Tier: 1000 🪙</option>
+                </select>
+
+                <div class="tour-lb-header">
+                    <span>Rank</span><span>Player</span><span>Points Won</span>
+                </div>
+                <div id="lbPlayersList" style="min-height: 150px;">
+                    <div style="text-align:center; color:#666; padding:20px;">Loading...</div>
+                </div>
+                
+                <button class="close-btn" style="margin-top: 15px;" onclick="closeModals()">Close</button>
+            </div>
+        </div>
+    `);
+
+    // ন্যাভিগেশন সেটআপ
+    const origSwitchNav = window.switchNav;
+    window.switchNav = function(tab) {
+        if (origSwitchNav) origSwitchNav(tab);
+        const tourScreen = document.getElementById('tournamentScreen');
+        const csScreen = document.getElementById('comingSoonScreen');
+        if (tourScreen && csScreen) {
+            if (tab === 'tournament') {
+                csScreen.style.display = 'none'; 
+                tourScreen.style.display = 'block'; 
+            } else { tourScreen.style.display = 'none'; }
+        }
+    };
+
+    // ==========================================
+    // ৩. গেম টুর্নামেন্ট (আগের লজিক)
+    // ==========================================
+    window.tourState = { active: false, roundsLeft: 0, type: '' };
+
+    window.joinNormalTour = function(gameKey, fee) {
+        if (coins < fee) { showToast('⚠️ Not enough coins for Entry Fee!', 'error'); return; }
+        if (!window.deduct(fee)) return; 
+        
+        window.tourState.active = true;
+        window.tourState.type = 'normal';
+        window.tourState.roundsLeft = (fee === 100) ? 10 : 5;
+        
+        showToast(`✅ Tournament Joined! Entry Fee: ${fee}🪙 deducted. You have ${window.tourState.roundsLeft} rounds.`, 'success');
+        openMpLobby(gameKey);
+    };
+
+    // ==========================================
+    // ৪. অফিশিয়াল (Hourly) টুর্নামেন্ট লজিক
+    // ==========================================
+    function getCurrentHourID() {
+        // টাইমস্ট্যাম্পকে ঘণ্টায় কনভার্ট করা
+        return Math.floor(Date.now() / 3600000).toString();
+    }
+
+    // প্রতিবার যখন টায়ার রেন্ডার হবে, তখন ফায়ারবেস থেকে লাইভ ডাটা আনবে
+    function loadHourlyTiers() {
+        const hourID = getCurrentHourID();
+        const container = document.getElementById('hourlyTiersContainer');
+        if(!container) return;
+
+        database.ref('hourlyTournaments/' + hourID).on('value', snap => {
+            const data = snap.val() || {};
+            let html = '';
+            
+            for(let i=100; i<=1000; i+=100) {
+                const tierData = data['tier_' + i] || { players: {} };
+                const pKeys = Object.keys(tierData.players || {});
+                const pCount = pKeys.length;
+                const isFull = pCount >= 10;
+                
+                let myJoined = currentUser && pKeys.includes(currentUser.uid);
+                let btnHtml = '';
+                
+                if (myJoined) {
+                    btnHtml = `<button class="ot-join-btn" style="background:#f39c12;" disabled>Joined ✅</button>`;
+                } else if (isFull) {
+                    btnHtml = `<button class="ot-join-btn" disabled>Full 🚫</button>`;
+                } else {
+                    btnHtml = `<button class="ot-join-btn" onclick="joinHourlyTier(${i})">Join ${i} 🪙</button>`;
+                }
+
+                html += `
+                    <div class="ot-card">
+                        <div class="ot-info">
+                            <div class="ot-title">🏆 Tier ${i}</div>
+                            <div class="ot-stats">Joined: <span>${pCount}/10</span> | Empty: <span>${10 - pCount}</span></div>
+                        </div>
+                        ${btnHtml}
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        });
+    }
+    
+    // ন্যাভিগেশন খোলার সময় টায়ার লোড হবে
+    document.getElementById('nav_tournament').addEventListener('click', loadHourlyTiers);
+
+    // জয়েন লজিক
+    window.joinHourlyTier = function(amount) {
+        if (!currentUser) { showToast('Please login first!', 'warning'); return; }
+        if (coins < amount) { showToast('⚠️ Not enough coins in wallet!', 'error'); return; }
+
+        const hourID = getCurrentHourID();
+        const tierRef = database.ref('hourlyTournaments/' + hourID + '/tier_' + amount);
+
+        tierRef.once('value').then(snap => {
+            const data = snap.val() || { players: {} };
+            const pKeys = Object.keys(data.players || {});
+            
+            if (pKeys.length >= 10) {
+                showToast('⚠️ This tier is already full!', 'error');
+                return;
+            }
+            if (pKeys.includes(currentUser.uid)) {
+                showToast('⚠️ You have already joined this tier!', 'warning');
+                return;
+            }
+
+            // ওয়ালেট থেকে কয়েন কাটা
+            if(window.deduct(amount)) {
+                // টুর্নামেন্টে ইউজার এড করা (ডিফল্ট স্কোর ০)
+                tierRef.child('players/' + currentUser.uid).set({
+                    name: currentUser.displayName,
+                    score: 0
+                }).then(() => {
+                    showToast(`✅ Successfully joined Tier ${amount}! Now play games to win points.`, 'success');
+                });
+            }
+        });
+    };
+
+    // ==========================================
+    // ৫. পয়েন্ট ট্র্যাকিং (Hooking into window.add)
+    // ==========================================
+    // যখন ইউজার কোনো গেম জিতে কয়েন পাবে, তখন সেটি টুর্নামেন্ট স্কোরেও যোগ হবে
+    const originalAddFunc = window.add;
+    window.add = function(amount) {
+        // ১. মেইন ওয়ালেটে কয়েন যোগ হবে
+        if(originalAddFunc) originalAddFunc(amount);
+        
+        // ২. যদি কোনো টুর্নামেন্টে জয়েন থাকে তবে সেখানেও যোগ হবে
+        if(currentUser) {
+            const hourID = getCurrentHourID();
+            database.ref('hourlyTournaments/' + hourID).once('value').then(snap => {
+                const data = snap.val() || {};
+                
+                // সব টায়ার চেক করে দেখা ইউজার কোনোটাতে আছে কিনা
+                for(let i=100; i<=1000; i+=100) {
+                    const tierData = data['tier_' + i];
+                    if (tierData && tierData.players && tierData.players[currentUser.uid]) {
+                        const currentScore = tierData.players[currentUser.uid].score || 0;
+                        // স্কোর আপডেট
+                        database.ref(`hourlyTournaments/${hourID}/tier_${i}/players/${currentUser.uid}`).update({
+                            score: currentScore + amount
+                        });
+                    }
+                }
+            });
+        }
+    };
+
+    // ==========================================
+    // ৬. লিডারবোর্ড ও প্রাইজ ডিস্ট্রিবিউশন (Hourly Payout)
+    // ==========================================
+    window.openHourlyLeaderboard = function() {
+        document.getElementById('tourLeaderboardModal').style.display = 'flex';
+        fetchTierLeaderboard();
+        checkAndPayoutPreviousHour(); // লিডারবোর্ড খোলার সময় আগের ঘণ্টার পেমেন্ট চেক করা
+    };
+
+    window.fetchTierLeaderboard = function() {
+        const tierAmt = document.getElementById('lbTierSelect').value;
+        const hourID = getCurrentHourID();
+        const listDiv = document.getElementById('lbPlayersList');
+        
+        listDiv.innerHTML = '<div style="text-align:center; color:#666; padding:20px;">Loading...</div>';
+
+        database.ref('hourlyTournaments/' + hourID + '/tier_' + tierAmt + '/players').once('value').then(snap => {
+            const players = snap.val();
+            if (!players) {
+                listDiv.innerHTML = '<div style="text-align:center; color:#aaa; padding:20px;">No players joined this hour.</div>';
+                return;
+            }
+
+            let sortedPlayers = Object.keys(players).map(uid => ({
+                uid: uid,
+                name: players[uid].name,
+                score: players[uid].score
+            })).sort((a, b) => b.score - a.score);
+
+            let html = '';
+            sortedPlayers.forEach((p, index) => {
+                let rank = index + 1;
+                let medal = rank === 1 ? '🥇' : (rank === 2 ? '🥈' : (rank === 3 ? '🥉' : `#${rank}`));
+                html += `
+                    <div class="tour-lb-item">
+                        <span>${medal}</span>
+                        <span>${p.name}</span>
+                        <span>${p.score} 🪙</span>
+                    </div>
+                `;
+            });
+            listDiv.innerHTML = html;
+        });
+    };
+
+    // আগের ঘণ্টার টুর্নামেন্ট পেমেন্ট প্রসেস করা
+    function checkAndPayoutPreviousHour() {
+        const currentHour = parseInt(getCurrentHourID());
+        const previousHour = (currentHour - 1).toString();
+
+        database.ref('hourlyTournaments/' + previousHour).once('value').then(snap => {
+            if(!snap.exists()) return;
+            const hourData = snap.val();
+
+            if (hourData.paid) return; // আগেই পেমেন্ট হয়ে থাকলে বাদ
+
+            // ডুপ্লিকেট পেমেন্ট আটকাতে প্রথমে paid = true করে দেওয়া
+            database.ref('hourlyTournaments/' + previousHour).update({ paid: true });
+
+            // ১০টি টায়ারের পেমেন্ট হিসাব করা
+            for(let i=100; i<=1000; i+=100) {
+                let tier = hourData['tier_' + i];
+                if (tier && tier.players) {
+                    let playersArr = Object.keys(tier.players).map(uid => ({
+                        uid: uid,
+                        score: tier.players[uid].score
+                    }));
+
+                    // যাদের স্কোর ০ এর বেশি শুধু তাদেরই কাউন্ট করা হবে
+                    let validPlayers = playersArr.filter(p => p.score > 0);
+                    
+                    if(validPlayers.length > 0) {
+                        // স্কোর অনুযায়ী সাজানো
+                        validPlayers.sort((a, b) => b.score - a.score);
+                        
+                        let totalPlayersInTier = playersArr.length;
+                        let totalPool = totalPlayersInTier * i; // Total Entry Fee
+                        let poolAfterAdminCut = totalPool * 0.9; // 10% Admin Cut
+                        
+                        let p1 = Math.floor(poolAfterAdminCut * 0.5);
+                        let p2 = Math.floor(poolAfterAdminCut * 0.3);
+                        let p3 = Math.floor(poolAfterAdminCut * 0.2);
+
+                        // উইনারদের ওয়ালেটে টাকা দেওয়া
+                        if(validPlayers[0]) payWinner(validPlayers[0].uid, p1);
+                        if(validPlayers[1]) payWinner(validPlayers[1].uid, p2);
+                        if(validPlayers[2]) payWinner(validPlayers[2].uid, p3);
+                    }
+                }
+            }
+        });
+    }
+
+    function payWinner(uid, amount) {
+        if(amount <= 0) return;
+        const userRef = database.ref('users/' + uid);
+        userRef.once('value').then(snap => {
+            if(snap.exists()) {
+                let uData = snap.val();
+                userRef.update({
+                    coins: (uData.coins || 0) + amount
+                });
+            }
+        });
+    }
+
+    // প্রতি ১ মিনিট অন্তর চেক করবে পেমেন্টের সময় হয়েছে কিনা
+    setInterval(() => {
+        checkAndPayoutPreviousHour();
+    }, 60000);
+
+}, 1500);
+</script>
+<!-- 🎨 TOURNAMENT DESIGN OVERRIDE SHORTCUT 🎨 -->
+<script>
+setTimeout(() => {
+    // ১. নতুন ডিজাইন (CSS) ইনজেক্ট করা
+    const style = document.createElement('style');
+    style.innerHTML = `
+        /* প্রফেশনাল লিডারবোর্ড বাটন (সবার উপরে থাকবে) */
+        .btn-tour-lb {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: #fff;
+            border: 2px solid #6dd5ed;
+            border-radius: 50px;
+            padding: 14px 20px;
+            font-size: 15px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 100%;
+            margin-bottom: 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 20px rgba(42, 82, 152, 0.5);
+            transition: 0.3s;
+        }
+        .btn-tour-lb:active { transform: scale(0.95); }
+
+        /* গোল্ডেন বাটন (গেম টুর্নামেন্ট) */
+        .btn-tour-gold {
+            background: linear-gradient(135deg, #f1c40f, #f39c12);
+            color: #111;
+            border: 2px solid #fff;
+            border-radius: 16px;
+            padding: 15px;
+            font-size: 17px;
+            font-weight: 900;
+            text-transform: uppercase;
+            width: 100%;
+            margin-bottom: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 25px rgba(243, 156, 18, 0.4);
+            transition: 0.3s;
+        }
+        .btn-tour-gold:active { transform: scale(0.95); box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4); }
+
+        /* সবুজ বাটন (অফিসিয়াল টুর্নামেন্ট) */
+        .btn-tour-green {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: #fff;
+            border: 2px solid #fff;
+            border-radius: 16px;
+            padding: 15px;
+            font-size: 17px;
+            font-weight: 900;
+            text-transform: uppercase;
+            width: 100%;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 25px rgba(46, 204, 113, 0.4);
+            transition: 0.3s;
+        }
+        .btn-tour-green:active { transform: scale(0.95); box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4); }
+    `;
+    document.head.appendChild(style);
+
+    // ২. পুরানো বাটনগুলো খুঁজে নতুন ডিজাইনে রিপ্লেস করা
+    const tourScreen = document.getElementById('tournamentScreen');
+    if (!tourScreen) return;
+
+    const buttons = tourScreen.querySelectorAll('button.action-play-btn');
+    let gameBtn, hourlyBtn, lbBtn;
+    
+    buttons.forEach(btn => {
+        if (btn.innerText.includes('Game Tournament')) gameBtn = btn;
+        if (btn.innerText.includes('Hourly Tournament')) hourlyBtn = btn;
+        if (btn.innerText.includes('Tournament Leaderboard')) lbBtn = btn;
+    });
+
+    // লিডারবোর্ড বাটনটি নিচ থেকে রিমুভ করে টাইটেলের ঠিক নিচে অ্যাড করা
+    if (lbBtn) lbBtn.remove();
+    const title = tourScreen.querySelector('h2');
+    if (title) {
+        title.insertAdjacentHTML('afterend', `
+            <button class="btn-tour-lb" onclick="openHourlyLeaderboard()">
+                <span style="font-size:22px;">📊</span> Tournament Leaderboard
+            </button>
+        `);
+    }
+
+    // গেম টুর্নামেন্ট বাটনটি গোল্ডেন করা
+    if (gameBtn) {
+        gameBtn.outerHTML = `
+            <button class="btn-tour-gold" onclick="document.getElementById('tourGamesList').style.display = document.getElementById('tourGamesList').style.display === 'none' ? 'grid' : 'none';">
+                <span style="font-size:24px;">🎮</span> Game Tournament
+            </button>
+        `;
+    }
+
+    // অফিসিয়াল টুর্নামেন্ট বাটনটি সবুজ করা
+    if (hourlyBtn) {
+        hourlyBtn.outerHTML = `
+            <button class="btn-tour-green" onclick="document.getElementById('tourOfficialList').style.display = document.getElementById('tourOfficialList').style.display === 'none' ? 'block' : 'none';">
+                <span style="font-size:24px;">👑</span> Hourly Tournament
+            </button>
+        `;
+    }
+}, 2500); // আগের সব কোড লোড হওয়ার পর ডিজাইন ওভাররাইড করবে
+</script>
+<script>
+setTimeout(() => {
+    // ==========================================
+    // 🎨 PREMIUM CSS FOR LIMBO & DOTS-BOXES
+    // ==========================================
+    const extraGamesStyle = document.createElement('style');
+    extraGamesStyle.innerHTML = `
+        /* --- Limbo CSS --- */
+        .limbo-container { background: radial-gradient(circle at center, #111, #000); border: 1px solid #ffd700; border-radius: 16px; padding: 30px 20px; text-align: center; box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 20px; }
+        .limbo-display { font-size: 70px; font-weight: 900; font-family: monospace; color: #fff; text-shadow: 0 0 20px rgba(255,255,255,0.4); margin: 20px 0; transition: color 0.3s; }
+        .limbo-display.win { color: #2ecc71; text-shadow: 0 0 30px rgba(46,204,113,0.6); transform: scale(1.1); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .limbo-display.lose { color: #e74c3c; text-shadow: 0 0 30px rgba(231,76,60,0.6); }
+        .limbo-controls { display: flex; gap: 15px; margin-top: 20px; justify-content: center; align-items: center; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; }
+        .limbo-input-group { display: flex; flex-direction: column; align-items: center; flex: 1; }
+        .limbo-input-group label { font-size: 11px; color: #aaa; text-transform: uppercase; margin-bottom: 5px; font-weight: bold; }
+        .limbo-input { width: 100%; background: #000; border: 2px solid #333; color: #ffd700; font-size: 20px; font-weight: 900; padding: 10px; border-radius: 8px; text-align: center; outline: none; transition: 0.3s; }
+        .limbo-input:focus { border-color: #ffd700; box-shadow: 0 0 15px rgba(255,215,0,0.3); }
+        
+        /* --- Dots and Boxes CSS --- */
+        .db-container { position: relative; width: 300px; height: 300px; margin: 20px auto; background: rgba(0,0,0,0.8); border-radius: 12px; padding: 15px; border: 2px solid rgba(255,215,0,0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        .db-dot { position: absolute; width: 14px; height: 14px; background: #fff; border-radius: 50%; transform: translate(-50%, -50%); z-index: 10; box-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        .db-line { position: absolute; background: rgba(255,255,255,0.1); cursor: pointer; transition: 0.3s; z-index: 5; border-radius: 5px; }
+        .db-hline { height: 16px; transform: translateY(-50%); }
+        .db-vline { width: 16px; transform: translateX(-50%); }
+        .db-line:hover { background: rgba(255,215,0,0.3); }
+        .db-line.active-host { background: #3498db; box-shadow: 0 0 15px #3498db; pointer-events: none; }
+        .db-line.active-guest { background: #e74c3c; box-shadow: 0 0 15px #e74c3c; pointer-events: none; }
+        .db-box { position: absolute; transition: 0.4s; z-index: 1; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 30px; opacity: 0; }
+        .db-box.host { background: rgba(52,152,219,0.3); opacity: 1; animation: popBox 0.3s; }
+        .db-box.host::after { content: '🔵'; }
+        .db-box.guest { background: rgba(231,76,60,0.3); opacity: 1; animation: popBox 0.3s; }
+        .db-box.guest::after { content: '🔴'; }
+        @keyframes popBox { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+        
+        .db-score-board { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        .db-score { font-size: 24px; font-weight: 900; }
+        .db-turn-indicator { font-size: 14px; font-weight: bold; color: #ffd700; background: rgba(255,215,0,0.1); padding: 5px 15px; border-radius: 20px; }
+        
+        .bet-select-btn { flex: 1; padding: 12px; font-weight: 900; font-size: 14px; border-radius: 8px; cursor: pointer; border: 2px solid #555; background: #222; color: #aaa; transition: 0.3s; }
+        .bet-select-btn.selected { border-color: #ffd700; background: rgba(255,215,0,0.2); color: #ffd700; box-shadow: 0 0 15px rgba(255,215,0,0.3); transform: scale(1.05); }
+    `;
+    document.head.appendChild(extraGamesStyle);
+
+    // ==========================================
+    // 🏠 INJECT ICONS TO HOME SCREEN
+    // ==========================================
+    const homeGrid = document.querySelector('.home-grid');
+    if (homeGrid) {
+        // সিঙ্গেল প্লেয়ার সেকশনে Limbo যোগ করা হচ্ছে
+        const casinoSection = document.querySelectorAll('.home-grid')[1]; // দ্বিতীয় গ্রিড (Casino)
+        if (casinoSection) {
+            casinoSection.insertAdjacentHTML('beforeend', `
+                <div class="game-icon-card" onclick="openNewGame('limbo')">
+                    <div class="g-icon" style="border-color:#9b59b6; background: linear-gradient(145deg, rgba(155,89,182,0.1), rgba(0,0,0,0.8));"><span>🚀</span></div>
+                    <div class="g-name">Limbo</div>
+                </div>
+            `);
+        }
+        
+        // মাল্টিপ্লেয়ার সেকশনে Dots & Boxes যোগ করা হচ্ছে (হোম গ্রিডের শুরুতে)
+        homeGrid.insertAdjacentHTML('beforeend', `
+            <div class="game-icon-card" onclick="openMpLobby('dotsboxes')">
+                <div class="g-icon" style="border-color:#1abc9c;"><span>🔲</span></div>
+                <div class="g-name">Dots & Boxes</div>
+            </div>
+        `);
+    }
+
+    // ==========================================
+    // 🎮 1. LIMBO GAME (SINGLE PLAYER)
+    // ==========================================
+    const originalOpenNewGame = window.openNewGame;
+    window.openNewGame = function(name) {
+        if (name === 'limbo') {
+            if (!currentUser) { showToast('Please login first!', 'warning'); return; }
+            window.currentNewBetAmount = 10; 
+            
+            document.getElementById('homeScreen').style.display = 'none';
+            const gameArea = document.getElementById('gameArea');
+            const gameContent = document.getElementById('gameContent');
+            gameArea.classList.add('active');
+            
+            let html = `
+                <div class="game-title" style="font-size:26px; font-weight:900;">🚀 Premium Limbo</div>
+                <div style="display:flex; gap:12px; justify-content:center; margin-bottom: 20px;">
+                    <button id="ngb_10" class="bet-toggle-btn active" onclick="setNewBet(10)">🪙 10 BET</button>
+                    <button id="ngb_50" class="bet-toggle-btn inactive" onclick="setNewBet(50)">🪙 50 BET</button>
+                </div>
+                
+                <div class="limbo-container">
+                    <div class="limbo-display" id="limboMulti">1.00x</div>
+                    <div class="limbo-controls">
+                        <div class="limbo-input-group">
+                            <label>Target Multiplier</label>
+                            <input type="number" id="limboTarget" class="limbo-input" value="2.00" step="0.01" min="1.01" oninput="updateLimboWinChance()">
+                        </div>
+                        <div class="limbo-input-group">
+                            <label>Win Chance</label>
+                            <input type="text" id="limboChance" class="limbo-input" value="49.50%" disabled style="border-color:#555; color:#2ecc71;">
+                        </div>
+                    </div>
+                </div>
+                
+                <button onclick="playLimbo()" id="limboBtn" class="action-play-btn" style="background: linear-gradient(135deg, #2ecc71, #27ae60);">Play Now</button>
+                <div class="result-box" id="limboStatus" style="margin-top:15px;">Set target and play!</div>
+            `;
+            
+            gameContent.innerHTML = html;
+            
+            setTimeout(() => {
+                if (!document.getElementById('gameHistoryContainer')) {
+                    const hDiv = document.createElement('div'); hDiv.id = 'gameHistoryContainer'; hDiv.className = 'game-history-container';
+                    gameContent.appendChild(hDiv); renderGameHistory();
+                }
+            }, 100);
+        } else {
+            if (originalOpenNewGame) originalOpenNewGame(name);
+        }
+    };
+
+    window.updateLimboWinChance = function() {
+        const target = parseFloat(document.getElementById('limboTarget').value);
+        const chanceInput = document.getElementById('limboChance');
+        if (target && target > 1) {
+            let chance = 99 / target;
+            if(chance > 99) chance = 99;
+            chanceInput.value = chance.toFixed(2) + '%';
+            chanceInput.style.color = chance > 50 ? '#2ecc71' : (chance > 20 ? '#f39c12' : '#e74c3c');
+        } else {
+            chanceInput.value = '0.00%';
+        }
+    };
+
+    let limboActive = false;
+    window.playLimbo = function() {
+        if(limboActive) return;
+        
+        const bet = window.currentNewBetAmount;
+        const target = parseFloat(document.getElementById('limboTarget').value);
+        
+        if (isNaN(target) || target < 1.01) { showToast('Target must be at least 1.01x', 'warning'); return; }
+        if (!window.deduct(bet)) return;
+
+        limboActive = true;
+        const btn = document.getElementById('limboBtn');
+        const display = document.getElementById('limboMulti');
+        const status = document.getElementById('limboStatus');
+        
+        btn.disabled = true;
+        display.className = 'limbo-display';
+        if(typeof playSound === 'function') playSound('spin');
+        
+        // রেজাল্ট লজিক
+        const winChance = 99 / target;
+        let isWin = (Math.random() * 100) < winChance;
+        let finalResult = 1.00;
+        
+        if (isWin) {
+            // উইন হলে টার্গেটের সমান বা তার একটু বেশি রেজাল্ট আসবে
+            finalResult = target + (Math.random() * (target * 0.5));
+        } else {
+            // লস হলে টার্গেটের নিচে ক্র্যাশ করবে
+            finalResult = 1.00 + (Math.random() * (target - 1.01));
+        }
+        
+        // অ্যানিমেশন
+        let currentVisual = 1.00;
+        let step = (finalResult - 1.00) / 20;
+        if(step < 0.01) step = 0.01;
+        
+        status.innerHTML = '🚀 Rolling...';
+        
+        let rollInterval = setInterval(() => {
+            currentVisual += step;
+            if(currentVisual >= finalResult) {
+                currentVisual = finalResult;
+                clearInterval(rollInterval);
+                
+                display.innerText = currentVisual.toFixed(2) + 'x';
+                
+                if (currentVisual >= target) {
+                    display.classList.add('win');
+                    let winAmt = Math.floor(bet * target);
+                    window.add(winAmt);
+                    status.innerHTML = `<span style="color:#2ecc71;">🎉 <strong>WIN!</strong> You won ${winAmt} 🪙</span>`;
+                    if(typeof addGameHistory === 'function') addGameHistory('Limbo', 'win', winAmt, bet);
+                } else {
+                    display.classList.add('lose');
+                    status.innerHTML = `<span style="color:#e74c3c;">💥 <strong>CRASHED!</strong> You lost ${bet} 🪙</span>`;
+                    if(typeof playSound === 'function') playSound('lose');
+                    if(typeof addGameHistory === 'function') addGameHistory('Limbo', 'lose', bet, bet);
+                }
+                
+                limboActive = false;
+                btn.disabled = false;
+            } else {
+                display.innerText = currentVisual.toFixed(2) + 'x';
+            }
+        }, 30);
+    };
+
+    // ==========================================
+    // 🔲 2. DOTS AND BOXES (MULTIPLAYER)
+    // ==========================================
+    // HTML স্ক্রিন ইনজেক্ট করা হচ্ছে
+    document.body.insertAdjacentHTML('beforeend', `
+        <div id="mpDotsBoxesScreen" class="mp-screen">
+            <div style="width: 100%; max-width: 500px; text-align:center;">
+                
+                <div class="db-score-board">
+                    <div style="text-align:left;">
+                        <div style="color:#3498db; font-size:12px; font-weight:bold;" id="dbP1Name">Player 1 (Host)</div>
+                        <div class="db-score" style="color:#3498db;" id="dbP1Score">0</div>
+                    </div>
+                    <div class="db-turn-indicator" id="dbTurnStatus">VS</div>
+                    <div style="text-align:right;">
+                        <div style="color:#e74c3c; font-size:12px; font-weight:bold;" id="dbP2Name">Player 2 (Guest)</div>
+                        <div class="db-score" style="color:#e74c3c;" id="dbP2Score">0</div>
+                    </div>
+                </div>
+                
+                <div class="mp-box" style="background: rgba(0,0,0,0.85); padding: 20px;">
+                    <h3 style="color:#ffd700; margin-bottom:15px; font-size:20px;">🔲 Dots & Boxes</h3>
+                    
+                    <div id="dbSetupArea">
+                        <p style="color:#aaa; font-size:13px; margin-bottom:15px;">Select Bet Amount and click Ready.</p>
+                        <div style="display:flex; gap:10px; margin-bottom:15px;">
+                            <button id="dbBet10" class="bet-select-btn selected" onclick="selectDbBet(10)">🪙 10 Bet</button>
+                            <button id="dbBet50" class="bet-select-btn" onclick="selectDbBet(50)">🪙 50 Bet</button>
+                        </div>
+                        <button id="dbReadyBtn" onclick="readyDb()" style="width:100%; padding:14px; background:#2ecc71; color:#fff; border:none; border-radius:8px; font-weight:bold; font-size:16px; cursor:pointer;">✅ Ready</button>
+                        <p id="dbSetupStatus" style="font-size:12px; color:#f39c12; margin-top:10px;"></p>
+                    </div>
+
+                    <div id="dbGameArea" style="display:none;">
+                        <!-- বোর্ডটি জাভাস্ক্রিপ্ট দিয়ে ডাইনামিকালি রেন্ডার করা হবে -->
+                        <div id="dbBoardContainer"></div>
+                    </div>
+
+                    <div id="dbResultArea" style="display:none; margin-top:20px;">
+                        <h2 id="dbWinnerText" style="color:#ffd700; margin-bottom:15px;">Game Over</h2>
+                        <div style="display:flex; gap:10px;">
+                            <button onclick="voteRetry()" style="flex:1; background:#3498db; padding:12px; color:#fff; border:none; border-radius:8px; font-weight:bold;">🔄 Rematch</button>
+                            <button onclick="cancelRoom()" style="flex:1; background:#e74c3c; padding:12px; color:#fff; border:none; border-radius:8px; font-weight:bold;">🚪 Leave</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `);
+
+    // Master Router Integration
+    const origGenerateRoom = window.generateRoom;
+    window.generateRoom = function() {
+        if (window.activeMpGame === 'dotsboxes') {
+            if(!currentUser) return;
+            const code = Math.floor(1000 + Math.random() * 9000).toString();
+            window.currentMpRoom = code;
+            window.isHost = true;
+            
+            database.ref('mpRooms/' + code).set({
+                game: 'dotsboxes',
+                hostId: currentUser.uid,
+                hostName: currentUser.displayName,
+                status: 'waiting',
+                rematch: { host: false, guest: false },
+                dbState: {
+                    p1Ready: false, p2Ready: false, betAmt: 10,
+                    hLines: Array(12).fill(''), vLines: Array(12).fill(''), boxes: Array(9).fill(''),
+                    p1Score: 0, p2Score: 0, turn: 'host', winner: null
+                }
+            });
+            document.getElementById('displayRoomCode').innerText = code;
+            document.querySelectorAll('.mp-screen').forEach(el => el.classList.remove('active'));
+            document.getElementById('mpWaiting').classList.add('active');
+            database.ref('mpRooms/' + code).on('value', window.handleRoomUpdates);
+        } else {
+            if (origGenerateRoom) origGenerateRoom();
+        }
+    };
+
+    const origHandleUpdates = window.handleRoomUpdates;
+    window.handleRoomUpdates = function(snap) {
+        const data = snap.val();
+        if(data && data.status === 'playing' && data.game === 'dotsboxes') {
+            renderDotsBoxes(data);
+        }
+        if (origHandleUpdates) origHandleUpdates(snap);
+    };
+
+    window.dbTempBetValue = 10;
+    window.dbBetDeducted = false;
+
+    window.selectDbBet = function(amt) {
+        if(!window.isHost) return; // Only host sets initial bet visually
+        window.dbTempBetValue = amt;
+        document.getElementById('dbBet10').classList.remove('selected');
+        document.getElementById('dbBet50').classList.remove('selected');
+        document.getElementById('dbBet'+amt).classList.add('selected');
+        // Update database so guest sees it instantly
+        if(window.currentMpRoom) {
+            database.ref('mpRooms/' + window.currentMpRoom + '/dbState').update({ betAmt: amt });
+        }
+    };
+
+    window.readyDb = function() {
+        // ডাইনামিক বেট ফি
+        const bet = window.dbTempBetValue;
+        if (coins < bet) { showToast(`Need ${bet} coins to play!`, 'error'); return; }
+        if (!window.deduct(bet)) return;
+        
+        window.dbBetDeducted = true;
+        document.getElementById('dbReadyBtn').style.display = 'none';
+        
+        const updateKey = isHost ? 'p1Ready' : 'p2Ready';
+        database.ref('mpRooms/' + currentMpRoom + '/dbState').update({ [updateKey]: true });
+    };
+
+    // 3x3 Box Grid Generation (4x4 dots = 16 dots, 12 h-lines, 12 v-lines)
+    function generateDbBoard() {
+        const dotSpacing = 70;
+        const padding = 30;
+        let html = `<div style="position:relative; width:${dotSpacing*3 + padding*2}px; height:${dotSpacing*3 + padding*2}px; margin: 0 auto; background:rgba(255,255,255,0.02); border-radius:12px; border: 1px solid rgba(255,215,0,0.1);">`;
+        
+        // Boxes
+        for(let r=0; r<3; r++) {
+            for(let c=0; c<3; c++) {
+                html += `<div id="db_box_${r}_${c}" class="db-box" style="left:${c*dotSpacing + padding}px; top:${r*dotSpacing + padding}px; width:${dotSpacing}px; height:${dotSpacing}px;"></div>`;
+            }
+        }
+        
+        // H-Lines
+        for(let r=0; r<4; r++) {
+            for(let c=0; c<3; c++) {
+                let idx = r*3 + c;
+                html += `<div id="db_h_${idx}" class="db-line db-hline" style="left:${c*dotSpacing + padding + 7}px; top:${r*dotSpacing + padding}px; width:${dotSpacing-14}px;" onclick="makeDbMove('h', ${idx})"></div>`;
+            }
+        }
+        
+        // V-Lines
+        for(let r=0; r<3; r++) {
+            for(let c=0; c<4; c++) {
+                let idx = r*4 + c;
+                html += `<div id="db_v_${idx}" class="db-line db-vline" style="left:${c*dotSpacing + padding}px; top:${r*dotSpacing + padding + 7}px; height:${dotSpacing-14}px;" onclick="makeDbMove('v', ${idx})"></div>`;
+            }
+        }
+        
+        // Dots
+        for(let r=0; r<4; r++) {
+            for(let c=0; c<4; c++) {
+                html += `<div class="db-dot" style="left:${c*dotSpacing + padding}px; top:${r*dotSpacing + padding}px;"></div>`;
+            }
+        }
+        
+        html += `</div>`;
+        return html;
+    }
+
+    let processedDbWinner = false;
+
+    window.renderDotsBoxes = function(data) {
+        document.querySelectorAll('.mp-screen').forEach(el => el.classList.remove('active'));
+        document.getElementById('mpDotsBoxesScreen').classList.add('active');
+
+        document.getElementById('dbP1Name').innerText = data.hostName;
+        document.getElementById('dbP2Name').innerText = data.guestName;
+        
+        const state = data.dbState;
+        window.dbTempBetValue = state.betAmt;
+
+        // UI for Guest to see Host's selected bet
+        document.getElementById('dbBet10').classList.remove('selected');
+        document.getElementById('dbBet50').classList.remove('selected');
+        document.getElementById('dbBet'+state.betAmt).classList.add('selected');
+        
+        if (!isHost) {
+            document.getElementById('dbBet10').style.pointerEvents = 'none';
+            document.getElementById('dbBet50').style.pointerEvents = 'none';
+        }
+
+        const bothReady = state.p1Ready && state.p2Ready;
+
+        if(!bothReady) {
+            document.getElementById('dbSetupArea').style.display = 'block';
+            document.getElementById('dbGameArea').style.display = 'none';
+            document.getElementById('dbResultArea').style.display = 'none';
+            
+            let iAmReady = isHost ? state.p1Ready : state.p2Ready;
+            if(iAmReady) {
+                document.getElementById('dbReadyBtn').style.display = 'none';
+                document.getElementById('dbSetupStatus').innerText = '⏳ Waiting for opponent to place bet...';
+            } else {
+                document.getElementById('dbReadyBtn').style.display = 'block';
+                document.getElementById('dbReadyBtn').innerText = `✅ Ready (Pay ${state.betAmt}🪙)`;
+                document.getElementById('dbSetupStatus').innerText = '';
+            }
+            return;
+        }
+
+        // Both Ready -> Play Game
+        document.getElementById('dbSetupArea').style.display = 'none';
+        document.getElementById('dbGameArea').style.display = 'block';
+        
+        if (!document.getElementById('dbBoardContainer').innerHTML) {
+            document.getElementById('dbBoardContainer').innerHTML = generateDbBoard();
+        }
+
+        // Update Scores and Turn
+        document.getElementById('dbP1Score').innerText = state.p1Score;
+        document.getElementById('dbP2Score').innerText = state.p2Score;
+        
+        let isMyTurn = (isHost && state.turn === 'host') || (!isHost && state.turn === 'guest');
+        const turnStatus = document.getElementById('dbTurnStatus');
+        
+        if(!state.winner) {
+            turnStatus.innerText = isMyTurn ? '👉 YOUR TURN' : '⏳ OPPONENT';
+            turnStatus.style.background = isMyTurn ? 'rgba(46,204,113,0.2)' : 'rgba(231,76,60,0.2)';
+            turnStatus.style.color = isMyTurn ? '#2ecc71' : '#e74c3c';
+            document.getElementById('dbBoardContainer').style.pointerEvents = isMyTurn ? 'auto' : 'none';
+        } else {
+            document.getElementById('dbBoardContainer').style.pointerEvents = 'none';
+        }
+
+        // Render Lines
+        for(let i=0; i<12; i++) {
+            const hLine = document.getElementById('db_h_'+i);
+            if(state.hLines[i]) {
+                hLine.classList.add('active-' + state.hLines[i]);
+            } else {
+                hLine.className = 'db-line db-hline';
+            }
+            
+            const vLine = document.getElementById('db_v_'+i);
+            if(state.vLines[i]) {
+                vLine.classList.add('active-' + state.vLines[i]);
+            } else {
+                vLine.className = 'db-line db-vline';
+            }
+        }
+
+        // Render Boxes
+        for(let r=0; r<3; r++) {
+            for(let c=0; c<3; c++) {
+                let idx = r*3 + c;
+                const box = document.getElementById(`db_box_${r}_${c}`);
+                if(state.boxes[idx]) {
+                    box.className = 'db-box ' + state.boxes[idx];
+                } else {
+                    box.className = 'db-box';
+                }
+            }
+        }
+
+        // Winner Logic
+        if(state.winner) {
+            document.getElementById('dbResultArea').style.display = 'block';
+            turnStatus.style.display = 'none';
+            const winnerText = document.getElementById('dbWinnerText');
+            const totalBetPool = state.betAmt * 2;
+            const winPrize = Math.floor(totalBetPool * 0.9); // 10% Platform fee
+
+            if(state.winner === 'draw') {
+                winnerText.innerHTML = `⚖️ Match Draw!<br><span style="font-size:14px; color:#aaa;">${state.betAmt} 🪙 Refunded</span>`;
+                if(window.dbBetDeducted && !processedDbWinner) {
+                    window.add(state.betAmt);
+                    processedDbWinner = true;
+                }
+            } else {
+                let iWon = (isHost && state.winner === 'host') || (!isHost && state.winner === 'guest');
+                if(iWon) {
+                    winnerText.innerHTML = `🎉 YOU WON!<br><span style="font-size:14px; color:#2ecc71;">+${winPrize} 🪙 Added</span>`;
+                    if(window.dbBetDeducted && !processedDbWinner) {
+                        window.add(winPrize);
+                        processedDbWinner = true;
+                    }
+                } else {
+                    winnerText.innerHTML = `😞 YOU LOST!<br><span style="font-size:14px; color:#e74c3c;">Better luck next time</span>`;
+                    processedDbWinner = true;
+                }
+            }
+        }
+
+        // Rematch Sync
+        if(data.rematch.host && data.rematch.guest) {
+            window.dbBetDeducted = false;
+            processedDbWinner = false;
+            document.getElementById('dbBoardContainer').innerHTML = ''; // Clear board to regenerate
+            document.getElementById('dbResultArea').style.display = 'none';
+            document.getElementById('dbTurnStatus').style.display = 'block';
+            
+            database.ref('mpRooms/' + currentMpRoom).update({
+                dbState: {
+                    p1Ready: false, p2Ready: false, betAmt: window.dbTempBetValue,
+                    hLines: Array(12).fill(''), vLines: Array(12).fill(''), boxes: Array(9).fill(''),
+                    p1Score: 0, p2Score: 0, turn: 'host', winner: null
+                },
+                rematch: { host: false, guest: false }
+            });
+        }
+    };
+
+    window.makeDbMove = function(type, idx) {
+        database.ref('mpRooms/' + currentMpRoom + '/dbState').once('value', snap => {
+            let state = snap.val();
+            let myRole = isHost ? 'host' : 'guest';
+            if(state.turn !== myRole || state.winner) return;
+
+            // Update line
+            if(type === 'h') {
+                if(state.hLines[idx]) return;
+                state.hLines[idx] = myRole;
+            } else {
+                if(state.vLines[idx]) return;
+                state.vLines[idx] = myRole;
+            }
+            if(typeof playSound === 'function') playSound('click');
+
+            // Check Boxes
+            let scored = false;
+            for(let r=0; r<3; r++) {
+                for(let c=0; c<3; c++) {
+                    let bIdx = r*3 + c;
+                    if(!state.boxes[bIdx]) {
+                        let top = state.hLines[r*3 + c];
+                        let bot = state.hLines[(r+1)*3 + c];
+                        let left = state.vLines[r*4 + c];
+                        let right = state.vLines[r*4 + c + 1];
+                        
+                        if(top && bot && left && right) {
+                            state.boxes[bIdx] = myRole;
+                            scored = true;
+                            if(isHost) state.p1Score++; else state.p2Score++;
+                            if(typeof playSound === 'function') playSound('win');
+                        }
+                    }
+                }
+            }
+
+            // Check Game Over
+            if(state.p1Score + state.p2Score === 9) {
+                if(state.p1Score > state.p2Score) state.winner = 'host';
+                else if(state.p2Score > state.p1Score) state.winner = 'guest';
+                else state.winner = 'draw';
+            } else {
+                // Change turn only if no box was completed
+                if(!scored) {
+                    state.turn = isHost ? 'guest' : 'host';
+                }
+            }
+
+            database.ref('mpRooms/' + currentMpRoom + '/dbState').update(state);
+        });
+    };
+
+}, 2500); // 2.5s delay to ensure it attaches after the Master Multiplay Router and UI loads
+</script>
+  
 </body>
 </html>
