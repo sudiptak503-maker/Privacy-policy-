@@ -6267,5 +6267,68 @@ setTimeout(() => {
     }
 }, 1500); // পেজ লোড হওয়ার ১.৫ সেকেন্ড পর এটি চেক করবে
 </script>
+  <script>
+setTimeout(() => {
+    // ১. এক্সচেঞ্জ লজিক ওভাররাইট (২০০০ কয়েন = ১০ টাকা)
+    window.calculateCustomExchange = function() {
+        const coinInput = document.getElementById('customExchangeCoins');
+        if (!coinInput) return;
+        const coinsToExchange = parseInt(coinInput.value) || 0;
+        
+        // ২০০০ কয়েনের নিচে হলে এরর দেখাবে
+        if (coinsToExchange < 2000) { 
+            showToast('⚠️ Minimum 2000 coins required!', 'warning'); 
+            return; 
+        }
+        if (coinsToExchange > coins) { 
+            showToast(`⚠️ You have only ${coins} coins!`, 'error'); 
+            return; 
+        }
+
+        const currMonth = new Date().getMonth() + "-" + new Date().getFullYear();
+        const userRef = database.ref('users/' + currentUser.uid);
+
+        userRef.once('value').then(snap => {
+            let data = snap.val() || {};
+            let exchangeCount = (data.lastExchangeMonth === currMonth) ? (data.exchangeCount || 0) : 0;
+
+            if (exchangeCount >= 3) {
+                showToast('⚠️ লিমিট শেষ! আপনি এই মাসে আর এক্সচেঞ্জ করতে পারবেন না (সর্বোচ্চ ৩ বার)।', 'error');
+                return;
+            }
+
+            // ২০০০ কয়েনে ১০ টাকা হিসেবে ক্যালকুলেশন
+            const exchangeUnits = Math.floor(coinsToExchange / 2000);
+            const moneyToAdd = exchangeUnits * 10;
+            const coinsToDeduct = exchangeUnits * 2000;
+
+            userRef.update({
+                coins: (data.coins || 0) - coinsToDeduct,
+                money: (data.money || 0) + moneyToAdd,
+                exchangeCount: exchangeCount + 1,
+                lastExchangeMonth: currMonth
+            }).then(() => {
+                showToast(`✅ এক্সচেঞ্জ সফল! (এই মাসে ${exchangeCount + 1}/3 বার করা হয়েছে)`, 'success');
+                closeModals();
+            });
+        });
+    };
+
+    // ২. রিয়েল-টাইম মানি ডিসপ্লে আপডেট (ইনপুট বক্সে টাইপ করার সাথে সাথে)
+    const customExchangeInput = document.getElementById('customExchangeCoins');
+    const moneyDisplay = document.getElementById('customExchangeMoneyDisplay');
+    
+    if(customExchangeInput && moneyDisplay) {
+        customExchangeInput.addEventListener('input', function(e) {
+            let val = parseInt(e.target.value) || 0;
+            // প্রতি ২০০০ কয়েনে ১০ টাকার হিসাব
+            let moneyCalc = Math.floor(val / 2000) * 10;
+            moneyDisplay.innerText = moneyCalc;
+        });
+    }
+    
+    console.log("✅ Exchange Logic Overwritten: 2000 Coins = 10 Money");
+}, 3500); // 3.5 সেকেন্ড ডিলে দেওয়া হলো যাতে এটি অন্য সব স্ক্রিপ্টের পরে রান করে লজিক ওভাররাইট করতে পারে
+</script>
 </body>
 </html>
