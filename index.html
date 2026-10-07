@@ -91,24 +91,22 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .game-card.space::before{background:radial-gradient(circle,rgba(16,185,129,.16),transparent 65%)}
 .game-card.candy::before{background:radial-gradient(circle,rgba(236,72,153,.18),transparent 65%)}
 .game-card.fruit::before{background:radial-gradient(circle,rgba(245,158,11,.18),transparent 65%)}
-.game-card.flappy::before{background:radial-gradient(circle,rgba(250,204,21,.18),transparent 65%)}
 .game-card.snake::before{background:radial-gradient(circle,rgba(34,197,94,.18),transparent 65%)}
-.game-card.jungle::before{background:radial-gradient(circle,rgba(34,197,94,.2),transparent 65%)}
 .game-card.block::before{background:radial-gradient(circle,rgba(59,130,246,.2),transparent 65%)}
 .game-card.shooter::before{background:radial-gradient(circle,rgba(168,85,247,.2),transparent 65%)}
-.game-card.chicken::before{background:radial-gradient(circle,rgba(250,204,21,.2),transparent 65%)}
+.game-card.arrow::before{background:radial-gradient(circle,rgba(236,72,153,.2),transparent 65%)}
+.game-card.ballsort::before{background:radial-gradient(circle,rgba(56,189,248,.2),transparent 65%)}
 .game-card:active{transform:scale(.98)}
 .game-card-inner{display:flex;align-items:center;gap:16px;position:relative}
 .game-thumb{width:70px;height:70px;border-radius:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:linear-gradient(135deg,rgba(99,102,241,.25),rgba(139,92,246,.18));border:1px solid rgba(99,102,241,.3)}
 .game-thumb.space{background:linear-gradient(135deg,rgba(16,185,129,.25),rgba(59,130,246,.18));border-color:rgba(16,185,129,.3)}
 .game-thumb.candy{background:linear-gradient(135deg,rgba(236,72,153,.25),rgba(139,92,246,.18));border-color:rgba(236,72,153,.3)}
 .game-thumb.fruit{background:linear-gradient(135deg,rgba(245,158,11,.25),rgba(239,68,68,.18));border-color:rgba(245,158,11,.3)}
-.game-thumb.flappy{background:linear-gradient(135deg,rgba(250,204,21,.25),rgba(249,115,22,.18));border-color:rgba(250,204,21,.3)}
 .game-thumb.snake{background:linear-gradient(135deg,rgba(34,197,94,.25),rgba(16,185,129,.18));border-color:rgba(34,197,94,.3)}
-.game-thumb.jungle{background:linear-gradient(135deg,rgba(74,222,128,.25),rgba(22,163,74,.18));border-color:rgba(74,222,128,.3)}
 .game-thumb.block{background:linear-gradient(135deg,rgba(147,197,253,.25),rgba(59,130,246,.18));border-color:rgba(147,197,253,.3)}
 .game-thumb.shooter{background:linear-gradient(135deg,rgba(196,181,253,.25),rgba(124,58,237,.18));border-color:rgba(196,181,253,.3)}
-.game-thumb.chicken{background:linear-gradient(135deg,rgba(254,240,138,.25),rgba(234,179,8,.18));border-color:rgba(254,240,138,.3)}
+.game-thumb.arrow{background:linear-gradient(135deg,rgba(244,114,182,.25),rgba(168,85,247,.18));border-color:rgba(244,114,182,.3)}
+.game-thumb.ballsort{background:linear-gradient(135deg,rgba(125,211,252,.25),rgba(14,165,233,.18));border-color:rgba(125,211,252,.3)}
 .game-thumb svg{width:48px;height:48px}
 .game-info{flex:1;min-width:0}
 .game-info h3{font-size:16px;font-weight:700;margin-bottom:4px}
@@ -337,10 +335,6 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .sound-toggle svg{width:18px;height:18px;stroke:var(--text);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .sound-toggle.muted svg{stroke:var(--muted);opacity:.5}
 
-/* Chicken cash out button overlay */
-.cashout-btn{position:absolute;top:calc(70px + env(safe-area-inset-top));right:14px;background:linear-gradient(135deg,#10B981,#059669);color:#fff;border:none;padding:10px 16px;border-radius:12px;font-weight:800;font-size:12px;cursor:pointer;z-index:20;box-shadow:0 8px 20px rgba(16,185,129,.4);display:none}
-.cashout-btn:active{transform:scale(.95)}
-
 body.low-end .bottom-nav,
 body.low-end .game-header,
 body.low-end .game-controls,
@@ -433,13 +427,21 @@ body.low-end .screen{animation:none !important}
       <div class="game-card-inner">
         <div class="game-thumb">
           <svg viewBox="0 0 64 64" fill="none">
-            <defs><linearGradient id="c1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#818CF8"/><stop offset="1" stop-color="#6366F1"/></linearGradient></defs>
-            <ellipse cx="32" cy="52" rx="20" ry="3" fill="rgba(0,0,0,0.3)"/>
-            <path d="M8 42 L10 32 Q12 26 20 24 L44 24 Q52 26 54 32 L56 42 Q56 44 54 44 L10 44 Q8 44 8 42 Z" fill="url(#c1)" stroke="#C7D2FE" stroke-width="1.2"/>
-            <path d="M22 24 L24 18 Q25 16 28 16 L36 16 Q39 16 40 18 L42 24 Z" fill="url(#c1)" stroke="#C7D2FE"/>
-            <path d="M25 23 L27 18 L37 18 L39 23 Z" fill="#0F172A"/>
-            <ellipse cx="12" cy="36" rx="2.5" ry="1.8" fill="#FEF3C7"/><ellipse cx="52" cy="36" rx="2.5" ry="1.8" fill="#FEF3C7"/>
-            <circle cx="18" cy="44" r="5" fill="#1E293B" stroke="#C7D2FE" stroke-width="1.5"/><circle cx="46" cy="44" r="5" fill="#1E293B" stroke="#C7D2FE" stroke-width="1.5"/>
+            <defs>
+              <linearGradient id="car1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F87171"/><stop offset="1" stop-color="#DC2626"/></linearGradient>
+              <linearGradient id="car2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#93C5FD"/><stop offset="1" stop-color="#3B82F6"/></linearGradient>
+            </defs>
+            <rect x="4" y="46" width="56" height="8" rx="2" fill="#374151"/>
+            <rect x="8" y="48" width="8" height="2" fill="#FCD34D"/><rect x="24" y="48" width="8" height="2" fill="#FCD34D"/><rect x="40" y="48" width="8" height="2" fill="#FCD34D"/>
+            <path d="M10 42 L14 28 Q16 22 24 22 L40 22 Q48 22 50 28 L54 42 Q54 46 50 46 L14 46 Q10 46 10 42 Z" fill="url(#car1)" stroke="#7F1D1D" stroke-width="1.5"/>
+            <path d="M22 22 L26 14 L38 14 L42 22 Z" fill="url(#car2)" stroke="#1E40AF" stroke-width="1.5"/>
+            <rect x="26" y="15" width="12" height="6" fill="#0F172A" opacity="0.7"/>
+            <circle cx="18" cy="46" r="6" fill="#1F2937" stroke="#94A3B8" stroke-width="2"/>
+            <circle cx="46" cy="46" r="6" fill="#1F2937" stroke="#94A3B8" stroke-width="2"/>
+            <circle cx="18" cy="46" r="2" fill="#94A3B8"/>
+            <circle cx="46" cy="46" r="2" fill="#94A3B8"/>
+            <ellipse cx="12" cy="38" rx="2" ry="1.5" fill="#FEF3C7"/>
+            <ellipse cx="52" cy="38" rx="2" ry="1.5" fill="#FEF3C7"/>
           </svg>
         </div>
         <div class="game-info"><h3>Crazy Car Dodge</h3><p>Dodge traffic, collect coins, survive the rush</p>
@@ -454,40 +456,27 @@ body.low-end .screen{animation:none !important}
       <div class="game-card-inner">
         <div class="game-thumb space">
           <svg viewBox="0 0 64 64" fill="none">
-            <defs><linearGradient id="r1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#94A3B8"/><stop offset="0.5" stop-color="#F1F5F9"/><stop offset="1" stop-color="#94A3B8"/></linearGradient><linearGradient id="r2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#34D399"/><stop offset="1" stop-color="#10B981"/></linearGradient></defs>
-            <path d="M27 50 Q32 60 37 50 Q35 54 32 56 Q29 54 27 50 Z" fill="#F59E0B"/>
-            <path d="M22 38 L14 52 L22 48 Z" fill="#6366F1"/><path d="M42 38 L50 52 L42 48 Z" fill="#6366F1"/>
-            <path d="M32 8 Q42 20 42 36 L42 48 L22 48 L22 36 Q22 20 32 8 Z" fill="url(#r1)" stroke="#CBD5E1"/>
-            <path d="M32 8 Q40 18 40 26 L24 26 Q24 18 32 8 Z" fill="url(#r2)"/>
-            <circle cx="32" cy="30" r="5" fill="#0F172A" stroke="#34D399" stroke-width="1.5"/>
+            <defs>
+              <linearGradient id="rocket1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#64748B"/><stop offset="0.5" stop-color="#F1F5F9"/><stop offset="1" stop-color="#64748B"/></linearGradient>
+              <linearGradient id="rocket2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#34D399"/><stop offset="1" stop-color="#059669"/></linearGradient>
+              <radialGradient id="rocket3" cx="0.5" cy="0.5"><stop offset="0" stop-color="#FEF3C7"/><stop offset="1" stop-color="#F59E0B"/></radialGradient>
+            </defs>
+            <circle cx="10" cy="14" r="2" fill="#FCD34D"/>
+            <circle cx="54" cy="20" r="1.5" fill="#FCD34D"/>
+            <circle cx="20" cy="6" r="1.5" fill="#FCD34D"/>
+            <circle cx="50" cy="8" r="1" fill="#FCD34D"/>
+            <path d="M24 44 L16 58 L24 52 Z" fill="#6366F1" stroke="#4338CA" stroke-width="1"/>
+            <path d="M40 44 L48 58 L40 52 Z" fill="#6366F1" stroke="#4338CA" stroke-width="1"/>
+            <path d="M27 54 Q32 62 37 54 Q35 58 32 59 Q29 58 27 54 Z" fill="#F59E0B"/>
+            <path d="M32 6 Q42 18 42 36 L42 48 L22 48 L22 36 Q22 18 32 6 Z" fill="url(#rocket1)" stroke="#475569" stroke-width="1.5"/>
+            <path d="M32 6 Q38 14 40 22 L24 22 Q26 14 32 6 Z" fill="url(#rocket2)"/>
+            <circle cx="32" cy="30" r="6" fill="#0F172A" stroke="#10B981" stroke-width="2"/>
+            <circle cx="30" cy="28" r="1.5" fill="#34D399"/>
+            <circle cx="32" cy="34" r="4" fill="url(#rocket3)"/>
           </svg>
         </div>
         <div class="game-info"><h3>Space Rocket Run</h3><p>Catch stars, dodge asteroids, explore deep space</p>
           <div class="game-badges"><span class="game-badge blue">+10 / star</span><span class="game-badge gold">+50 rare</span><span class="game-badge magnet">🧲 Magnet</span><span class="game-badge shield">🛡️ Shield</span></div>
-        </div>
-        <div class="game-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
-      </div>
-    </div>
-
-    <!-- Flappy Bird -->
-    <div class="game-card flappy" onclick="launchGame('flappy')">
-      <div class="game-card-inner">
-        <div class="game-thumb flappy">
-          <svg viewBox="0 0 64 64" fill="none">
-            <defs>
-              <radialGradient id="fb1" cx="0.4" cy="0.35"><stop offset="0" stop-color="#FEF08A"/><stop offset="1" stop-color="#EAB308"/></radialGradient>
-              <linearGradient id="fb2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4ADE80"/><stop offset="1" stop-color="#16A34A"/></linearGradient>
-            </defs>
-            <rect x="8" y="6" width="14" height="52" rx="3" fill="url(#fb2)" stroke="#15803D" stroke-width="1.2"/>
-            <rect x="42" y="14" width="14" height="44" rx="3" fill="url(#fb2)" stroke="#15803D" stroke-width="1.2"/>
-            <ellipse cx="32" cy="32" rx="12" ry="9" fill="url(#fb1)" stroke="#A16207" stroke-width="1.2"/>
-            <circle cx="36" cy="30" r="2" fill="#0F172A"/>
-            <path d="M44 32 L50 30 L44 34 Z" fill="#F97316"/>
-            <path d="M22 32 Q14 26 10 30 Q14 34 22 32 Z" fill="#FBBF24" stroke="#A16207" stroke-width="0.8"/>
-          </svg>
-        </div>
-        <div class="game-info"><h3>Flappy Bird</h3><p>Fly through pipes, don't hit — endless challenge</p>
-          <div class="game-badges"><span class="game-badge yellow">+50 / pipe</span><span class="game-badge gold">Survive = Points</span></div>
         </div>
         <div class="game-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
       </div>
@@ -499,16 +488,19 @@ body.low-end .screen{animation:none !important}
         <div class="game-thumb snake">
           <svg viewBox="0 0 64 64" fill="none">
             <defs>
-              <linearGradient id="sk1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4ADE80"/><stop offset="1" stop-color="#16A34A"/></linearGradient>
-              <radialGradient id="sk2" cx="0.4" cy="0.35"><stop offset="0" stop-color="#FCA5A5"/><stop offset="1" stop-color="#DC2626"/></radialGradient>
+              <linearGradient id="snk1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4ADE80"/><stop offset="1" stop-color="#15803D"/></linearGradient>
+              <radialGradient id="snk2" cx="0.4" cy="0.35"><stop offset="0" stop-color="#FCA5A5"/><stop offset="1" stop-color="#DC2626"/></radialGradient>
             </defs>
-            <rect x="6" y="6" width="52" height="52" rx="6" stroke="#166534" stroke-width="1.5" fill="rgba(22,163,74,0.08)"/>
-            <rect x="10" y="10" width="10" height="10" rx="2" fill="url(#sk1)"/>
-            <rect x="21" y="10" width="10" height="10" rx="2" fill="url(#sk1)"/>
-            <rect x="32" y="10" width="10" height="10" rx="2" fill="url(#sk1)"/>
-            <rect x="32" y="21" width="10" height="10" rx="2" fill="url(#sk1)"/>
-            <circle cx="37" cy="15" r="2" fill="#0F172A"/>
-            <circle cx="44" cy="44" r="5" fill="url(#sk2)" stroke="#991B1B" stroke-width="1"/>
+            <rect x="4" y="4" width="56" height="56" rx="8" stroke="#166534" stroke-width="1.5" fill="rgba(22,163,74,0.06)"/>
+            <rect x="8" y="8" width="11" height="11" rx="3" fill="url(#snk1)"/>
+            <rect x="20" y="8" width="11" height="11" rx="3" fill="url(#snk1)"/>
+            <rect x="32" y="8" width="11" height="11" rx="3" fill="url(#snk1)"/>
+            <rect x="32" y="20" width="11" height="11" rx="3" fill="url(#snk1)"/>
+            <rect x="20" y="20" width="11" height="11" rx="3" fill="url(#snk1)"/>
+            <circle cx="36" cy="13" r="1.8" fill="#0F172A"/>
+            <circle cx="42" cy="13" r="1.8" fill="#0F172A"/>
+            <circle cx="46" cy="46" r="6" fill="url(#snk2)" stroke="#991B1B" stroke-width="1.2"/>
+            <path d="M44 42 Q46 38 49 40" stroke="#16A34A" stroke-width="2" fill="none"/>
           </svg>
         </div>
         <div class="game-info"><h3>Classic Snake</h3><p>Eat fruits, grow longer, don't bite yourself</p>
@@ -518,109 +510,64 @@ body.low-end .screen{animation:none !important}
       </div>
     </div>
 
-    <!-- Jungle Safari Run (NEW) -->
-    <div class="game-card jungle" onclick="launchGame('jungle')">
-      <div class="game-card-inner">
-        <div class="game-thumb jungle">
-          <svg viewBox="0 0 64 64" fill="none">
-            <defs>
-              <linearGradient id="jg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4ADE80"/><stop offset="1" stop-color="#16A34A"/></linearGradient>
-              <linearGradient id="jg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FCD34D"/><stop offset="1" stop-color="#F59E0B"/></linearGradient>
-            </defs>
-            <rect x="4" y="48" width="56" height="12" rx="3" fill="#78350F"/>
-            <rect x="4" y="52" width="56" height="3" fill="#A16207"/>
-            <path d="M14 48 Q18 30 22 20 Q26 12 32 14 Q38 12 42 20 Q46 30 50 48 Z" fill="url(#jg1)"/>
-            <circle cx="32" cy="22" r="6" fill="url(#jg2)"/>
-            <circle cx="30" cy="21" r="1.5" fill="#0F172A"/>
-            <circle cx="34" cy="21" r="1.5" fill="#0F172A"/>
-            <path d="M30 25 L32 27 L34 25" stroke="#92400E" stroke-width="1.5" fill="none"/>
-            <rect x="8" y="42" width="4" height="6" fill="#F59E0B"/>
-            <rect x="52" y="42" width="4" height="6" fill="#F59E0B"/>
-          </svg>
-        </div>
-        <div class="game-info"><h3>Jungle Safari Run</h3><p>Run through the jungle, dodge obstacles, collect coins</p>
-          <div class="game-badges"><span class="game-badge green">+10 / coin</span><span class="game-badge gold">+50 mega</span><span class="game-badge magnet">🧲 Magnet</span><span class="game-badge shield">🛡️ Shield</span></div>
-        </div>
-        <div class="game-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
-      </div>
-    </div>
-
-    <!-- Block Puzzle (NEW) -->
+    <!-- Block Puzzle -->
     <div class="game-card block" onclick="launchGame('block')">
       <div class="game-card-inner">
         <div class="game-thumb block">
           <svg viewBox="0 0 64 64" fill="none">
             <defs>
-              <linearGradient id="bg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#93C5FD"/><stop offset="1" stop-color="#3B82F6"/></linearGradient>
-              <linearGradient id="bg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F9A8D4"/><stop offset="1" stop-color="#EC4899"/></linearGradient>
-              <linearGradient id="bg3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6EE7B7"/><stop offset="1" stop-color="#10B981"/></linearGradient>
+              <linearGradient id="blk1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#93C5FD"/><stop offset="1" stop-color="#2563EB"/></linearGradient>
+              <linearGradient id="blk2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F9A8D4"/><stop offset="1" stop-color="#DB2777"/></linearGradient>
+              <linearGradient id="blk3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6EE7B7"/><stop offset="1" stop-color="#059669"/></linearGradient>
+              <linearGradient id="blk4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FCD34D"/><stop offset="1" stop-color="#D97706"/></linearGradient>
             </defs>
-            <rect x="6" y="6" width="16" height="16" rx="3" fill="url(#bg1)"/>
-            <rect x="24" y="6" width="16" height="16" rx="3" fill="url(#bg2)"/>
-            <rect x="42" y="6" width="16" height="16" rx="3" fill="url(#bg3)"/>
-            <rect x="6" y="24" width="16" height="16" rx="3" fill="url(#bg2)"/>
-            <rect x="24" y="24" width="16" height="16" rx="3" fill="url(#bg3)"/>
-            <rect x="42" y="24" width="16" height="16" rx="3" fill="url(#bg1)"/>
-            <rect x="6" y="42" width="16" height="16" rx="3" fill="url(#bg3)"/>
-            <rect x="24" y="42" width="16" height="16" rx="3" fill="url(#bg1)"/>
-            <rect x="42" y="42" width="16" height="16" rx="3" fill="url(#bg2)"/>
+            <rect x="4" y="4" width="56" height="56" rx="8" fill="rgba(15,23,42,0.5)" stroke="#334155" stroke-width="1.5"/>
+            <rect x="8" y="8" width="12" height="12" rx="3" fill="url(#blk1)"/>
+            <rect x="22" y="8" width="12" height="12" rx="3" fill="url(#blk2)"/>
+            <rect x="36" y="8" width="12" height="12" rx="3" fill="url(#blk3)"/>
+            <rect x="8" y="22" width="12" height="12" rx="3" fill="url(#blk4)"/>
+            <rect x="22" y="22" width="12" height="12" rx="3" fill="url(#blk1)"/>
+            <rect x="36" y="22" width="12" height="12" rx="3" fill="url(#blk2)"/>
+            <rect x="8" y="36" width="12" height="12" rx="3" fill="url(#blk3)"/>
+            <rect x="22" y="36" width="12" height="12" rx="3" fill="url(#blk4)"/>
+            <rect x="36" y="36" width="12" height="12" rx="3" fill="url(#blk1)"/>
+            <rect x="50" y="8" width="6" height="12" rx="2" fill="url(#blk4)"/>
+            <rect x="50" y="22" width="6" height="12" rx="2" fill="url(#blk3)"/>
+            <rect x="50" y="36" width="6" height="12" rx="2" fill="url(#blk2)"/>
           </svg>
         </div>
-        <div class="game-info"><h3>Block Puzzle</h3><p>Place blocks, clear lines, earn 100 points per line</p>
-          <div class="game-badges"><span class="game-badge blue">+100 / line</span><span class="game-badge">No bonus</span></div>
+        <div class="game-info"><h3>Block Puzzle</h3><p>Place blocks, clear lines, earn 500 points per line</p>
+          <div class="game-badges"><span class="game-badge blue">+500 / line</span><span class="game-badge">Smart fit snap</span></div>
         </div>
         <div class="game-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
       </div>
     </div>
 
-    <!-- Space Shooter (NEW) -->
+    <!-- Space Shooter -->
     <div class="game-card shooter" onclick="launchGame('shooter')">
       <div class="game-card-inner">
         <div class="game-thumb shooter">
           <svg viewBox="0 0 64 64" fill="none">
             <defs>
-              <linearGradient id="sh1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C4B5FD"/><stop offset="1" stop-color="#7C3AED"/></linearGradient>
-              <radialGradient id="sh2" cx="0.4" cy="0.35"><stop offset="0" stop-color="#FCA5A5"/><stop offset="1" stop-color="#DC2626"/></radialGradient>
+              <linearGradient id="sht1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C4B5FD"/><stop offset="1" stop-color="#6D28D9"/></linearGradient>
+              <radialGradient id="sht2" cx="0.4" cy="0.35"><stop offset="0" stop-color="#FCA5A5"/><stop offset="1" stop-color="#B91C1C"/></radialGradient>
             </defs>
-            <path d="M32 6 L38 20 L34 20 L34 40 L30 40 L30 20 L26 20 Z" fill="url(#sh1)" stroke="#A78BFA"/>
-            <path d="M24 36 L18 48 L24 44 Z" fill="#6366F1"/>
-            <path d="M40 36 L46 48 L40 44 Z" fill="#6366F1"/>
-            <circle cx="32" cy="28" r="4" fill="#0F172A" stroke="#34D399"/>
-            <circle cx="14" cy="14" r="5" fill="url(#sh2)"/>
-            <circle cx="50" cy="14" r="5" fill="url(#sh2)"/>
-            <circle cx="20" cy="50" r="3" fill="#FCD34D"/>
-            <circle cx="44" cy="50" r="3" fill="#FCD34D"/>
+            <circle cx="10" cy="10" r="1.5" fill="#FCD34D"/>
+            <circle cx="54" cy="18" r="1.5" fill="#FCD34D"/>
+            <circle cx="16" cy="52" r="1" fill="#FCD34D"/>
+            <path d="M32 6 L38 18 L34 18 L34 40 L30 40 L30 18 L26 18 Z" fill="url(#sht1)" stroke="#7C3AED" stroke-width="1"/>
+            <path d="M24 36 L16 50 L24 46 Z" fill="#8B5CF6" stroke="#5B21B6"/>
+            <path d="M40 36 L48 50 L40 46 Z" fill="#8B5CF6" stroke="#5B21B6"/>
+            <circle cx="32" cy="26" r="4" fill="#0F172A" stroke="#34D399" stroke-width="1.5"/>
+            <circle cx="30" cy="25" r="1" fill="#34D399"/>
+            <rect x="30" y="42" width="4" height="6" fill="#FCD34D"/>
+            <circle cx="12" cy="16" r="5" fill="url(#sht2)"/>
+            <circle cx="52" cy="14" r="5" fill="url(#sht2)"/>
+            <circle cx="14" cy="48" r="3" fill="url(#sht2)"/>
           </svg>
         </div>
         <div class="game-info"><h3>Space Shooter</h3><p>Destroy aliens, dodge attacks, survive the galaxy</p>
           <div class="game-badges"><span class="game-badge blue">+20 / coin</span><span class="game-badge gold">+60 mega</span><span class="game-badge shield">🛡️ 5 Hearts</span></div>
-        </div>
-        <div class="game-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
-      </div>
-    </div>
-
-    <!-- Chicken Road (NEW) -->
-    <div class="game-card chicken" onclick="launchGame('chicken')">
-      <div class="game-card-inner">
-        <div class="game-thumb chicken">
-          <svg viewBox="0 0 64 64" fill="none">
-            <defs>
-              <linearGradient id="ch1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FEF08A"/><stop offset="1" stop-color="#EAB308"/></linearGradient>
-            </defs>
-            <rect x="4" y="20" width="56" height="24" fill="#374151"/>
-            <rect x="4" y="26" width="56" height="2" fill="#FCD34D" stroke-dasharray="4,4"/>
-            <rect x="4" y="36" width="56" height="2" fill="#FCD34D" stroke-dasharray="4,4"/>
-            <ellipse cx="32" cy="32" rx="7" ry="9" fill="url(#ch1)"/>
-            <circle cx="32" cy="22" r="5" fill="url(#ch1)"/>
-            <circle cx="30" cy="21" r="1" fill="#0F172A"/>
-            <circle cx="34" cy="21" r="1" fill="#0F172A"/>
-            <path d="M32 24 L30 26 L34 26 Z" fill="#F97316"/>
-            <path d="M25 32 L20 30 L20 34 Z" fill="#F97316"/>
-            <path d="M39 32 L44 30 L44 34 Z" fill="#F97316"/>
-          </svg>
-        </div>
-        <div class="game-info"><h3>Chicken Road</h3><p>Cross the road safely, multiply points, cash out anytime</p>
-          <div class="game-badges"><span class="game-badge yellow">2x - 100x</span><span class="game-badge gold">Cash Out</span></div>
         </div>
         <div class="game-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
       </div>
@@ -631,16 +578,26 @@ body.low-end .screen{animation:none !important}
       <div class="game-card-inner">
         <div class="game-thumb candy">
           <svg viewBox="0 0 64 64" fill="none">
-            <defs><linearGradient id="c1p" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F9A8D4"/><stop offset="1" stop-color="#EC4899"/></linearGradient><linearGradient id="c1u" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C4B5FD"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient><linearGradient id="c1b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#93C5FD"/><stop offset="1" stop-color="#3B82F6"/></linearGradient><linearGradient id="c1g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6EE7B7"/><stop offset="1" stop-color="#10B981"/></linearGradient></defs>
-            <rect x="10" y="10" width="14" height="14" rx="4" fill="url(#c1p)"/><rect x="25" y="10" width="14" height="14" rx="4" fill="url(#c1u)"/><rect x="40" y="10" width="14" height="14" rx="4" fill="url(#c1b)"/>
-            <rect x="10" y="25" width="14" height="14" rx="4" fill="url(#c1g)"/>
-            <path d="M32 25 L34 30 L39 32 L34 34 L32 39 L30 34 L25 32 L30 30 Z" fill="#FEF3C7" stroke="#F59E0B" stroke-width="0.8"/>
-            <rect x="40" y="25" width="14" height="14" rx="4" fill="url(#c1p)"/>
-            <rect x="10" y="40" width="14" height="14" rx="4" fill="url(#c1u)"/><rect x="25" y="40" width="14" height="14" rx="4" fill="url(#c1b)"/><rect x="40" y="40" width="14" height="14" rx="4" fill="url(#c1g)"/>
+            <defs>
+              <radialGradient id="cdy1" cx="0.4" cy="0.35"><stop offset="0" stop-color="#F9A8D4"/><stop offset="1" stop-color="#DB2777"/></radialGradient>
+              <radialGradient id="cdy2" cx="0.4" cy="0.35"><stop offset="0" stop-color="#C4B5FD"/><stop offset="1" stop-color="#6D28D9"/></radialGradient>
+              <radialGradient id="cdy3" cx="0.4" cy="0.35"><stop offset="0" stop-color="#93C5FD"/><stop offset="1" stop-color="#1D4ED8"/></radialGradient>
+              <radialGradient id="cdy4" cx="0.4" cy="0.35"><stop offset="0" stop-color="#6EE7B7"/><stop offset="1" stop-color="#047857"/></radialGradient>
+            </defs>
+            <circle cx="16" cy="16" r="10" fill="url(#cdy1)"/>
+            <circle cx="34" cy="16" r="10" fill="url(#cdy2)"/>
+            <circle cx="52" cy="16" r="10" fill="url(#cdy3)"/>
+            <circle cx="16" cy="34" r="10" fill="url(#cdy4)"/>
+            <path d="M34 24 L36 30 L42 32 L36 34 L34 40 L32 34 L26 32 L32 30 Z" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1"/>
+            <circle cx="52" cy="34" r="10" fill="url(#cdy1)"/>
+            <circle cx="16" cy="52" r="10" fill="url(#cdy2)"/>
+            <circle cx="34" cy="52" r="10" fill="url(#cdy3)"/>
+            <circle cx="52" cy="52" r="10" fill="url(#cdy4)"/>
+            <circle cx="13" cy="13" r="3" fill="rgba(255,255,255,.5)"/>
           </svg>
         </div>
-        <div class="game-info"><h3>Candy Crush</h3><p>Match 3 candies in a row to score big points</p>
-          <div class="game-badges"><span class="game-badge pink">Match 3</span><span class="game-badge gold">+30 combo</span></div>
+        <div class="game-info"><h3>Candy Crush</h3><p>Match 3 candies. 4+ creates bombs that explode!</p>
+          <div class="game-badges"><span class="game-badge pink">Match 3</span><span class="game-badge gold">💣 Bomb</span><span class="game-badge">Mega Boom</span></div>
         </div>
         <div class="game-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
       </div>
@@ -652,19 +609,79 @@ body.low-end .screen{animation:none !important}
         <div class="game-thumb fruit">
           <svg viewBox="0 0 64 64" fill="none">
             <defs>
-              <radialGradient id="fa" cx="0.4" cy="0.35"><stop offset="0" stop-color="#FCA5A5"/><stop offset="1" stop-color="#DC2626"/></radialGradient>
-              <radialGradient id="fo" cx="0.4" cy="0.35"><stop offset="0" stop-color="#FED7AA"/><stop offset="1" stop-color="#EA580C"/></radialGradient>
-              <radialGradient id="fg" cx="0.4" cy="0.35"><stop offset="0" stop-color="#C4B5FD"/><stop offset="1" stop-color="#7C3AED"/></radialGradient>
-              <radialGradient id="fl" cx="0.4" cy="0.35"><stop offset="0" stop-color="#FEF08A"/><stop offset="1" stop-color="#EAB308"/></radialGradient>
+              <radialGradient id="fru1" cx="0.4" cy="0.35"><stop offset="0" stop-color="#FCA5A5"/><stop offset="1" stop-color="#B91C1C"/></radialGradient>
+              <radialGradient id="fru2" cx="0.4" cy="0.35"><stop offset="0" stop-color="#FED7AA"/><stop offset="1" stop-color="#C2410C"/></radialGradient>
+              <radialGradient id="fru3" cx="0.4" cy="0.35"><stop offset="0" stop-color="#C4B5FD"/><stop offset="1" stop-color="#6D28D9"/></radialGradient>
+              <radialGradient id="fru4" cx="0.4" cy="0.35"><stop offset="0" stop-color="#FEF08A"/><stop offset="1" stop-color="#A16207"/></radialGradient>
             </defs>
-            <circle cx="20" cy="22" r="11" fill="url(#fa)"/><path d="M20 12 Q22 8 26 9" stroke="#65A30D" stroke-width="2" fill="none"/>
-            <circle cx="44" cy="22" r="11" fill="url(#fo)"/>
-            <circle cx="20" cy="44" r="11" fill="url(#fg)"/>
-            <ellipse cx="44" cy="44" rx="11" ry="10" fill="url(#fl)"/>
+            <circle cx="18" cy="20" r="11" fill="url(#fru1)"/>
+            <path d="M18 9 Q20 4 25 5" stroke="#65A30D" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <ellipse cx="14" cy="15" rx="3" ry="2" fill="rgba(255,255,255,.5)" transform="rotate(-30 14 15)"/>
+            <circle cx="44" cy="20" r="11" fill="url(#fru2)"/>
+            <circle cx="44" cy="20" r="1.5" fill="#7C2D12"/>
+            <ellipse cx="40" cy="15" rx="3" ry="2" fill="rgba(255,255,255,.5)" transform="rotate(-30 40 15)"/>
+            <circle cx="18" cy="44" r="11" fill="url(#fru3)"/>
+            <ellipse cx="14" cy="39" rx="3" ry="2" fill="rgba(255,255,255,.5)" transform="rotate(-30 14 39)"/>
+            <ellipse cx="44" cy="44" rx="11" ry="10" fill="url(#fru4)"/>
+            <ellipse cx="40" cy="39" rx="3" ry="2" fill="rgba(255,255,255,.5)" transform="rotate(-30 40 39)"/>
+            <circle cx="32" cy="32" r="4" fill="#F59E0B" opacity="0.6"/>
           </svg>
         </div>
-        <div class="game-info"><h3>Fruit Crush</h3><p>Match juicy fruits, build combos, earn rewards</p>
-          <div class="game-badges"><span class="game-badge gold">Match 3</span><span class="game-badge">+30 combo</span></div>
+        <div class="game-info"><h3>Fruit Crush</h3><p>Match juicy fruits. 4+ creates explosive bombs!</p>
+          <div class="game-badges"><span class="game-badge gold">Match 3</span><span class="game-badge">💣 Bomb</span><span class="game-badge pink">Mega Boom</span></div>
+        </div>
+        <div class="game-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+      </div>
+    </div>
+
+    <!-- Arrow Maze (NEW) -->
+    <div class="game-card arrow" onclick="launchGame('arrow')">
+      <div class="game-card-inner">
+        <div class="game-thumb arrow">
+          <svg viewBox="0 0 64 64" fill="none">
+            <defs>
+              <linearGradient id="arr1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F472B6"/><stop offset="1" stop-color="#7C3AED"/></linearGradient>
+              <linearGradient id="arr2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4ADE80"/><stop offset="1" stop-color="#0EA5E9"/></linearGradient>
+            </defs>
+            <rect x="4" y="4" width="56" height="56" rx="8" fill="rgba(15,23,42,0.5)" stroke="#334155" stroke-width="1.5"/>
+            <path d="M14 20 L14 44 L22 44 L22 28 L34 28" stroke="url(#arr1)" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <polygon points="34,24 44,28 34,32" fill="url(#arr1)"/>
+            <path d="M30 44 L50 44 L50 20 L38 20" stroke="url(#arr2)" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <polygon points="34,16 30,20 34,24" fill="url(#arr2)"/>
+            <circle cx="14" cy="20" r="3" fill="#F472B6"/>
+            <circle cx="38" cy="20" r="3" fill="#0EA5E9"/>
+          </svg>
+        </div>
+        <div class="game-info"><h3>Arrow Maze</h3><p>Trace the arrow path. +20 per arrow, +100 bonus on complete</p>
+          <div class="game-badges"><span class="game-badge pink">+20 / arrow</span><span class="game-badge gold">+100 bonus</span><span class="game-badge blue">10 Levels</span></div>
+        </div>
+        <div class="game-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+      </div>
+    </div>
+
+    <!-- Ball Sort Puzzle (NEW) -->
+    <div class="game-card ballsort" onclick="launchGame('ballsort')">
+      <div class="game-card-inner">
+        <div class="game-thumb ballsort">
+          <svg viewBox="0 0 64 64" fill="none">
+            <defs>
+              <linearGradient id="bs1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(148,163,184,0.3)"/><stop offset="1" stop-color="rgba(148,163,184,0.05)"/></linearGradient>
+            </defs>
+            <path d="M6 8 L6 52 Q6 58 12 58 L18 58 Q24 58 24 52 L24 8" stroke="#94A3B8" stroke-width="2" fill="url(#bs1)"/>
+            <circle cx="15" cy="14" r="4" fill="#F472B6"/>
+            <circle cx="15" cy="24" r="4" fill="#F472B6"/>
+            <circle cx="15" cy="34" r="4" fill="#FCD34D"/>
+            <circle cx="15" cy="44" r="4" fill="#FCD34D"/>
+            <path d="M26 8 L26 52 Q26 58 32 58 L38 58 Q44 58 44 52 L44 8" stroke="#94A3B8" stroke-width="2" fill="url(#bs1)"/>
+            <circle cx="35" cy="14" r="4" fill="#4ADE80"/>
+            <circle cx="35" cy="24" r="4" fill="#F472B6"/>
+            <circle cx="35" cy="34" r="4" fill="#4ADE80"/>
+            <circle cx="35" cy="44" r="4" fill="#F472B6"/>
+            <path d="M46 8 L46 52 Q46 58 52 58 L58 58 Q64 58 64 52 L64 8" stroke="#94A3B8" stroke-width="2" fill="url(#bs1)"/>
+          </svg>
+        </div>
+        <div class="game-info"><h3>Ball Sort Puzzle</h3><p>Sort colored balls into tubes. +200 per completed tube</p>
+          <div class="game-badges"><span class="game-badge blue">+200 / tube</span><span class="game-badge gold">2000 / round</span><span class="game-badge green">10 Levels</span></div>
         </div>
         <div class="game-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
       </div>
@@ -798,7 +815,6 @@ body.low-end .screen{animation:none !important}
     <button class="game-quit" onclick="quitGame()">Quit</button>
   </div>
   <div class="powerup-bar" id="powerupBar"></div>
-  <button class="cashout-btn" id="cashoutBtn" onclick="chickenCashOut()">💰 CASH OUT</button>
   <canvas id="gameCanvas"></canvas>
   <div class="game-controls" id="gameControls">
     <div class="ctrl-btn" onmousedown="moveGame('left')" onmouseup="stopMove()" onmouseleave="stopMove()" ontouchstart="moveGame('left');event.preventDefault()" ontouchend="stopMove()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
@@ -1062,66 +1078,17 @@ const Sound = (() => {
   }
 
   const BGM_PRESETS = {
-    home: {
-      chords: [[220.00, 261.63, 329.63],[174.61, 220.00, 261.63],[261.63, 329.63, 392.00],[196.00, 246.94, 293.66]],
-      melody: [523.25, 587.33, 659.25, 587.33, 523.25, 440.00, 392.00, 440.00],
-      arpSpeed: 0.42, chordDur: 3.2, padVol: 0.032, bassVol: 0.045, melVol: 0.022, arpVol: 0.014
-    },
-    leaderboard: {
-      chords: [[196.00, 246.94, 293.66],[174.61, 220.00, 261.63],[146.83, 185.00, 220.00],[164.81, 207.65, 246.94]],
-      melody: [587.33, 659.25, 783.99, 880.00, 783.99, 659.25, 587.33, 493.88],
-      arpSpeed: 0.36, chordDur: 3.0, padVol: 0.030, bassVol: 0.042, melVol: 0.020, arpVol: 0.013
-    },
-    car: {
-      chords: [[146.83, 174.61, 220.00],[164.81, 196.00, 246.94],[174.61, 220.00, 261.63],[146.83, 185.00, 220.00]],
-      melody: [440, 523.25, 493.88, 440, 392, 349.23, 392, 440],
-      arpSpeed: 0.30, chordDur: 2.4, padVol: 0.020, bassVol: 0.038, melVol: 0.016, arpVol: 0.010
-    },
-    space: {
-      chords: [[130.81, 155.56, 196.00],[123.47, 146.83, 185.00],[110.00, 138.59, 164.81],[123.47, 155.56, 185.00]],
-      melody: [392, 466.16, 523.25, 466.16, 392, 349.23, 311.13, 349.23],
-      arpSpeed: 0.55, chordDur: 4.0, padVol: 0.028, bassVol: 0.032, melVol: 0.014, arpVol: 0.011
-    },
-    candy: {
-      chords: [[261.63, 329.63, 392.00],[293.66, 369.99, 440.00],[329.63, 415.30, 493.88],[261.63, 329.63, 392.00]],
-      melody: [523.25, 659.25, 783.99, 659.25, 523.25, 587.33, 659.25, 523.25],
-      arpSpeed: 0.28, chordDur: 2.6, padVol: 0.022, bassVol: 0.036, melVol: 0.018, arpVol: 0.012
-    },
-    fruit: {
-      chords: [[220.00, 277.18, 329.63],[246.94, 311.13, 369.99],[220.00, 277.18, 329.63],[196.00, 246.94, 293.66]],
-      melody: [440, 554.37, 659.25, 554.37, 440, 493.88, 587.33, 493.88],
-      arpSpeed: 0.30, chordDur: 2.6, padVol: 0.022, bassVol: 0.036, melVol: 0.017, arpVol: 0.012
-    },
-    flappy: {
-      chords: [[261.63, 329.63, 392.00],[293.66, 349.23, 440.00],[329.63, 392.00, 493.88],[261.63, 329.63, 392.00]],
-      melody: [659.25, 587.33, 523.25, 587.33, 659.25, 783.99, 659.25, 587.33],
-      arpSpeed: 0.26, chordDur: 2.4, padVol: 0.024, bassVol: 0.040, melVol: 0.019, arpVol: 0.013
-    },
-    snake: {
-      chords: [[164.81, 207.65, 246.94],[185.00, 233.08, 277.18],[207.65, 246.94, 311.13],[164.81, 207.65, 246.94]],
-      melody: [392, 493.88, 587.33, 493.88, 392, 440, 523.25, 440],
-      arpSpeed: 0.32, chordDur: 2.8, padVol: 0.024, bassVol: 0.038, melVol: 0.017, arpVol: 0.012
-    },
-    jungle: {
-      chords: [[196.00, 246.94, 293.66],[174.61, 220.00, 261.63],[146.83, 185.00, 220.00],[164.81, 207.65, 246.94]],
-      melody: [523.25, 659.25, 783.99, 659.25, 523.25, 587.33, 659.25, 523.25],
-      arpSpeed: 0.35, chordDur: 3.0, padVol: 0.026, bassVol: 0.040, melVol: 0.018, arpVol: 0.012
-    },
-    block: {
-      chords: [[261.63, 329.63, 392.00],[293.66, 369.99, 440.00],[329.63, 415.30, 493.88],[261.63, 329.63, 392.00]],
-      melody: [523.25, 659.25, 783.99, 659.25, 523.25, 587.33, 659.25, 523.25],
-      arpSpeed: 0.40, chordDur: 3.2, padVol: 0.024, bassVol: 0.036, melVol: 0.016, arpVol: 0.012
-    },
-    shooter: {
-      chords: [[130.81, 155.56, 196.00],[123.47, 146.83, 185.00],[110.00, 138.59, 164.81],[123.47, 155.56, 185.00]],
-      melody: [392, 466.16, 523.25, 466.16, 392, 349.23, 311.13, 349.23],
-      arpSpeed: 0.30, chordDur: 3.5, padVol: 0.030, bassVol: 0.038, melVol: 0.016, arpVol: 0.012
-    },
-    chicken: {
-      chords: [[261.63, 329.63, 392.00],[293.66, 369.99, 440.00],[329.63, 415.30, 493.88],[261.63, 329.63, 392.00]],
-      melody: [523.25, 659.25, 783.99, 659.25, 523.25, 587.33, 659.25, 523.25],
-      arpSpeed: 0.28, chordDur: 2.6, padVol: 0.024, bassVol: 0.040, melVol: 0.019, arpVol: 0.013
-    }
+    home: { chords:[[220,261.63,329.63],[174.61,220,261.63],[261.63,329.63,392],[196,246.94,293.66]], melody:[523.25,587.33,659.25,587.33,523.25,440,392,440], arpSpeed:0.42, chordDur:3.2, padVol:0.032, bassVol:0.045, melVol:0.022 },
+    leaderboard:{ chords:[[196,246.94,293.66],[174.61,220,261.63],[146.83,185,220],[164.81,207.65,246.94]], melody:[587.33,659.25,783.99,880,783.99,659.25,587.33,493.88], arpSpeed:0.36, chordDur:3.0, padVol:0.030, bassVol:0.042, melVol:0.020 },
+    car:{ chords:[[146.83,174.61,220],[164.81,196,246.94],[174.61,220,261.63],[146.83,185,220]], melody:[440,523.25,493.88,440,392,349.23,392,440], arpSpeed:0.30, chordDur:2.4, padVol:0.020, bassVol:0.038, melVol:0.016 },
+    space:{ chords:[[130.81,155.56,196],[123.47,146.83,185],[110,138.59,164.81],[123.47,155.56,185]], melody:[392,466.16,523.25,466.16,392,349.23,311.13,349.23], arpSpeed:0.55, chordDur:4.0, padVol:0.028, bassVol:0.032, melVol:0.014 },
+    candy:{ chords:[[261.63,329.63,392],[293.66,369.99,440],[329.63,415.30,493.88],[261.63,329.63,392]], melody:[523.25,659.25,783.99,659.25,523.25,587.33,659.25,523.25], arpSpeed:0.28, chordDur:2.6, padVol:0.022, bassVol:0.036, melVol:0.018 },
+    fruit:{ chords:[[220,277.18,329.63],[246.94,311.13,369.99],[220,277.18,329.63],[196,246.94,293.66]], melody:[440,554.37,659.25,554.37,440,493.88,587.33,493.88], arpSpeed:0.30, chordDur:2.6, padVol:0.022, bassVol:0.036, melVol:0.017 },
+    snake:{ chords:[[164.81,207.65,246.94],[185,233.08,277.18],[207.65,246.94,311.13],[164.81,207.65,246.94]], melody:[392,493.88,587.33,493.88,392,440,523.25,440], arpSpeed:0.32, chordDur:2.8, padVol:0.024, bassVol:0.038, melVol:0.017 },
+    block:{ chords:[[261.63,329.63,392],[293.66,369.99,440],[329.63,415.30,493.88],[261.63,329.63,392]], melody:[523.25,659.25,783.99,659.25,523.25,587.33,659.25,523.25], arpSpeed:0.40, chordDur:3.2, padVol:0.024, bassVol:0.036, melVol:0.016 },
+    shooter:{ chords:[[130.81,155.56,196],[123.47,146.83,185],[110,138.59,164.81],[123.47,155.56,185]], melody:[392,466.16,523.25,466.16,392,349.23,311.13,349.23], arpSpeed:0.30, chordDur:3.5, padVol:0.030, bassVol:0.038, melVol:0.016 },
+    arrow:{ chords:[[261.63,329.63,392],[293.66,369.99,440],[329.63,415.30,493.88],[261.63,329.63,392]], melody:[587.33,659.25,783.99,659.25,587.33,523.25,493.88,523.25], arpSpeed:0.30, chordDur:2.8, padVol:0.024, bassVol:0.040, melVol:0.018 },
+    ballsort:{ chords:[[196,246.94,293.66],[220,277.18,329.63],[246.94,311.13,369.99],[196,246.94,293.66]], melody:[523.25,587.33,698.46,587.33,523.25,493.88,440,493.88], arpSpeed:0.34, chordDur:3.0, padVol:0.024, bassVol:0.038, melVol:0.017 }
   };
 
   function schedulePad(freqs, startTime, dur, vol) {
@@ -1130,28 +1097,21 @@ const Sound = (() => {
         const osc = ctx.createOscillator();
         const g = ctx.createGain();
         const filter = ctx.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.value = 1200;
-        filter.Q.value = 0.7;
+        filter.type = 'lowpass'; filter.frequency.value = 1200; filter.Q.value = 0.7;
         osc.type = i === 0 ? 'triangle' : 'sine';
         osc.frequency.setValueAtTime(f, startTime);
         const lfo = ctx.createOscillator();
         const lfoG = ctx.createGain();
         lfo.frequency.value = 0.35 + Math.random() * 0.3;
         lfoG.gain.value = 1.2;
-        lfo.connect(lfoG);
-        lfoG.connect(osc.frequency);
-        lfo.start(startTime);
-        lfo.stop(startTime + dur + 0.1);
+        lfo.connect(lfoG); lfoG.connect(osc.frequency);
+        lfo.start(startTime); lfo.stop(startTime + dur + 0.1);
         g.gain.setValueAtTime(0, startTime);
         g.gain.linearRampToValueAtTime(vol, startTime + 0.9);
         g.gain.linearRampToValueAtTime(vol, startTime + dur - 0.9);
         g.gain.linearRampToValueAtTime(0, startTime + dur);
-        osc.connect(filter);
-        filter.connect(g);
-        g.connect(bgmGain);
-        osc.start(startTime);
-        osc.stop(startTime + dur + 0.1);
+        osc.connect(filter); filter.connect(g); g.connect(bgmGain);
+        osc.start(startTime); osc.stop(startTime + dur + 0.1);
         bgmNodes.push({ osc, gain: g });
       } catch(e) {}
     });
@@ -1162,19 +1122,15 @@ const Sound = (() => {
       const osc = ctx.createOscillator();
       const g = ctx.createGain();
       const filter = ctx.createBiquadFilter();
-      filter.type = 'lowpass';
-      filter.frequency.value = 400;
+      filter.type = 'lowpass'; filter.frequency.value = 400;
       osc.type = 'sine';
       osc.frequency.setValueAtTime(freq / 2, startTime);
       g.gain.setValueAtTime(0, startTime);
       g.gain.linearRampToValueAtTime(vol, startTime + 0.25);
       g.gain.linearRampToValueAtTime(vol * 0.7, startTime + dur - 0.4);
       g.gain.linearRampToValueAtTime(0, startTime + dur);
-      osc.connect(filter);
-      filter.connect(g);
-      g.connect(bgmGain);
-      osc.start(startTime);
-      osc.stop(startTime + dur + 0.1);
+      osc.connect(filter); filter.connect(g); g.connect(bgmGain);
+      osc.start(startTime); osc.stop(startTime + dur + 0.1);
       bgmNodes.push({ osc, gain: g });
     } catch(e) {}
   }
@@ -1187,18 +1143,14 @@ const Sound = (() => {
         const osc = ctx.createOscillator();
         const g = ctx.createGain();
         const filter = ctx.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.value = 3000;
+        filter.type = 'lowpass'; filter.frequency.value = 3000;
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(f, t);
         g.gain.setValueAtTime(0, t);
         g.gain.linearRampToValueAtTime(vol, t + 0.04);
         g.gain.exponentialRampToValueAtTime(0.001, t + 0.6);
-        osc.connect(filter);
-        filter.connect(g);
-        g.connect(bgmGain);
-        osc.start(t);
-        osc.stop(t + 0.7);
+        osc.connect(filter); filter.connect(g); g.connect(bgmGain);
+        osc.start(t); osc.stop(t + 0.7);
         bgmNodes.push({ osc, gain: g });
       } catch(e) {}
     });
@@ -1213,8 +1165,7 @@ const Sound = (() => {
     stopBgm();
     currentBgm = name;
     const preset = BGM_PRESETS[name] || BGM_PRESETS.home;
-    let chordIndex = 0;
-    let melodyIndex = 0;
+    let chordIndex = 0, melodyIndex = 0;
 
     function playChord() {
       if (currentBgm !== name || muted || isBgPaused || !ctx) return;
@@ -1295,15 +1246,13 @@ const Sound = (() => {
   function magnet() { playTone(440, 0.15, 'sine', 0.05); playTone(880, 0.15, 'sine', 0.05, 0.1); }
   function shoot() { playTone(880, 0.05, 'square', 0.04); }
   function explode() { playTone(150, 0.20, 'sawtooth', 0.08); playTone(80, 0.30, 'square', 0.06, 0.05); }
+  function bomb() { playTone(80, 0.35, 'sawtooth', 0.10); playTone(200, 0.15, 'square', 0.07, 0.02); playTone(60, 0.5, 'sawtooth', 0.07, 0.05); }
 
   return { init, startBgm, stopBgm, toggleMute, setBgPaused,
-    coin, bigCoin, crash, gameOver, levelUp, boost, click, match, swap, splash, win, powerup, magnet, shoot, explode,
+    coin, bigCoin, crash, gameOver, levelUp, boost, click, match, swap, splash, win, powerup, magnet, shoot, explode, bomb,
     isMuted: () => muted };
 })();
 
-/* ============================================================
-   AUTO PAUSE BGM ON BACKGROUND
-   ============================================================ */
 function handleVisibilityChange() {
   if (document.hidden) { Sound.setBgPaused(true); }
   else { Sound.setBgPaused(false); Sound.init(); }
@@ -1655,9 +1604,6 @@ let lastPowerupSpawn = 0;
 const POWERUP_SPAWN_INTERVAL = 15000;
 const POWERUP_DURATION = 5000;
 
-let flappy = null;
-let pipes = [];
-
 let snake = null;
 let snakeDir = { x:1, y:0 };
 let snakeQueue = [];
@@ -1666,13 +1612,6 @@ let snakeGolden = null;
 let snakeMoveTimer = 0;
 let snakeMoveInterval = 200;
 let snakeGridSize = 14;
-
-/* New game variables */
-let jungle = null;
-let jungleObstacles = [], jungleCoins = [], jungleMegaCoins = [], junglePowerups = [];
-let jungleMagnetActive = false, jungleMagnetTime = 0;
-let jungleShieldActive = false, jungleShieldTime = 0;
-let jungleGroundOffset = 0;
 
 let blockGrid = [];
 let blockPieces = [];
@@ -1684,20 +1623,32 @@ const BLOCK_GRID = 8;
 
 let shooterShip = null;
 let shooterBullets = [], shooterEnemies = [], shooterEnemyBullets = [];
-let shooterCoins = [], shooterMegaCoins = [], shooterPowerups = [];
+let shooterCoins = [], shooterMegaCoins = [];
 let shooterHearts = 5;
 let shooterShootCooldown = 0;
 let shooterEnemySpawnTimer = 0;
 
-let chicken = null;
-let chickenMultiplier = 1;
-let chickenScore = 0;
-let chickenLanes = [];
-let chickenCurrentLane = 0;
-let chickenCrossed = 0;
-let chickenCashOutFlag = false;
-const CHICKEN_MULTIPLIERS = [0, 2, 4, 6, 10, 20, 40, 60, 80, 100, 200];
-const CHICKEN_TOTAL_LANES = 10;
+/* Bomb system for match games */
+let bombs = []; // {r,c,size:'small'|'large'}
+
+/* Arrow Maze variables */
+let arrowGridSize = 5;
+let arrowPath = [];
+let arrowIndex = 0;
+let arrowLevel = 1;
+let arrowMap = {};
+let arrowCellSize = 0;
+let arrowOffsetX = 0;
+let arrowOffsetY = 0;
+let arrowWrongFlash = 0;
+
+/* Ball Sort variables */
+let ballTubes = [];
+let ballColors = 5;
+let ballCapacity = 4;
+let ballSelectedTube = -1;
+let ballTubeRects = [];
+let ballSortLevel = 1;
 
 /* ============================================================
    POWERUP BAR
@@ -1738,9 +1689,9 @@ function moveGame(dir){
   if(dir==='down') keys.down=true;
   if(dir==='boost'){ keys.boost=true; Sound.boost(); }
   if(dir==='tap'){
-    if(activeGame==='flappy' && flappy) { flappy.vy = -5.6; Sound.swap(); }
-    if(activeGame==='jungle' && jungle && !jungle.jumping) {
-      jungle.vy = -13; jungle.jumping = true; Sound.swap();
+    if(activeGame==='snake' && snake){
+      const dirs=[[0,-1],[1,0],[0,1],[-1,0]];
+      const cyc=dirs[Math.floor(Math.random()*4)];
     }
   }
 }
@@ -1750,13 +1701,9 @@ document.addEventListener('keydown', e=>{
   if(!activeGame) return;
   if(e.key==='ArrowLeft'||e.key==='a') keys.left=true;
   if(e.key==='ArrowRight'||e.key==='d') keys.right=true;
-  if(e.key==='ArrowUp'||e.key==='w'){
-    keys.up=true;
-    if(activeGame==='flappy' && flappy){ flappy.vy=-5.6; Sound.swap(); }
-    if(activeGame==='jungle' && jungle && !jungle.jumping){ jungle.vy=-13; jungle.jumping=true; Sound.swap(); }
-  }
+  if(e.key==='ArrowUp'||e.key==='w') keys.up=true;
   if(e.key==='ArrowDown'||e.key==='s') keys.down=true;
-  if(e.key===' '){ keys.boost=true; if(activeGame==='flappy' && flappy){ flappy.vy=-5.6; Sound.swap(); } }
+  if(e.key===' '){ keys.boost=true; }
 });
 document.addEventListener('keyup', e=>{
   if(e.key==='ArrowLeft'||e.key==='a') keys.left=false;
@@ -1779,22 +1726,14 @@ function handleCanvasTouchStart(e){
     const x=touch.clientX-rect.left, y=touch.clientY-rect.top;
     const col=Math.floor((x-gridOffsetX)/tileSize);
     const row=Math.floor((y-gridOffsetY)/tileSize);
-    if(row>=0&&row<gridSize&&col>=0&&col<gridSize) handleTileTap(row,col);
-    return;
-  }
-  
-  if(activeGame==='flappy'){
-    e.preventDefault();
-    if(flappy){ flappy.vy = -5.6; Sound.swap(); }
-    return;
-  }
-  
-  if(activeGame==='jungle'){
-    e.preventDefault();
-    if(jungle && !jungle.jumping){
-      jungle.vy = -13;
-      jungle.jumping = true;
-      Sound.swap();
+    if(row>=0&&row<gridSize&&col>=0&&col<gridSize){
+      // Check if tapped on a bomb
+      const bomb = bombs.find(b => b.r === row && b.c === col);
+      if(bomb){
+        explodeBomb(bomb.r, bomb.c, bomb.size);
+        return;
+      }
+      handleTileTap(row,col);
     }
     return;
   }
@@ -1814,31 +1753,15 @@ function handleCanvasTouchStart(e){
     return;
   }
   
-  if(activeGame==='chicken'){
+  if(activeGame==='arrow'){
     e.preventDefault();
-    const rect = canvas.getBoundingClientRect();
-    const touch = e.touches ? e.touches[0] : e;
-    const x = touch.clientX - rect.left;
-    const y = touch.clientY - rect.top;
-    
-    // Cash out button check
-    const btn = document.getElementById('cashoutBtn');
-    if(btn && btn.style.display === 'block'){
-      const btnRect = btn.getBoundingClientRect();
-      const canvasRect = canvas.getBoundingClientRect();
-      if(x >= btnRect.left - canvasRect.left && x <= btnRect.right - canvasRect.left &&
-         y >= btnRect.top - canvasRect.top && y <= btnRect.bottom - canvasRect.top){
-        chickenCashOut();
-        return;
-      }
-    }
-    
-    if(chicken && !chickenCashOutFlag){
-      const laneWidth = canvas._h / 12;
-      const maxY = canvas._h - 80 - CHICKEN_TOTAL_LANES * laneWidth;
-      chicken.targetY = Math.max(maxY, chicken.targetY - laneWidth);
-      Sound.swap();
-    }
+    handleArrowTap(e);
+    return;
+  }
+  
+  if(activeGame==='ballsort'){
+    e.preventDefault();
+    handleBallSortTap(e);
     return;
   }
   
@@ -1852,18 +1775,19 @@ function handleCanvasTouchStart(e){
     return;
   }
   
-  // Default: car/space
+  // Default: car/space — support both X and Y drag
   e.preventDefault();
   const rect=canvas.getBoundingClientRect();
   const touch=e.touches?e.touches[0]:e;
   touchTargetX=touch.clientX-rect.left;
+  touchTargetY=touch.clientY-rect.top;
   touchActive=true;
 }
 
 function handleCanvasTouchMove(e){
   if(!activeGame) return;
   
-  if(activeGame==='candy'||activeGame==='fruit'||activeGame==='flappy'||activeGame==='jungle'||activeGame==='chicken') return;
+  if(activeGame==='candy'||activeGame==='fruit'||activeGame==='arrow'||activeGame==='ballsort') return;
   
   if(activeGame==='snake'){
     e.preventDefault();
@@ -1906,6 +1830,7 @@ function handleCanvasTouchMove(e){
   const rect=canvas.getBoundingClientRect();
   const touch=e.touches?e.touches[0]:e;
   touchTargetX=touch.clientX-rect.left;
+  touchTargetY=touch.clientY-rect.top;
 }
 
 function handleCanvasTouchEnd(){ 
@@ -1932,7 +1857,7 @@ function startGame(type){
   lastGameType=type;
   trackGamePlay(type);
   
-  const titles={car:'Car',space:'Rocket',flappy:'Flappy',snake:'Snake',candy:'Candy',fruit:'Fruit',jungle:'Safari',block:'Block',shooter:'Shooter',chicken:'Chicken'};
+  const titles={car:'Car',space:'Rocket',snake:'Snake',candy:'Candy',fruit:'Fruit',block:'Block',shooter:'Shooter',arrow:'Arrow Maze',ballsort:'Ball Sort'};
   setText('gameTitleUI', titles[type]||'Game');
 
   score=0; health=3; particles=[]; roadOffset=0;
@@ -1944,18 +1869,14 @@ function startGame(type){
   gameStartTime=Date.now();
   touchActive=false; touchTargetX=null; touchTargetY=null;
   matchesAnimating=[]; selectedTile=null; isSwapping=false;
-  player=null; flappy=null; pipes=[]; snake=null; snakeQueue=[]; snakeFood=null; snakeGolden=null;
-  jungle=null; jungleObstacles=[]; jungleCoins=[]; jungleMegaCoins=[]; junglePowerups=[];
-  jungleMagnetActive=false; jungleShieldActive=false; jungleGroundOffset=0;
+  player=null; snake=null; snakeQueue=[]; snakeFood=null; snakeGolden=null;
   shooterShip=null; shooterBullets=[]; shooterEnemies=[]; shooterEnemyBullets=[];
-  shooterCoins=[]; shooterMegaCoins=[]; shooterPowerups=[];
+  shooterCoins=[]; shooterMegaCoins=[];
   shooterHearts=5; shooterShootCooldown=0; shooterEnemySpawnTimer=0;
-  chicken=null; chickenMultiplier=1; chickenScore=0; chickenLanes=[];
-  chickenCurrentLane=0; chickenCrossed=0; chickenCashOutFlag=false;
   blockGrid=[]; blockPieces=[]; blockSelectedPiece=null;
+  bombs=[]; arrowWrongFlash=0;
   _lastFrame=0;
   renderPowerupBar();
-  setStyle('cashoutBtn','display','none');
 
   if(type==='car'||type==='space'){
     setStyle('levelStat','display','block');
@@ -1963,22 +1884,11 @@ function startGame(type){
     setStyle('healthStat','display','block');
     setStyle('gameControls','display','flex');
     health=3;
-  } else if(type==='flappy'){
-    setStyle('levelStat','display','block');
-    setStyle('movesStat','display','none');
-    setStyle('healthStat','display','none');
-    setStyle('gameControls','display','none');
   } else if(type==='snake'){
     setStyle('levelStat','display','block');
     setStyle('movesStat','display','none');
     setStyle('healthStat','display','none');
     setStyle('gameControls','display','none');
-  } else if(type==='jungle'){
-    setStyle('levelStat','display','block');
-    setStyle('movesStat','display','none');
-    setStyle('healthStat','display','block');
-    setStyle('gameControls','display','flex');
-    health=3;
   } else if(type==='block'){
     setStyle('levelStat','display','none');
     setStyle('movesStat','display','none');
@@ -1990,8 +1900,8 @@ function startGame(type){
     setStyle('healthStat','display','block');
     setStyle('gameControls','display','flex');
     health=5;
-  } else if(type==='chicken'){
-    setStyle('levelStat','display','none');
+  } else if(type==='arrow'||type==='ballsort'){
+    setStyle('levelStat','display','block');
     setStyle('movesStat','display','none');
     setStyle('healthStat','display','none');
     setStyle('gameControls','display','none');
@@ -2018,16 +1928,6 @@ function startGame(type){
           speed: Math.random()*1.2+0.4
         });
       }
-    } else if(type==='flappy'){
-      flappy = {
-        x: canvas._w * 0.28,
-        y: canvas._h / 2,
-        r: 16,
-        vy: 0,
-        rot: 0
-      };
-      pipes = [];
-      baseSpeed = IS_LOW_END ? 2.6 : 3.2;
     } else if(type==='snake'){
       const cellSize = Math.min(canvas._w, canvas._h - 80) * 0.92;
       const cs = Math.floor(cellSize / snakeGridSize);
@@ -2042,16 +1942,6 @@ function startGame(type){
       snakeMoveInterval = IS_LOW_END ? 220 : 180;
       snakeMoveTimer = 0;
       spawnSnakeFood();
-    } else if(type==='jungle'){
-      jungle = {
-        x: canvas._w * 0.2,
-        y: canvas._h - 135,
-        w: 50,
-        h: 55,
-        vy: 0,
-        jumping: false,
-        jumpCount: 0
-      };
     } else if(type==='block'){
       initBlockGame();
     } else if(type==='shooter'){
@@ -2063,11 +1953,14 @@ function startGame(type){
         targetX: canvas._w/2 - 22,
         targetY: canvas._h - 130
       };
-    } else if(type==='chicken'){
-      initChickenGame();
+    } else if(type==='arrow'){
+      initArrowMaze(1);
+    } else if(type==='ballsort'){
+      initBallSort(1);
     } else {
       currentTheme = type==='candy'?'candy':'fruit';
       movesLeft=20;
+      bombs=[];
       initGrid();
       const maxW = Math.min(canvas._w*0.94, 460);
       tileSize = Math.floor(maxW/gridSize);
@@ -2080,12 +1973,11 @@ function startGame(type){
     
     if(type==='car') loopCarGame();
     else if(type==='space') loopSpaceGame();
-    else if(type==='flappy') loopFlappyGame();
     else if(type==='snake') loopSnakeGame();
-    else if(type==='jungle') loopJungleGame();
     else if(type==='block') loopBlockGame();
     else if(type==='shooter') loopShooterGame();
-    else if(type==='chicken') loopChickenGame();
+    else if(type==='arrow') loopArrowMaze();
+    else if(type==='ballsort') loopBallSort();
     else loopMatchGame();
   });
 }
@@ -2140,23 +2032,22 @@ function movePlayerSmooth(){
   if(keys.left) player.targetX = player.x-40;
   if(keys.right) player.targetX = player.x+40;
   
-  // Up-down movement for car & space
-  if((activeGame==='car' || activeGame==='space')){
-    if(player.targetY === undefined) player.targetY = player.y;
-    if(keys.up) player.targetY = player.targetY - 40;
-    if(keys.down) player.targetY = player.targetY + 40;
-    const dy = player.targetY - player.y;
-    player.y += dy * sensitivity * speedMult;
-    const minY = activeGame==='space' ? 70 : 0;
-    const maxY = canvas._h - player.h - 20;
-    if(player.y < minY){ player.y = minY; player.targetY = minY; }
-    if(player.y > maxY){ player.y = maxY; player.targetY = maxY; }
-    
-    // Touch Y
-    if(touchActive && touchTargetY !== null){
-      player.targetY = touchTargetY - player.h/2;
-    }
+  // Up-down movement for car & space (buttons/keys)
+  if(player.targetY === undefined) player.targetY = player.y;
+  if(keys.up) player.targetY = player.targetY - 40;
+  if(keys.down) player.targetY = player.targetY + 40;
+  
+  // Touch Y control
+  if(touchActive && touchTargetY !== null){
+    player.targetY = touchTargetY - player.h/2;
   }
+  
+  const dy = player.targetY - player.y;
+  player.y += dy * sensitivity * speedMult;
+  const minY = activeGame==='space' ? 70 : 0;
+  const maxY = canvas._h - player.h - 20;
+  if(player.y < minY){ player.y = minY; player.targetY = minY; }
+  if(player.y > maxY){ player.y = maxY; player.targetY = maxY; }
   
   if(touchActive && touchTargetX!==null) player.targetX = touchTargetX - player.w/2;
   const dx = player.targetX - player.x;
@@ -2193,9 +2084,7 @@ function drawShield(x, y, r) {
   ctx.translate(x, y);
   if(!IS_LOW_END){ ctx.shadowColor='#A855F7'; ctx.shadowBlur=16; }
   const grad = ctx.createLinearGradient(0,-r,0,r);
-  grad.addColorStop(0,'#D8B4FE');
-  grad.addColorStop(0.5,'#A855F7');
-  grad.addColorStop(1,'#7E22CE');
+  grad.addColorStop(0,'#D8B4FE'); grad.addColorStop(0.5,'#A855F7'); grad.addColorStop(1,'#7E22CE');
   ctx.fillStyle=grad;
   ctx.beginPath();
   ctx.moveTo(0,-r);
@@ -2612,123 +2501,7 @@ function loopSpaceGame(){
   gameLoop=requestAnimationFrame(loopSpaceGame);
 }
 
-/* ---------- FLAPPY BIRD (Updated: 50 points per pipe) ---------- */
-function loopFlappyGame(){
-  if(!activeGame||activeGame!=='flappy') return;
-  const now=performance.now();
-  if(now-_lastFrame<FRAME_MS){ gameLoop=requestAnimationFrame(loopFlappyGame); return; }
-  const dt = Math.min((now-_lastFrame)/1000, 0.05);
-  _lastFrame=now;
-
-  updateDifficulty();
-
-  const bgGrad = ctx.createLinearGradient(0,0,0,canvas._h);
-  bgGrad.addColorStop(0,'#0EA5E9'); bgGrad.addColorStop(0.4,'#38BDF8'); bgGrad.addColorStop(1,'#7DD3FC');
-  ctx.fillStyle=bgGrad; ctx.fillRect(0,0,canvas._w,canvas._h);
-
-  if(!flappy) return;
-
-  flappy.vy += 22 * dt;
-  flappy.y += flappy.vy;
-  flappy.rot = Math.max(-0.5, Math.min(1.2, flappy.vy * 0.08));
-
-  if(flappy.y < flappy.r) { flappy.y = flappy.r; flappy.vy = 0; }
-  if(flappy.y > canvas._h - flappy.r - 40) return triggerGameOver('You hit the ground!');
-
-  const pipeGap = IS_LOW_END ? 170 : 155;
-  const pipeSpacing = IS_LOW_END ? 260 : 230;
-  if (pipes.length === 0 || pipes[pipes.length-1].x < canvas._w - pipeSpacing) {
-    const minTop = 60;
-    const maxTop = canvas._h - pipeGap - 80;
-    const topH = minTop + Math.random() * (maxTop - minTop);
-    pipes.push({
-      x: canvas._w + 20,
-      w: 60,
-      topH: topH,
-      gap: pipeGap,
-      passed: false
-    });
-  }
-
-  for(let i=pipes.length-1;i>=0;i--){
-    const p = pipes[i];
-    p.x -= (baseSpeed * 60 + 100) * dt;
-    if(p.x + p.w < -20) { pipes.splice(i,1); continue; }
-
-    ctx.fillStyle='#16A34A';
-    ctx.strokeStyle='#166534';
-    ctx.lineWidth=2;
-    ctx.fillRect(p.x, 0, p.w, p.topH);
-    ctx.strokeRect(p.x, 0, p.w, p.topH);
-    ctx.fillRect(p.x - 4, p.topH - 20, p.w + 8, 20);
-    ctx.strokeRect(p.x - 4, p.topH - 20, p.w + 8, 20);
-
-    const botY = p.topH + p.gap;
-    const botH = canvas._h - botY - 40;
-    ctx.fillRect(p.x, botY, p.w, botH);
-    ctx.strokeRect(p.x, botY, p.w, botH);
-    ctx.fillRect(p.x - 4, botY, p.w + 8, 20);
-    ctx.strokeRect(p.x - 4, botY, p.w + 8, 20);
-
-    const fr = flappy.r * 0.85;
-    const birdLeft = flappy.x - fr;
-    const birdRight = flappy.x + fr;
-    const birdTop = flappy.y - fr;
-    const birdBottom = flappy.y + fr;
-
-    if (birdRight > p.x && birdLeft < p.x + p.w) {
-      if (birdTop < p.topH || birdBottom > botY) {
-        return triggerGameOver('You hit a pipe!');
-      }
-    }
-
-    // UPDATED: 50 points per pipe
-    if (!p.passed && p.x + p.w < flappy.x) {
-      p.passed = true;
-      score += 50;
-      gameLevel = Math.min(10, 1 + Math.floor(score / 300));
-      updateGameUI();
-      Sound.coin();
-    }
-  }
-
-  ctx.fillStyle='#65A30D';
-  ctx.fillRect(0, canvas._h - 40, canvas._w, 40);
-  ctx.fillStyle='#84CC16';
-  ctx.fillRect(0, canvas._h - 40, canvas._w, 6);
-
-  ctx.save();
-  ctx.translate(flappy.x, flappy.y);
-  ctx.rotate(flappy.rot);
-  if(!IS_LOW_END){ ctx.shadowColor='#F59E0B'; ctx.shadowBlur=12; }
-  const birdGrad = ctx.createRadialGradient(-flappy.r*0.3, -flappy.r*0.3, 2, 0, 0, flappy.r);
-  birdGrad.addColorStop(0,'#FEF08A'); birdGrad.addColorStop(1,'#EAB308');
-  ctx.fillStyle = birdGrad;
-  ctx.beginPath(); ctx.ellipse(0, 0, flappy.r, flappy.r*0.8, 0, 0, Math.PI*2); ctx.fill();
-  ctx.shadowBlur=0;
-  ctx.strokeStyle='#A16207'; ctx.lineWidth=1.5; ctx.stroke();
-  ctx.fillStyle='#0F172A';
-  ctx.beginPath(); ctx.arc(flappy.r*0.4, -flappy.r*0.25, 2.5, 0, Math.PI*2); ctx.fill();
-  ctx.fillStyle='#fff';
-  ctx.beginPath(); ctx.arc(flappy.r*0.45, -flappy.r*0.35, 1, 0, Math.PI*2); ctx.fill();
-  ctx.fillStyle='#F97316';
-  ctx.beginPath();
-  ctx.moveTo(flappy.r*0.8, 0);
-  ctx.lineTo(flappy.r*1.5, -3);
-  ctx.lineTo(flappy.r*0.8, 5);
-  ctx.closePath(); ctx.fill();
-  ctx.fillStyle='#FBBF24';
-  ctx.beginPath();
-  ctx.ellipse(-flappy.r*0.3, 0, flappy.r*0.5, flappy.r*0.3, 0.3, 0, Math.PI*2);
-  ctx.fill();
-  ctx.strokeStyle='#A16207'; ctx.lineWidth=1; ctx.stroke();
-  ctx.restore();
-
-  updateParticles(); drawParticles();
-  gameLoop=requestAnimationFrame(loopFlappyGame);
-}
-
-/* ---------- SNAKE (Updated: 50 normal, 100 golden) ---------- */
+/* ---------- SNAKE ---------- */
 function spawnSnakeFood() {
   const occupied = new Set(snake.cells.map(c => c.x + ',' + c.y));
   let attempts = 0;
@@ -2737,13 +2510,8 @@ function spawnSnakeFood() {
     const y = Math.floor(Math.random() * snakeGridSize);
     if (!occupied.has(x + ',' + y)) {
       const isGolden = Math.random() < 0.12;
-      if (isGolden) {
-        snakeGolden = { x, y };
-        snakeFood = null;
-      } else {
-        snakeFood = { x, y };
-        snakeGolden = null;
-      }
+      if (isGolden) { snakeGolden = { x, y }; snakeFood = null; }
+      else { snakeFood = { x, y }; snakeGolden = null; }
       return;
     }
     attempts++;
@@ -2884,20 +2652,14 @@ function snakeStep(){
   snake.cells.unshift(newHead);
 
   let ate = false;
-  // UPDATED: 50 points for normal food
   if (snakeFood && newHead.x === snakeFood.x && newHead.y === snakeFood.y) {
-    score += 50;
-    ate = true;
-    Sound.coin();
+    score += 50; ate = true; Sound.coin();
     const cx = gridOffsetX + snakeFood.x * tileSize + tileSize/2;
     const cy = gridOffsetY + snakeFood.y * tileSize + tileSize/2;
     spawnParticles(cx, cy, '#EF4444', 10);
     snakeFood = null;
-  // UPDATED: 100 points for golden food
   } else if (snakeGolden && newHead.x === snakeGolden.x && newHead.y === snakeGolden.y) {
-    score += 100;
-    ate = true;
-    Sound.bigCoin();
+    score += 100; ate = true; Sound.bigCoin();
     const cx = gridOffsetX + snakeGolden.x * tileSize + tileSize/2;
     const cy = gridOffsetY + snakeGolden.y * tileSize + tileSize/2;
     spawnParticles(cx, cy, '#F59E0B', 20);
@@ -2921,271 +2683,7 @@ function snakeStep(){
   }
 }
 
-/* ---------- JUNGLE SAFARI RUN (NEW) ---------- */
-function loopJungleGame(){
-  if(!activeGame||activeGame!=='jungle') return;
-  const now=performance.now();
-  if(now-_lastFrame<FRAME_MS){ gameLoop=requestAnimationFrame(loopJungleGame); return; }
-  const dt=(now-_lastFrame)/1000;
-  _lastFrame=now;
-
-  updateDifficulty();
-  updatePowerupTimers(dt);
-  
-  if(magnetActive) { jungleMagnetActive = true; jungleMagnetTime = magnetTimeLeft; }
-  else jungleMagnetActive = false;
-  if(shieldActive) { jungleShieldActive = true; jungleShieldTime = shieldTimeLeft; }
-  else jungleShieldActive = false;
-
-  // Sky gradient
-  const skyGrad=ctx.createLinearGradient(0,0,0,canvas._h);
-  skyGrad.addColorStop(0,'#0EA5E9');
-  skyGrad.addColorStop(0.5,'#7DD3FC');
-  skyGrad.addColorStop(1,'#FEF3C7');
-  ctx.fillStyle=skyGrad;
-  ctx.fillRect(0,0,canvas._w,canvas._h);
-
-  // Background trees
-  if(!IS_LOW_END){
-    for(let i=0;i<5;i++){
-      const tx = (i*120 + (performance.now()/30) % 120) - 60;
-      ctx.fillStyle = 'rgba(22,101,52,0.3)';
-      ctx.beginPath();
-      ctx.moveTo(tx, canvas._h*0.5);
-      ctx.lineTo(tx-30, canvas._h*0.65);
-      ctx.lineTo(tx+30, canvas._h*0.65);
-      ctx.fill();
-    }
-  }
-
-  // Ground
-  const groundY = canvas._h - 80;
-  ctx.fillStyle = '#78350F';
-  ctx.fillRect(0, groundY, canvas._w, 80);
-  ctx.fillStyle = '#A16207';
-  ctx.fillRect(0, groundY, canvas._w, 8);
-  
-  jungleGroundOffset = (jungleGroundOffset + 6 * baseSpeed) % 60;
-  ctx.strokeStyle = 'rgba(0,0,0,0.3)';
-  ctx.lineWidth = 2;
-  for(let i = -60; i < canvas._w + 60; i += 60){
-    ctx.beginPath();
-    ctx.moveTo(i + jungleGroundOffset, groundY + 8);
-    ctx.lineTo(i + jungleGroundOffset - 15, groundY + 80);
-    ctx.stroke();
-  }
-
-  if(!jungle){
-    jungle = { x: canvas._w * 0.2, y: groundY - 55, w: 50, h: 55, vy: 0, jumping: false, jumpCount: 0 };
-  }
-
-  // Jump physics
-  if(jungle.jumping){
-    jungle.vy += 0.6;
-    jungle.y += jungle.vy;
-    if(jungle.y >= groundY - 55){
-      jungle.y = groundY - 55;
-      jungle.vy = 0;
-      jungle.jumping = false;
-      jungle.jumpCount = 0;
-    }
-  }
-
-  // Spawn obstacles
-  if(Math.random() < 0.015 * baseSpeed){
-    const obsType = Math.random() < 0.5 ? 'rock' : 'log';
-    jungleObstacles.push({
-      x: canvas._w + 40,
-      y: groundY - (obsType === 'rock' ? 35 : 25),
-      w: obsType === 'rock' ? 35 : 55,
-      h: obsType === 'rock' ? 35 : 25,
-      type: obsType,
-      speed: (5 + baseSpeed * 2)
-    });
-  }
-
-  if(Math.random() < 0.03 * baseSpeed){
-    jungleCoins.push({
-      x: canvas._w + 30,
-      y: groundY - 40 - Math.random() * 100,
-      r: 12,
-      speed: 6 * baseSpeed
-    });
-  }
-  if(Math.random() < 0.002 * baseSpeed){
-    jungleMegaCoins.push({
-      x: canvas._w + 30,
-      y: groundY - 80 - Math.random() * 80,
-      r: 20,
-      speed: 7 * baseSpeed
-    });
-  }
-  if(Math.random() < 0.0008 * baseSpeed){
-    junglePowerups.push({
-      x: canvas._w + 30,
-      y: groundY - 100,
-      r: 16,
-      type: Math.random() < 0.5 ? 'magnet' : 'shield',
-      speed: 5 * baseSpeed
-    });
-  }
-
-  const jRect = { x: jungle.x + 8, y: jungle.y + 8, w: jungle.w - 16, h: jungle.h - 16 };
-
-  for(let i = jungleObstacles.length - 1; i >= 0; i--){
-    const o = jungleObstacles[i];
-    o.x -= o.speed;
-    if(o.x < -100){ jungleObstacles.splice(i,1); continue; }
-    
-    if(o.type === 'rock'){
-      ctx.fillStyle = '#57534E';
-      ctx.beginPath();
-      ctx.moveTo(o.x, o.y + o.h);
-      ctx.lineTo(o.x + o.w*0.2, o.y);
-      ctx.lineTo(o.x + o.w*0.7, o.y + 5);
-      ctx.lineTo(o.x + o.w, o.y + o.h);
-      ctx.closePath();
-      ctx.fill();
-      ctx.strokeStyle = '#292524'; ctx.lineWidth = 2; ctx.stroke();
-    } else {
-      ctx.fillStyle = '#78350F';
-      ctx.fillRect(o.x, o.y, o.w, o.h);
-      ctx.strokeStyle = '#451A03'; ctx.lineWidth = 2; ctx.strokeRect(o.x, o.y, o.w, o.h);
-      ctx.fillStyle = '#A16207';
-      ctx.fillRect(o.x + 5, o.y + 8, o.w - 10, 3);
-    }
-    
-    const oRect = { x: o.x + 4, y: o.y + 4, w: o.w - 8, h: o.h - 8 };
-    if(rectIntersect(jRect, oRect)){
-      if(shieldActive){
-        spawnParticles(o.x + o.w/2, o.y + o.h/2, '#A855F7', 15);
-        jungleObstacles.splice(i,1);
-      } else {
-        health--; updateGameUI(); Sound.crash();
-        spawnParticles(jungle.x + jungle.w/2, jungle.y + jungle.h/2, '#EF4444', 20);
-        jungleObstacles.splice(i,1);
-        if(health <= 0) return triggerGameOver('You hit an obstacle!');
-      }
-    }
-  }
-
-  const pcx = jungle.x + jungle.w/2;
-  const pcy = jungle.y + jungle.h/2;
-  
-  for(let i = jungleCoins.length - 1; i >= 0; i--){
-    const c = jungleCoins[i];
-    if(magnetActive){
-      const dx = pcx - c.x, dy = pcy - c.y;
-      const dist = Math.hypot(dx, dy);
-      if(dist < 260){ c.x += dx/dist * 10; c.y += dy/dist * 10; }
-      else { c.x -= c.speed; }
-    } else { c.x -= c.speed; }
-    if(c.x < -40){ jungleCoins.splice(i,1); continue; }
-    drawCoin(c.x, c.y, c.r);
-    const cRect = { x: c.x - c.r + 3, y: c.y - c.r + 3, w: c.r*2 - 6, h: c.r*2 - 6 };
-    if(rectIntersect(jRect, cRect)){
-      score += 10; updateGameUI(); Sound.coin();
-      spawnParticles(c.x, c.y, '#F59E0B', 12);
-      jungleCoins.splice(i,1);
-    }
-  }
-
-  for(let i = jungleMegaCoins.length - 1; i >= 0; i--){
-    const c = jungleMegaCoins[i];
-    if(magnetActive){
-      const dx = pcx - c.x, dy = pcy - c.y;
-      const dist = Math.hypot(dx, dy);
-      if(dist < 300){ c.x += dx/dist * 11; c.y += dy/dist * 11; }
-      else { c.x -= c.speed; }
-    } else { c.x -= c.speed; }
-    if(c.x < -60){ jungleMegaCoins.splice(i,1); continue; }
-    drawCoin(c.x, c.y, c.r);
-    const cRect = { x: c.x - c.r + 3, y: c.y - c.r + 3, w: c.r*2 - 6, h: c.r*2 - 6 };
-    if(rectIntersect(jRect, cRect)){
-      score += 50; updateGameUI(); Sound.bigCoin();
-      spawnParticles(c.x, c.y, '#10B981', 25);
-      jungleMegaCoins.splice(i,1);
-    }
-  }
-
-  for(let i = junglePowerups.length - 1; i >= 0; i--){
-    const p = junglePowerups[i];
-    p.x -= p.speed;
-    if(p.x < -60){ junglePowerups.splice(i,1); continue; }
-    if(p.type === 'magnet') drawMagnet(p.x, p.y, p.r);
-    else drawShield(p.x, p.y, p.r);
-    const pRect = { x: p.x - p.r, y: p.y - p.r, w: p.r*2, h: p.r*2 };
-    if(rectIntersect(jRect, pRect)){
-      activatePowerup(p.type);
-      junglePowerups.splice(i,1);
-    }
-  }
-
-  drawDeer(jungle.x, jungle.y, jungle.w, jungle.h);
-  
-  drawMagnetAuraOnPlayer(jungle.x, jungle.y, jungle.w, jungle.h);
-  drawShieldAuraOnPlayer(jungle.x, jungle.y, jungle.w, jungle.h);
-
-  updateParticles(); drawParticles();
-  gameLoop = requestAnimationFrame(loopJungleGame);
-}
-
-function drawDeer(x, y, w, h){
-  ctx.save();
-  ctx.translate(x + w/2, y + h/2);
-  
-  if(!IS_LOW_END){
-    ctx.fillStyle = 'rgba(0,0,0,0.3)';
-    ctx.beginPath();
-    ctx.ellipse(0, h/2 + 5, w/2, 4, 0, 0, Math.PI*2);
-    ctx.fill();
-  }
-  
-  const bodyGrad = ctx.createLinearGradient(0, -h/4, 0, h/4);
-  bodyGrad.addColorStop(0, '#D97706');
-  bodyGrad.addColorStop(1, '#92400E');
-  ctx.fillStyle = bodyGrad;
-  ctx.beginPath();
-  ctx.ellipse(0, 5, w*0.45, h*0.35, 0, 0, Math.PI*2);
-  ctx.fill();
-  ctx.strokeStyle = '#78350F'; ctx.lineWidth = 1.5; ctx.stroke();
-  
-  ctx.fillStyle = '#B45309';
-  ctx.beginPath();
-  ctx.ellipse(w*0.35, -h*0.15, w*0.22, h*0.2, 0.3, 0, Math.PI*2);
-  ctx.fill();
-  ctx.stroke();
-  
-  ctx.fillStyle = '#0F172A';
-  ctx.beginPath(); ctx.arc(w*0.42, -h*0.18, 2, 0, Math.PI*2); ctx.fill();
-  ctx.fillStyle = '#fff';
-  ctx.beginPath(); ctx.arc(w*0.43, -h*0.19, 0.8, 0, Math.PI*2); ctx.fill();
-  
-  ctx.strokeStyle = '#78350F'; ctx.lineWidth = 2; ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.moveTo(w*0.35, -h*0.32);
-  ctx.lineTo(w*0.3, -h*0.5);
-  ctx.moveTo(w*0.3, -h*0.5);
-  ctx.lineTo(w*0.22, -h*0.55);
-  ctx.moveTo(w*0.3, -h*0.5);
-  ctx.lineTo(w*0.38, -h*0.58);
-  ctx.stroke();
-  
-  ctx.fillStyle = '#92400E';
-  ctx.fillRect(-w*0.25, h*0.2, 5, h*0.3);
-  ctx.fillRect(-w*0.1, h*0.2, 5, h*0.3);
-  ctx.fillRect(w*0.1, h*0.2, 5, h*0.3);
-  ctx.fillRect(w*0.25, h*0.2, 5, h*0.3);
-  
-  ctx.fillStyle = '#FEF3C7';
-  ctx.beginPath();
-  ctx.ellipse(-w*0.45, 0, 4, 6, 0, 0, Math.PI*2);
-  ctx.fill();
-  
-  ctx.restore();
-}
-
-/* ---------- BLOCK PUZZLE (NEW) ---------- */
+/* ---------- BLOCK PUZZLE (Updated: 500 pts per line + snap-fit) ---------- */
 function initBlockGame(){
   blockGrid = [];
   for(let r=0; r<BLOCK_GRID; r++){
@@ -3230,8 +2728,7 @@ function generateBlockPieces(){
     const shape = shapes[Math.floor(Math.random() * shapes.length)];
     blockPieces.push({
       shape: shape,
-      x: 0,
-      y: 0,
+      x: 0, y: 0,
       placed: false,
       dragging: false,
       color: `hsl(${Math.random() * 60 + 200}, 70%, 60%)`
@@ -3272,6 +2769,31 @@ function canPlacePiece(piece, gridRow, gridCol){
   return true;
 }
 
+function findBestPlacement(piece){
+  const shape = piece.shape;
+  const cs = blockCellSize * 0.8;
+  const totalW = shape[0].length * cs;
+  const totalH = shape.length * cs;
+  const startX = piece.x - totalW/2;
+  const startY = piece.y - totalH/2;
+  
+  let bestR = -1, bestC = -1, bestDist = Infinity;
+  for(let r = 0; r < BLOCK_GRID; r++){
+    for(let c = 0; c < BLOCK_GRID; c++){
+      if(!canPlacePiece(piece, r, c)) continue;
+      const gx = blockOffsetX + c * blockCellSize;
+      const gy = blockOffsetY + r * blockCellSize;
+      const d = Math.hypot(gx - startX, gy - startY);
+      if(d < bestDist){ bestDist = d; bestR = r; bestC = c; }
+    }
+  }
+  // Snap threshold: within 1.8 grid cells
+  if(bestR >= 0 && bestDist < blockCellSize * 2.2){
+    return { r: bestR, c: bestC };
+  }
+  return null;
+}
+
 function placePiece(piece, gridRow, gridCol){
   const shape = piece.shape;
   for(let r=0; r<shape.length; r++){
@@ -3287,9 +2809,7 @@ function placePiece(piece, gridRow, gridCol){
   const completedCols = [];
   
   for(let r=0; r<BLOCK_GRID; r++){
-    if(blockGrid[r].every(cell => cell !== null)){
-      completedRows.push(r);
-    }
+    if(blockGrid[r].every(cell => cell !== null)) completedRows.push(r);
   }
   for(let c=0; c<BLOCK_GRID; c++){
     let full = true;
@@ -3308,7 +2828,8 @@ function placePiece(piece, gridRow, gridCol){
       for(let r=0; r<BLOCK_GRID; r++) blockGrid[r][c] = null;
     });
     
-    score += linesCleared * 100;
+    // UPDATED: 500 points per line
+    score += linesCleared * 500;
     updateGameUI();
     Sound.match();
     
@@ -3365,8 +2886,7 @@ function loopBlockGame(){
   ctx.strokeStyle = 'rgba(99, 102, 241, 0.3)';
   ctx.lineWidth = 2;
   roundRect(ctx, blockOffsetX - 4, blockOffsetY - 4, blockCellSize * BLOCK_GRID + 8, blockCellSize * BLOCK_GRID + 8, 12);
-  ctx.fill();
-  ctx.stroke();
+  ctx.fill(); ctx.stroke();
   
   for(let r=0; r<BLOCK_GRID; r++){
     for(let c=0; c<BLOCK_GRID; c++){
@@ -3466,19 +2986,13 @@ function handleBlockTouchEnd(){
   if(!blockSelectedPiece) return;
   
   const piece = blockSelectedPiece;
-  const shape = piece.shape;
-  const cs = blockCellSize * 0.8;
-  const totalW = shape[0].length * cs;
-  const totalH = shape.length * cs;
-  const startX = piece.x - totalW/2;
-  const startY = piece.y - totalH/2;
   
-  const gridCol = Math.round((startX - blockOffsetX) / blockCellSize);
-  const gridRow = Math.round((startY - blockOffsetY) / blockCellSize);
-  
-  if(canPlacePiece(piece, gridRow, gridCol)){
-    placePiece(piece, gridRow, gridCol);
+  // Try snap to nearest valid position
+  const placement = findBestPlacement(piece);
+  if(placement){
+    placePiece(piece, placement.r, placement.c);
   } else {
+    // Snap back to home
     piece.x = piece.homeX;
     piece.y = piece.homeY;
   }
@@ -3487,7 +3001,7 @@ function handleBlockTouchEnd(){
   blockSelectedPiece = null;
 }
 
-/* ---------- SPACE SHOOTER (NEW) ---------- */
+/* ---------- SPACE SHOOTER ---------- */
 function loopShooterGame(){
   if(!activeGame || activeGame !== 'shooter') return;
   const now = performance.now();
@@ -3556,8 +3070,7 @@ function loopShooterGame(){
     shooterBullets.push({
       x: shooterShip.x + shooterShip.w/2,
       y: shooterShip.y,
-      vy: -12,
-      r: 4
+      vy: -12, r: 4
     });
     shooterShootCooldown = 0.15;
     Sound.shoot();
@@ -3633,8 +3146,7 @@ function loopShooterGame(){
       shooterEnemyBullets.push({
         x: e.x + e.w/2,
         y: e.y + e.h,
-        vy: 5,
-        r: 4
+        vy: 5, r: 4
       });
     }
     
@@ -3723,7 +3235,6 @@ function loopShooterGame(){
   
   drawRocket(shooterShip.x, shooterShip.y, shooterShip.w, shooterShip.h, 0);
   
-  // Hearts
   for(let i=0; i<shooterHearts; i++){
     const hx = 20 + i * 25;
     const hy = 30;
@@ -3743,256 +3254,537 @@ function loopShooterGame(){
   gameLoop = requestAnimationFrame(loopShooterGame);
 }
 
-/* ---------- CHICKEN ROAD (NEW) ---------- */
-function initChickenGame(){
-  chickenScore = 0;
-  chickenMultiplier = 1;
-  chickenCrossed = 0;
-  chickenCurrentLane = 0;
-  chickenCashOutFlag = false;
-  chickenLanes = [];
+/* ============================================================
+   NEW GAME 1: ARROW MAZE
+   ============================================================ */
+function initArrowMaze(level) {
+  arrowLevel = level;
+  arrowGridSize = Math.min(7, 4 + Math.floor(level / 2));
+  arrowPath = [];
+  arrowMap = {};
+  arrowIndex = 0;
+  arrowWrongFlash = 0;
   
-  const laneWidth = canvas._h / 12;
-  for(let i=0; i<CHICKEN_TOTAL_LANES + 1; i++){
-    chickenLanes.push({
-      y: canvas._h - 80 - i * laneWidth,
-      cars: []
-    });
+  // Build path of cells
+  let cx = Math.floor(Math.random() * arrowGridSize);
+  let cy = Math.floor(Math.random() * arrowGridSize);
+  const used = new Set([cx + ',' + cy]);
+  const pathLen = Math.min(10, 4 + level);
+  arrowPath.push({x: cx, y: cy, dir: null});
+  
+  for (let i = 1; i < pathLen; i++) {
+    const dirs = [[0,-1],[1,0],[0,1],[-1,0]];
+    for (let j = dirs.length - 1; j > 0; j--) {
+      const k = Math.floor(Math.random() * (j+1));
+      const tmp = dirs[j]; dirs[j] = dirs[k]; dirs[k] = tmp;
+    }
+    let moved = false;
+    for (const [dx, dy] of dirs) {
+      const nx = cx + dx, ny = cy + dy;
+      if (nx >= 0 && nx < arrowGridSize && ny >= 0 && ny < arrowGridSize && !used.has(nx + ',' + ny)) {
+        arrowPath[arrowPath.length - 1].dir = [dx, dy];
+        cx = nx; cy = ny;
+        arrowPath.push({x: cx, y: cy, dir: null});
+        used.add(cx + ',' + cy);
+        moved = true;
+        break;
+      }
+    }
+    if (!moved) break;
   }
   
-  chicken = {
-    x: canvas._w * 0.2,
-    y: canvas._h - 80,
-    w: 36,
-    h: 36,
-    targetY: canvas._h - 80
-  };
-  
-  chickenLanes.forEach((lane, i) => {
-    if(i === 0 || i === CHICKEN_TOTAL_LANES) return;
-    const carCount = Math.floor(Math.random() * 2) + 1;
-    for(let j=0; j<carCount; j++){
-      lane.cars.push({
-        x: Math.random() * canvas._w,
-        w: 50, h: 30,
-        speed: (2 + Math.random() * 2) * (Math.random() < 0.5 ? 1 : -1),
-        color: `hsl(${Math.random() * 360}, 70%, 50%)`
-      });
-    }
+  // Build lookup
+  arrowPath.forEach((p, i) => {
+    arrowMap[p.x + ',' + p.y] = { dir: p.dir, index: i, x: p.x, y: p.y };
   });
   
-  const btn = document.getElementById('cashoutBtn');
-  if(btn) btn.style.display = 'block';
+  // Compute grid layout
+  const boardSize = Math.min(canvas._w * 0.92, canvas._h * 0.7);
+  arrowCellSize = Math.floor(boardSize / arrowGridSize);
+  arrowOffsetX = (canvas._w - arrowCellSize * arrowGridSize) / 2;
+  arrowOffsetY = (canvas._h - arrowCellSize * arrowGridSize) / 2;
+  if (arrowOffsetY < 60) arrowOffsetY = 60;
 }
 
-function loopChickenGame(){
-  if(!activeGame || activeGame !== 'chicken') return;
-  const now = performance.now();
-  if(now - _lastFrame < FRAME_MS){ gameLoop = requestAnimationFrame(loopChickenGame); return; }
-  const dt = (now - _lastFrame) / 1000;
-  _lastFrame = now;
-  
-  if(!chicken){
-    initChickenGame();
-  }
-  
-  ctx.fillStyle = '#4ADE80';
-  ctx.fillRect(0, 0, canvas._w, canvas._h);
-  
-  const laneWidth = canvas._h / 12;
-  chickenLanes.forEach((lane, i) => {
-    const laneY = lane.y;
-    
-    if(i === 0){
-      ctx.fillStyle = '#65A30D';
-      ctx.fillRect(0, laneY, canvas._w, laneWidth);
-    } else if(i === CHICKEN_TOTAL_LANES){
-      ctx.fillStyle = '#FCD34D';
-      ctx.fillRect(0, laneY, canvas._w, laneWidth);
-      ctx.fillStyle = '#F59E0B';
-      ctx.font = 'bold 16px Sora, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('FINISH', canvas._w/2, laneY + laneWidth/2 + 6);
-    } else {
-      ctx.fillStyle = '#374151';
-      ctx.fillRect(0, laneY, canvas._w, laneWidth);
-      
-      ctx.strokeStyle = '#FCD34D';
-      ctx.lineWidth = 2;
-      ctx.setLineDash([10, 10]);
-      ctx.beginPath();
-      ctx.moveTo(0, laneY + laneWidth/2);
-      ctx.lineTo(canvas._w, laneY + laneWidth/2);
-      ctx.stroke();
-      ctx.setLineDash([]);
-      
-      const mult = CHICKEN_MULTIPLIERS[i];
-      if(mult > 0){
-        ctx.fillStyle = 'rgba(252, 211, 77, 0.9)';
-        ctx.font = 'bold 12px Sora, sans-serif';
-        ctx.textAlign = 'left';
-        ctx.fillText(mult + 'x', 8, laneY + laneWidth/2 + 4);
-      }
-      
-      lane.cars.forEach(car => {
-        car.x += car.speed * dt * 60;
-        if(car.x > canvas._w + 60) car.x = -60;
-        if(car.x < -60) car.x = canvas._w + 60;
-        
-        ctx.fillStyle = car.color;
-        roundRect(ctx, car.x, laneY + laneWidth/2 - car.h/2, car.w, car.h, 5);
-        ctx.fill();
-        
-        ctx.fillStyle = 'rgba(0,0,0,0.3)';
-        ctx.fillRect(car.x + 5, laneY + laneWidth/2 - car.h/2 + 5, car.w - 10, car.h - 10);
-        
-        ctx.fillStyle = '#93C5FD';
-        ctx.fillRect(car.x + 10, laneY + laneWidth/2 - car.h/2 + 8, 10, car.h - 16);
-        ctx.fillRect(car.x + car.w - 20, laneY + laneWidth/2 - car.h/2 + 8, 10, car.h - 16);
-      });
-    }
-  });
-  
-  if(!chickenCashOutFlag){
-    const dy = chicken.targetY - chicken.y;
-    if(Math.abs(dy) > 1){
-      chicken.y += dy * 0.15;
-    }
-    
-    drawChicken(chicken.x, chicken.y, chicken.w, chicken.h);
-    
-    const chickenRect = { x: chicken.x + 5, y: chicken.y + 5, w: chicken.w - 10, h: chicken.h - 10 };
-    const currentLane = Math.round((canvas._h - 80 - chicken.y) / laneWidth);
-    
-    if(currentLane > 0 && currentLane < CHICKEN_TOTAL_LANES){
-      const lane = chickenLanes[currentLane];
-      for(const car of lane.cars){
-        const carRect = { x: car.x, y: lane.y + laneWidth/2 - car.h/2, w: car.w, h: car.h };
-        if(rectIntersect(chickenRect, carRect)){
-          Sound.crash();
-          spawnParticles(chicken.x + chicken.w/2, chicken.y + chicken.h/2, '#EF4444', 30);
-          chickenCashOutFlag = true;
-          setTimeout(() => {
-            showAlert('🚗 Accident!\nYour points were lost. Try again!', 'error', 'Game Over');
-            triggerGameOver('Chicken accident!');
-          }, 500);
-          return;
-        }
-      }
-    }
-    
-    if(currentLane > chickenCrossed){
-      chickenCrossed = currentLane;
-      chickenMultiplier = CHICKEN_MULTIPLIERS[Math.min(currentLane, CHICKEN_MULTIPLIERS.length - 1)];
-      chickenScore = chickenMultiplier;
-      score = chickenScore;
-      updateGameUI();
-      Sound.coin();
-      
-      if(currentLane >= CHICKEN_TOTAL_LANES){
-        chickenCashOutFlag = true;
-        Sound.win();
-        score = chickenScore * 2;
-        updateGameUI();
-        showAlert(`🏆 Finish line crossed!\nFinal Score: ${score} points (2x bonus!)`, 'success', 'Victory!');
-        setTimeout(() => triggerGameOver('Victory!'), 1500);
-      }
-    }
-  }
-  
-  // Multiplier UI
-  ctx.fillStyle = 'rgba(0,0,0,0.7)';
-  ctx.fillRect(canvas._w/2 - 80, 10, 160, 50);
-  ctx.fillStyle = '#FCD34D';
-  ctx.font = 'bold 24px Sora, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText(chickenMultiplier + 'x', canvas._w/2, 42);
-  ctx.fillStyle = '#fff';
-  ctx.font = 'bold 11px Inter, sans-serif';
-  ctx.fillText('SCORE: ' + chickenScore, canvas._w/2, 56);
-  
-  updateParticles();
-  drawParticles();
-  gameLoop = requestAnimationFrame(loopChickenGame);
-}
-
-function drawChicken(x, y, w, h){
+function drawArrowCell(x, y, size, dir, isCurrent, isCompleted, isEnd) {
   ctx.save();
-  ctx.translate(x + w/2, y + h/2);
+  const cx = x + size/2;
+  const cy = y + size/2;
+  const pad = size * 0.12;
   
-  ctx.fillStyle = 'rgba(0,0,0,0.3)';
-  ctx.beginPath();
-  ctx.ellipse(0, h/2 + 2, w/2, 4, 0, 0, Math.PI*2);
+  // Background
+  if (isCurrent) {
+    ctx.fillStyle = 'rgba(244, 114, 182, 0.25)';
+    ctx.strokeStyle = '#F472B6';
+    ctx.lineWidth = 3;
+  } else if (isCompleted) {
+    ctx.fillStyle = 'rgba(74, 222, 128, 0.18)';
+    ctx.strokeStyle = '#4ADE80';
+    ctx.lineWidth = 2;
+  } else if (isEnd) {
+    ctx.fillStyle = 'rgba(250, 204, 21, 0.18)';
+    ctx.strokeStyle = '#FCD34D';
+    ctx.lineWidth = 2;
+  } else {
+    ctx.fillStyle = 'rgba(30, 41, 59, 0.7)';
+    ctx.strokeStyle = 'rgba(148, 163, 184, 0.35)';
+    ctx.lineWidth = 1.5;
+  }
+  roundRect(ctx, x + pad, y + pad, size - pad*2, size - pad*2, size * 0.15);
   ctx.fill();
-  
-  const bodyGrad = ctx.createRadialGradient(-w*0.1, -h*0.1, 2, 0, 0, w*0.6);
-  bodyGrad.addColorStop(0, '#FEF08A');
-  bodyGrad.addColorStop(1, '#EAB308');
-  ctx.fillStyle = bodyGrad;
-  ctx.beginPath();
-  ctx.ellipse(0, h*0.1, w*0.4, h*0.35, 0, 0, Math.PI*2);
-  ctx.fill();
-  ctx.strokeStyle = '#A16207';
-  ctx.lineWidth = 1.5;
   ctx.stroke();
   
-  ctx.fillStyle = '#FEF08A';
-  ctx.beginPath();
-  ctx.arc(w*0.15, -h*0.25, w*0.25, 0, Math.PI*2);
-  ctx.fill();
-  ctx.stroke();
+  // Arrow
+  if (dir) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    const rot = dir[0] === 1 ? Math.PI/2 : dir[0] === -1 ? -Math.PI/2 : dir[1] === 1 ? 0 : Math.PI;
+    ctx.rotate(rot);
+    const r = size * 0.22;
+    if (isCompleted) {
+      ctx.fillStyle = '#4ADE80';
+    } else if (isCurrent) {
+      ctx.fillStyle = '#F472B6';
+      if(!IS_LOW_END){ ctx.shadowColor = '#F472B6'; ctx.shadowBlur = 12; }
+    } else {
+      ctx.fillStyle = '#94A3B8';
+    }
+    ctx.beginPath();
+    ctx.moveTo(0, -r);
+    ctx.lineTo(r*0.9, -r*0.1);
+    ctx.lineTo(r*0.35, -r*0.1);
+    ctx.lineTo(r*0.35, r);
+    ctx.lineTo(-r*0.35, r);
+    ctx.lineTo(-r*0.35, -r*0.1);
+    ctx.lineTo(-r*0.9, -r*0.1);
+    ctx.closePath();
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.restore();
+  } else if (isEnd) {
+    // Star for end
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.fillStyle = '#FCD34D';
+    if(!IS_LOW_END){ ctx.shadowColor = '#FCD34D'; ctx.shadowBlur = 14; }
+    const r = size * 0.2;
+    ctx.beginPath();
+    for (let i = 0; i < 10; i++) {
+      const a = (i/10) * Math.PI * 2 - Math.PI/2;
+      const rad = i % 2 === 0 ? r : r*0.45;
+      const px = Math.cos(a) * rad;
+      const py = Math.sin(a) * rad;
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
   
-  ctx.fillStyle = '#0F172A';
-  ctx.beginPath();
-  ctx.arc(w*0.2, -h*0.3, 2, 0, Math.PI*2);
-  ctx.fill();
-  
-  ctx.fillStyle = '#F97316';
-  ctx.beginPath();
-  ctx.moveTo(w*0.35, -h*0.25);
-  ctx.lineTo(w*0.5, -h*0.2);
-  ctx.lineTo(w*0.35, -h*0.15);
-  ctx.closePath();
-  ctx.fill();
-  
-  ctx.fillStyle = '#EF4444';
-  ctx.beginPath();
-  ctx.arc(w*0.15, -h*0.45, 4, 0, Math.PI*2);
-  ctx.arc(w*0.22, -h*0.42, 3, 0, Math.PI*2);
-  ctx.fill();
-  
-  ctx.strokeStyle = '#F97316';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(-w*0.15, h*0.4);
-  ctx.lineTo(-w*0.15, h*0.55);
-  ctx.moveTo(-w*0.15, h*0.55);
-  ctx.lineTo(-w*0.25, h*0.6);
-  ctx.moveTo(-w*0.15, h*0.55);
-  ctx.lineTo(-w*0.05, h*0.6);
-  ctx.moveTo(w*0.15, h*0.4);
-  ctx.lineTo(w*0.15, h*0.55);
-  ctx.moveTo(w*0.15, h*0.55);
-  ctx.lineTo(w*0.05, h*0.6);
-  ctx.moveTo(w*0.15, h*0.55);
-  ctx.lineTo(w*0.25, h*0.6);
-  ctx.stroke();
+  // Wrong flash overlay
+  if (arrowWrongFlash > 0) {
+    ctx.strokeStyle = 'rgba(239, 68, 68,' + arrowWrongFlash + ')';
+    ctx.lineWidth = 4;
+    roundRect(ctx, x + pad, y + pad, size - pad*2, size - pad*2, size * 0.15);
+    ctx.stroke();
+  }
   
   ctx.restore();
 }
 
-function chickenCashOut(){
-  if(chickenCrossed > 0 && !chickenCashOutFlag){
-    chickenCashOutFlag = true;
-    score = chickenScore;
-    updateGameUI();
-    Sound.win();
-    showAlert(`💰 Cashed out at ${chickenMultiplier}x!\nYou earned ${score} points!`, 'success', 'Cash Out');
-    setTimeout(() => triggerGameOver('Cashed out successfully!'), 1000);
+function loopArrowMaze() {
+  if (!activeGame || activeGame !== 'arrow') return;
+  const now = performance.now();
+  if (now - _lastFrame < FRAME_MS) { gameLoop = requestAnimationFrame(loopArrowMaze); return; }
+  _lastFrame = now;
+  
+  if (arrowWrongFlash > 0) arrowWrongFlash -= 0.05;
+  
+  const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas._h);
+  bgGrad.addColorStop(0, '#1A0B2E');
+  bgGrad.addColorStop(1, '#0A0518');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, canvas._w, canvas._h);
+  
+  if(!IS_LOW_END){
+    const neb = ctx.createRadialGradient(canvas._w/2, canvas._h/2, 30, canvas._w/2, canvas._h/2, canvas._w);
+    neb.addColorStop(0, 'rgba(244, 114, 182, 0.08)');
+    neb.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = neb;
+    ctx.fillRect(0, 0, canvas._w, canvas._h);
+  }
+  
+  // Draw all arrow cells
+  for (let r = 0; r < arrowGridSize; r++) {
+    for (let c = 0; c < arrowGridSize; c++) {
+      const key = c + ',' + r;
+      const x = arrowOffsetX + c * arrowCellSize;
+      const y = arrowOffsetY + r * arrowCellSize;
+      const data = arrowMap[key];
+      if (!data) {
+        // Empty cell - subtle background
+        ctx.fillStyle = 'rgba(30, 41, 59, 0.35)';
+        const pad = arrowCellSize * 0.12;
+        roundRect(ctx, x + pad, y + pad, arrowCellSize - pad*2, arrowCellSize - pad*2, arrowCellSize * 0.15);
+        ctx.fill();
+        continue;
+      }
+      const isCurrent = data.index === arrowIndex;
+      const isCompleted = data.index < arrowIndex;
+      const isEnd = data.dir === null;
+      drawArrowCell(x, y, arrowCellSize, data.dir, isCurrent, isCompleted, isEnd);
+    }
+  }
+  
+  // Progress text
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  ctx.font = 'bold 14px Sora, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(`Level ${arrowLevel}  •  ${arrowIndex}/${arrowPath.length - 1} arrows`, canvas._w/2, arrowOffsetY - 20);
+  
+  updateParticles();
+  drawParticles();
+  gameLoop = requestAnimationFrame(loopArrowMaze);
+}
+
+function handleArrowTap(e) {
+  const rect = canvas.getBoundingClientRect();
+  const touch = e.touches ? e.touches[0] : e;
+  const x = touch.clientX - rect.left;
+  const y = touch.clientY - rect.top;
+  const col = Math.floor((x - arrowOffsetX) / arrowCellSize);
+  const row = Math.floor((y - arrowOffsetY) / arrowCellSize);
+  if (row < 0 || row >= arrowGridSize || col < 0 || col >= arrowGridSize) return;
+  
+  const key = col + ',' + row;
+  const data = arrowMap[key];
+  if (!data) return;
+  
+  // If this is the current cell, do nothing (already selected)
+  if (data.index === arrowIndex) return;
+  
+  // Check if this is the correct next cell
+  const currentData = arrowMap[arrowPath[arrowIndex].x + ',' + arrowPath[arrowIndex].y];
+  if (currentData && currentData.dir) {
+    const [dx, dy] = currentData.dir;
+    const expectedX = arrowPath[arrowIndex].x + dx;
+    const expectedY = arrowPath[arrowIndex].y + dy;
+    if (col === expectedX && row === expectedY) {
+      // Correct!
+      arrowIndex++;
+      score += 20;
+      updateGameUI();
+      Sound.coin();
+      const cx = arrowOffsetX + col * arrowCellSize + arrowCellSize/2;
+      const cy = arrowOffsetY + row * arrowCellSize + arrowCellSize/2;
+      spawnParticles(cx, cy, '#4ADE80', 12);
+      
+      // Check completion
+      if (arrowIndex >= arrowPath.length - 1) {
+        score += 100;
+        updateGameUI();
+        Sound.win();
+        const newLevel = Math.min(10, arrowLevel + 1);
+        if (arrowLevel >= 10) {
+          showAlert(`🏆 Arrow Maze Complete!\nBonus: +100\nTotal Score: ${score}`, 'success', 'All Levels Cleared!');
+          setTimeout(() => triggerGameOver('Victory! All 10 levels cleared!'), 1500);
+        } else {
+          showAlert(`✅ Level ${arrowLevel} cleared!\nBonus: +100`, 'success', 'Level Complete!');
+          setTimeout(() => {
+            if (activeGame === 'arrow') {
+              initArrowMaze(newLevel);
+              gameLevel = newLevel;
+              updateGameUI();
+            }
+          }, 1200);
+        }
+      }
+      return;
+    }
+  }
+  
+  // Wrong tap
+  arrowWrongFlash = 1;
+  Sound.crash();
+  score = Math.max(0, score - 5);
+  updateGameUI();
+}
+
+/* ============================================================
+   NEW GAME 2: BALL SORT PUZZLE
+   ============================================================ */
+function initBallSort(level) {
+  ballSortLevel = level;
+  ballColors = Math.min(10, 4 + level);
+  ballCapacity = 4;
+  const numFilled = ballColors;
+  const numEmpty = 2;
+  const totalTubes = numFilled + numEmpty;
+  
+  // Create pool of balls
+  let allBalls = [];
+  for (let c = 0; c < ballColors; c++) {
+    for (let i = 0; i < ballCapacity; i++) allBalls.push(c);
+  }
+  // Shuffle
+  for (let i = allBalls.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const tmp = allBalls[i]; allBalls[i] = allBalls[j]; allBalls[j] = tmp;
+  }
+  
+  // Distribute
+  ballTubes = [];
+  for (let t = 0; t < numFilled; t++) {
+    ballTubes.push(allBalls.slice(t * ballCapacity, (t + 1) * ballCapacity));
+  }
+  for (let e = 0; e < numEmpty; e++) ballTubes.push([]);
+  
+  ballSelectedTube = -1;
+  
+  // Compute layout
+  const tubeW = Math.min(canvas._w / (totalTubes + 0.6), 48);
+  const tubeH = Math.min(canvas._h * 0.55, 220);
+  const totalW = tubeW * totalTubes;
+  const gap = (canvas._w - totalW) / (totalTubes + 1);
+  ballTubeRects = [];
+  const baseY = (canvas._h - tubeH) / 2 + 10;
+  for (let i = 0; i < totalTubes; i++) {
+    ballTubeRects.push({
+      x: gap + i * (tubeW + gap),
+      y: baseY,
+      w: tubeW,
+      h: tubeH
+    });
   }
 }
 
-/* ---------- MATCH GAMES ---------- */
+const BALL_COLORS_LIST = [
+  '#EF4444', // red
+  '#F59E0B', // orange
+  '#FCD34D', // yellow
+  '#4ADE80', // green
+  '#22D3EE', // cyan
+  '#3B82F6', // blue
+  '#8B5CF6', // purple
+  '#EC4899', // pink
+  '#A3E635', // lime
+  '#F472B6'  // rose
+];
+
+function drawBallTube(rect, balls, index) {
+  const { x, y, w, h } = rect;
+  const isSelected = index === ballSelectedTube;
+  const ballR = w * 0.36;
+  const ballSpacing = h / (ballCapacity + 0.5);
+  const baseY = y + h - ballSpacing * 0.55;
+  
+  // Tube body
+  ctx.save();
+  const grad = ctx.createLinearGradient(x, 0, x + w, 0);
+  grad.addColorStop(0, 'rgba(148, 163, 184, 0.15)');
+  grad.addColorStop(0.5, 'rgba(148, 163, 184, 0.05)');
+  grad.addColorStop(1, 'rgba(148, 163, 184, 0.15)');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x, y + h - w*0.5);
+  ctx.quadraticCurveTo(x, y + h, x + w*0.5, y + h);
+  ctx.quadraticCurveTo(x + w, y + h, x + w, y + h - w*0.5);
+  ctx.lineTo(x + w, y);
+  ctx.closePath();
+  ctx.fill();
+  
+  ctx.strokeStyle = isSelected ? '#F472B6' : 'rgba(148, 163, 184, 0.7)';
+  ctx.lineWidth = isSelected ? 3 : 2;
+  ctx.stroke();
+  
+  // Tube top rim
+  ctx.fillStyle = isSelected ? '#F472B6' : 'rgba(148, 163, 184, 0.7)';
+  ctx.fillRect(x - 2, y - 3, w + 4, 4);
+  
+  ctx.restore();
+  
+  // Balls (bottom-up)
+  ctx.save();
+  balls.forEach((colorIdx, i) => {
+    const by = baseY - i * ballSpacing;
+    const bx = x + w/2;
+    const color = BALL_COLORS_LIST[colorIdx % BALL_COLORS_LIST.length];
+    const radial = ctx.createRadialGradient(bx - ballR*0.35, by - ballR*0.35, ballR*0.15, bx, by, ballR);
+    radial.addColorStop(0, '#ffffff');
+    radial.addColorStop(0.25, color);
+    radial.addColorStop(1, color);
+    ctx.fillStyle = radial;
+    ctx.beginPath();
+    ctx.arc(bx, by, ballR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    // Highlight
+    ctx.fillStyle = 'rgba(255,255,255,0.45)';
+    ctx.beginPath();
+    ctx.arc(bx - ballR*0.3, by - ballR*0.35, ballR*0.22, 0, Math.PI*2);
+    ctx.fill();
+  });
+  ctx.restore();
+}
+
+function checkBallSortComplete() {
+  let completed = 0;
+  for (const tube of ballTubes) {
+    if (tube.length === ballCapacity) {
+      const first = tube[0];
+      if (tube.every(b => b === first)) completed++;
+    }
+  }
+  return completed;
+}
+
+function loopBallSort() {
+  if (!activeGame || activeGame !== 'ballsort') return;
+  const now = performance.now();
+  if (now - _lastFrame < FRAME_MS) { gameLoop = requestAnimationFrame(loopBallSort); return; }
+  _lastFrame = now;
+  
+  const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas._h);
+  bgGrad.addColorStop(0, '#0A1628');
+  bgGrad.addColorStop(1, '#050810');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, canvas._w, canvas._h);
+  
+  // Grid background
+  if (!IS_LOW_END) {
+    ctx.strokeStyle = 'rgba(56, 189, 248, 0.05)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < canvas._w; i += 30) {
+      ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas._h); ctx.stroke();
+    }
+    for (let i = 0; i < canvas._h; i += 30) {
+      ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas._w, i); ctx.stroke();
+    }
+  }
+  
+  // Title
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  ctx.font = 'bold 14px Sora, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(`Level ${ballSortLevel}  •  ${ballColors} colors  •  ${ballCapacity} per tube`, canvas._w/2, 40);
+  
+  // Draw tubes
+  ballTubes.forEach((balls, i) => {
+    drawBallTube(ballTubeRects[i], balls, i);
+  });
+  
+  updateParticles();
+  drawParticles();
+  gameLoop = requestAnimationFrame(loopBallSort);
+}
+
+function handleBallSortTap(e) {
+  const rect = canvas.getBoundingClientRect();
+  const touch = e.touches ? e.touches[0] : e;
+  const x = touch.clientX - rect.left;
+  const y = touch.clientY - rect.top;
+  
+  // Find tapped tube
+  let tappedIdx = -1;
+  for (let i = 0; i < ballTubeRects.length; i++) {
+    const r = ballTubeRects[i];
+    if (x >= r.x - 6 && x <= r.x + r.w + 6 && y >= r.y - 10 && y <= r.y + r.h + 10) {
+      tappedIdx = i;
+      break;
+    }
+  }
+  if (tappedIdx < 0) return;
+  
+  // Check if tube is fully completed (locked)
+  const tapped = ballTubes[tappedIdx];
+  const isLocked = tapped.length === ballCapacity && tapped.every(b => b === tapped[0]);
+  
+  if (ballSelectedTube === -1) {
+    if (tapped.length === 0 || isLocked) return;
+    ballSelectedTube = tappedIdx;
+    Sound.swap();
+    return;
+  }
+  
+  if (ballSelectedTube === tappedIdx) {
+    ballSelectedTube = -1;
+    Sound.swap();
+    return;
+  }
+  
+  // Try to pour
+  const src = ballTubes[ballSelectedTube];
+  const dst = ballTubes[tappedIdx];
+  if (src.length === 0) { ballSelectedTube = -1; return; }
+  
+  const topColor = src[src.length - 1];
+  const dstTopColor = dst.length > 0 ? dst[dst.length - 1] : -1;
+  
+  if (dst.length >= ballCapacity) {
+    ballSelectedTube = tappedIdx;
+    return;
+  }
+  if (dst.length > 0 && dstTopColor !== topColor) {
+    ballSelectedTube = tappedIdx;
+    Sound.swap();
+    return;
+  }
+  
+  // Move all matching top balls
+  let moved = 0;
+  while (src.length > 0 && src[src.length - 1] === topColor && dst.length < ballCapacity) {
+    dst.push(src.pop());
+    moved++;
+  }
+  
+  if (moved > 0) {
+    Sound.coin();
+    // Check if any tube completed
+    const wasCompleted = src.length === ballCapacity && src.every(b => b === src[0]);
+    const nowCompleted = dst.length === ballCapacity && dst.every(b => b === dst[0]);
+    
+    if (nowCompleted && !wasCompleted) {
+      score += 200;
+      updateGameUI();
+      Sound.bigCoin();
+      const r = ballTubeRects[tappedIdx];
+      spawnParticles(r.x + r.w/2, r.y + r.h/2, '#FCD34D', 25);
+    }
+    
+    // Check full completion
+    const totalCompleted = checkBallSortComplete();
+    if (totalCompleted === ballColors) {
+      // Round complete!
+      const bonus = 2000 - ballColors * 200;
+      if (bonus > 0) score += bonus;
+      updateGameUI();
+      Sound.win();
+      const newLevel = Math.min(10, ballSortLevel + 1);
+      if (ballSortLevel >= 10) {
+        showAlert(`🏆 Ball Sort Complete!\nAll 10 levels done!\nTotal: ${score}`, 'success', 'Master!');
+        setTimeout(() => triggerGameOver('Victory! All 10 levels cleared!'), 1500);
+      } else {
+        showAlert(`✅ Round complete!\nBonus: +${bonus > 0 ? bonus : 0}`, 'success', 'Level Complete!');
+        setTimeout(() => {
+          if (activeGame === 'ballsort') {
+            initBallSort(newLevel);
+            gameLevel = newLevel;
+            updateGameUI();
+          }
+        }, 1200);
+      }
+      ballSelectedTube = -1;
+      return;
+    }
+  }
+  
+  ballSelectedTube = -1;
+}
+
+/* ---------- MATCH GAMES (with bomb system) ---------- */
 function initGrid(){
   grid=[];
   const types = currentTheme==='candy'?candyTypes:fruitTypes;
@@ -4027,7 +3819,6 @@ function handleTileTap(row,col){
     if(matches.length===0){
       grid[r1][c1]=t1; grid[r2][c2]=t2;
       Sound.swap(); selectedTile=null;
-      showAlert('এই সুইপে কোনো ম্যাচ হয়নি!','info');
     } else {
       Sound.swap(); selectedTile=null;
       movesLeft--; updateGameUI();
@@ -4044,7 +3835,7 @@ function findMatches(){
   for(let r=0;r<gridSize;r++){
     let count=1;
     for(let c=1;c<=gridSize;c++){
-      if(c<gridSize && grid[r][c]===grid[r][c-1] && grid[r][c]!==null) count++;
+      if(c<gridSize && grid[r][c]===grid[r][c-1] && grid[r][c]!==null && !grid[r][c].startsWith('bomb')) count++;
       else {
         if(count>=3) for(let k=c-count;k<c;k++) matches.push({r,c:k});
         count=1;
@@ -4054,7 +3845,7 @@ function findMatches(){
   for(let c=0;c<gridSize;c++){
     let count=1;
     for(let r=1;r<=gridSize;r++){
-      if(r<gridSize && grid[r][c]===grid[r-1][c] && grid[r][c]!==null) count++;
+      if(r<gridSize && grid[r][c]===grid[r-1][c] && grid[r][c]!==null && !grid[r][c].startsWith('bomb')) count++;
       else {
         if(count>=3) for(let k=r-count;k<r;k++) matches.push({r:k,c});
         count=1;
@@ -4086,6 +3877,27 @@ function resolveMatches(matches){
     const cy=gridOffsetY+m.r*tileSize+tileSize/2;
     spawnParticles(cx,cy, currentTheme==='candy'?'#F472B6':'#F59E0B', 5);
   });
+  
+  // Determine bomb placement for 4+ matches
+  if(matches.length >= 4){
+    // Find the center of the match cluster
+    const centerR = Math.round(avgR);
+    const centerC = Math.round(avgC);
+    const size = matches.length >= 6 ? 'large' : 'small';
+    // Only add bomb if center is a matched cell
+    const isMatch = matches.some(m => m.r === centerR && m.c === centerC);
+    if(isMatch){
+      // Small delay before placing bomb so animation finishes
+      setTimeout(() => {
+        if(activeGame === 'candy' || activeGame === 'fruit'){
+          bombs.push({ r: centerR, c: centerC, size: size });
+          grid[centerR][centerC] = 'bomb_' + size;
+          Sound.bomb();
+        }
+      }, 500);
+    }
+  }
+  
   matches.forEach(m=>{ grid[m.r][m.c]=null; });
   matchesAnimating=matches.map(m=>({...m,progress:0}));
   setTimeout(()=>{
@@ -4096,6 +3908,51 @@ function resolveMatches(matches){
       else { isSwapping=false; checkGameState(); }
     },250);
   },250);
+}
+
+function explodeBomb(row, col, size) {
+  const radius = size === 'large' ? 2 : 1;
+  const pointsPerCell = size === 'large' ? 50 : 30;
+  let cleared = 0;
+  
+  for (let dr = -radius; dr <= radius; dr++) {
+    for (let dc = -radius; dc <= radius; dc++) {
+      const r = row + dr;
+      const c = col + dc;
+      if (r < 0 || r >= gridSize || c < 0 || c >= gridSize) continue;
+      if (grid[r][c] !== null) {
+        const cx = gridOffsetX + c * tileSize + tileSize/2;
+        const cy = gridOffsetY + r * tileSize + tileSize/2;
+        spawnParticles(cx, cy, '#FCD34D', 8);
+        grid[r][c] = null;
+        cleared++;
+      }
+    }
+  }
+  
+  // Remove the bomb itself
+  bombs = bombs.filter(b => !(b.r === row && b.c === col));
+  
+  score += cleared * pointsPerCell;
+  updateGameUI();
+  Sound.explode();
+  
+  // Big particle burst
+  const cx = gridOffsetX + col * tileSize + tileSize/2;
+  const cy = gridOffsetY + row * tileSize + tileSize/2;
+  spawnParticles(cx, cy, '#FCD34D', 20);
+  spawnParticles(cx, cy, '#EF4444', 15);
+  
+  // Drop tiles after
+  isSwapping = true;
+  setTimeout(() => {
+    dropTiles();
+    setTimeout(() => {
+      const newMatches = findMatches();
+      if(newMatches.length > 0) resolveMatches(newMatches);
+      else { isSwapping = false; checkGameState(); }
+    }, 250);
+  }, 250);
 }
 
 function dropTiles(){
@@ -4109,6 +3966,7 @@ function dropTiles(){
       }
     }
     for(let r=writeRow;r>=0;r--){
+      // Don't spawn bombs from random
       grid[r][c]=types[Math.floor(Math.random()*types.length)];
     }
   }
@@ -4155,7 +4013,11 @@ function loopMatchGame(){
         alpha=Math.max(0,1-anim.progress/15);
       }
       ctx.globalAlpha=alpha;
-      drawTile(x+tileSize/2, y+tileSize/2, tileSize*0.42*scale, type);
+      if(typeof type === 'string' && type.startsWith('bomb')){
+        drawBomb(x+tileSize/2, y+tileSize/2, tileSize*0.42*scale, type === 'bomb_large' ? 'large' : 'small');
+      } else {
+        drawTile(x+tileSize/2, y+tileSize/2, tileSize*0.42*scale, type);
+      }
       ctx.globalAlpha=1;
     }
   }
@@ -4192,6 +4054,54 @@ function roundRect(c,x,y,w,h,r){
   c.closePath();
 }
 
+function drawBomb(cx, cy, radius, size) {
+  ctx.save();
+  ctx.translate(cx, cy);
+  if(!IS_LOW_END){ ctx.shadowColor='#EF4444'; ctx.shadowBlur=16; }
+  // Bomb body
+  const grad = ctx.createRadialGradient(-radius*0.3, -radius*0.3, radius*0.1, 0, 0, radius);
+  if (size === 'large') {
+    grad.addColorStop(0, '#FCD34D');
+    grad.addColorStop(0.4, '#EF4444');
+    grad.addColorStop(1, '#7F1D1D');
+  } else {
+    grad.addColorStop(0, '#F87171');
+    grad.addColorStop(0.6, '#DC2626');
+    grad.addColorStop(1, '#7F1D1D');
+  }
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(0, 0, radius, 0, Math.PI*2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  // Fuse
+  ctx.strokeStyle = '#FCD34D';
+  ctx.lineWidth = 3;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(radius*0.3, -radius*0.85);
+  ctx.quadraticCurveTo(radius*0.6, -radius*1.3, radius*0.2, -radius*1.5);
+  ctx.stroke();
+  // Spark
+  const sparkT = performance.now()/100;
+  ctx.fillStyle = Math.sin(sparkT) > 0 ? '#FCD34D' : '#EF4444';
+  ctx.beginPath();
+  ctx.arc(radius*0.2, -radius*1.5, 3, 0, Math.PI*2);
+  ctx.fill();
+  // Star for large bomb
+  if (size === 'large') {
+    ctx.fillStyle = '#FEF3C7';
+    ctx.font = 'bold ' + Math.floor(radius*0.7) + 'px Sora, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('★', 0, radius*0.1);
+  }
+  ctx.restore();
+}
+
 function drawTile(cx,cy,radius,type){
   ctx.save(); ctx.translate(cx,cy);
   if(currentTheme==='candy'){
@@ -4199,10 +4109,11 @@ function drawTile(cx,cy,radius,type){
       red:['#FCA5A5','#DC2626'],orange:['#FDBA74','#EA580C'],yellow:['#FEF08A','#EAB308'],
       green:['#86EFAC','#16A34A'],blue:['#93C5FD','#2563EB'],purple:['#C4B5FD','#7C3AED']
     };
+    const c = colors[type] || colors.red;
     const grad=ctx.createRadialGradient(-radius*0.3,-radius*0.3,radius*0.1,0,0,radius);
-    grad.addColorStop(0,colors[type][0]); grad.addColorStop(1,colors[type][1]);
+    grad.addColorStop(0,c[0]); grad.addColorStop(1,c[1]);
     ctx.fillStyle=grad;
-    if(!IS_LOW_END){ ctx.shadowColor=colors[type][1]; ctx.shadowBlur=10; }
+    if(!IS_LOW_END){ ctx.shadowColor=c[1]; ctx.shadowBlur=10; }
     const r=radius*0.35, size=radius;
     ctx.beginPath();
     ctx.moveTo(-size+r,-size);
@@ -4283,29 +4194,24 @@ function drawFruitShape(radius,type){
 function triggerGameOver(reason){
   if(gameLoop) cancelAnimationFrame(gameLoop);
   gameLoop=null;
-  const wasChicken = activeGame === 'chicken';
-  const wasAccident = wasChicken && (reason.includes('accident') || reason.includes('Accident'));
   activeGame='';
   magnetActive=false; shieldActive=false;
-  jungleMagnetActive = false; jungleShieldActive = false;
   renderPowerupBar();
-  setStyle('cashoutBtn','display','none');
   Sound.stopBgm();
   Sound.gameOver();
-  setText('finalScore', wasAccident ? 0 : score);
+  setText('finalScore', score);
   setText('finalLevel', gameLevel);
   setText('gameOverSub', reason||'You ran out of health');
   setStyle('gameOverScreen','display','flex');
   setStyle('gameControls','display','none');
   
-  if(!wasAccident && score>0 && currentUser){
+  if(score>0 && currentUser){
     const newPoints=(userData.points||0)+score;
     db.ref('users/'+currentUser.uid).update({points:newPoints});
     const gameName = {
-      car:'Crazy Car', space:'Space Rocket', flappy:'Flappy Bird',
-      snake:'Classic Snake', candy:'Candy Crush', fruit:'Fruit Crush',
-      jungle:'Jungle Safari', block:'Block Puzzle', shooter:'Space Shooter',
-      chicken:'Chicken Road'
+      car:'Crazy Car', space:'Space Rocket', snake:'Classic Snake',
+      candy:'Candy Crush', fruit:'Fruit Crush', block:'Block Puzzle',
+      shooter:'Space Shooter', arrow:'Arrow Maze', ballsort:'Ball Sort'
     }[lastGameType] || 'Game';
     db.ref('users/'+currentUser.uid+'/history').push({game:gameName,points:score,time:Date.now()});
     db.ref('notifications/'+currentUser.uid).push({title:'Game Over',msg:`You earned ${score} points in ${gameName}.`,time:Date.now()});
@@ -4320,12 +4226,9 @@ function tryAgain(){
 function quitGame(){
   if(gameLoop) cancelAnimationFrame(gameLoop);
   gameLoop=null;
-  const wasChicken = activeGame === 'chicken';
   activeGame='';
   magnetActive=false; shieldActive=false;
-  jungleMagnetActive = false; jungleShieldActive = false;
   renderPowerupBar();
-  setStyle('cashoutBtn','display','none');
   Sound.stopBgm();
   setStyle('gameOverScreen','display','none');
   setStyle('startSplash','display','none');
@@ -4335,10 +4238,9 @@ function quitGame(){
     const newPoints=(userData.points||0)+score;
     db.ref('users/'+currentUser.uid).update({points:newPoints});
     const gameName = {
-      car:'Crazy Car', space:'Space Rocket', flappy:'Flappy Bird',
-      snake:'Classic Snake', candy:'Candy Crush', fruit:'Fruit Crush',
-      jungle:'Jungle Safari', block:'Block Puzzle', shooter:'Space Shooter',
-      chicken:'Chicken Road'
+      car:'Crazy Car', space:'Space Rocket', snake:'Classic Snake',
+      candy:'Candy Crush', fruit:'Fruit Crush', block:'Block Puzzle',
+      shooter:'Space Shooter', arrow:'Arrow Maze', ballsort:'Ball Sort'
     }[lastGameType] || 'Game';
     db.ref('users/'+currentUser.uid+'/history').push({game:gameName,points:score,time:Date.now()});
   }
@@ -4349,9 +4251,7 @@ function exitToHome(){
   gameLoop=null;
   activeGame='';
   magnetActive=false; shieldActive=false;
-  jungleMagnetActive = false; jungleShieldActive = false;
   renderPowerupBar();
-  setStyle('cashoutBtn','display','none');
   Sound.stopBgm();
   setStyle('gameOverScreen','display','none');
   setStyle('gameOverlay','display','none');
@@ -4370,25 +4270,23 @@ function launchGame(type){
   Sound.splash();
   const configs={
     car:{ name:'Crazy Car Dodge', title:'CAR', tagline:'Dodge • Collect • Survive',
-      icon:`<svg viewBox="0 0 64 64" fill="none"><defs><linearGradient id="sc1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#818CF8"/><stop offset="1" stop-color="#6366F1"/></linearGradient></defs><path d="M8 42 L10 32 Q12 26 20 24 L44 24 Q52 26 54 32 L56 42 Q56 44 54 44 L10 44 Q8 44 8 42 Z" fill="url(#sc1)" stroke="#C7D2FE" stroke-width="1.5"/><path d="M22 24 L24 18 Q25 16 28 16 L36 16 Q39 16 40 18 L42 24 Z" fill="url(#sc1)" stroke="#C7D2FE"/><path d="M25 23 L27 18 L37 18 L39 23 Z" fill="#0F172A"/><ellipse cx="12" cy="36" rx="2.5" ry="1.8" fill="#FEF3C7"/><ellipse cx="52" cy="36" rx="2.5" ry="1.8" fill="#FEF3C7"/><ellipse cx="12" cy="42" rx="2" ry="1.2" fill="#EF4444"/><ellipse cx="52" cy="42" rx="2" ry="1.2" fill="#EF4444"/><circle cx="18" cy="44" r="5" fill="#1E293B" stroke="#C7D2FE" stroke-width="1.5"/><circle cx="46" cy="44" r="5" fill="#1E293B" stroke="#C7D2FE" stroke-width="1.5"/></svg>` },
+      icon:`<svg viewBox="0 0 64 64" fill="none"><defs><linearGradient id="lcar1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F87171"/><stop offset="1" stop-color="#DC2626"/></linearGradient></defs><path d="M10 42 L14 28 Q16 22 24 22 L40 22 Q48 22 50 28 L54 42 Q54 46 50 46 L14 46 Q10 46 10 42 Z" fill="url(#lcar1)" stroke="#7F1D1D" stroke-width="1.5"/><path d="M22 22 L26 14 L38 14 L42 22 Z" fill="#3B82F6" stroke="#1E40AF" stroke-width="1.5"/><rect x="26" y="15" width="12" height="6" fill="#0F172A" opacity="0.7"/><circle cx="18" cy="46" r="6" fill="#1F2937" stroke="#94A3B8" stroke-width="2"/><circle cx="46" cy="46" r="6" fill="#1F2937" stroke="#94A3B8" stroke-width="2"/></svg>` },
     space:{ name:'Space Rocket Run', title:'ROCKET', tagline:'Catch • Dodge • Explore',
-      icon:`<svg viewBox="0 0 64 64" fill="none"><defs><linearGradient id="sr1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#34D399"/><stop offset="1" stop-color="#10B981"/></linearGradient><linearGradient id="sr2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#94A3B8"/><stop offset="0.5" stop-color="#F1F5F9"/><stop offset="1" stop-color="#94A3B8"/></linearGradient></defs><path d="M27 50 Q32 62 37 50 Q35 54 32 56 Q29 54 27 50 Z" fill="#F59E0B"/><path d="M22 38 L14 52 L22 48 Z" fill="#6366F1"/><path d="M42 38 L50 52 L42 48 Z" fill="#6366F1"/><path d="M32 8 Q42 20 42 36 L42 48 L22 48 L22 36 Q22 20 32 8 Z" fill="url(#sr2)" stroke="#CBD5E1"/><path d="M32 8 Q40 18 40 26 L24 26 Q24 18 32 8 Z" fill="url(#sr1)"/><circle cx="32" cy="30" r="5" fill="#0F172A" stroke="#34D399" stroke-width="1.5"/></svg>` },
-    flappy:{ name:'Flappy Bird', title:'FLAPPY', tagline:'Fly • Dodge • Endure',
-      icon:`<svg viewBox="0 0 64 64" fill="none"><defs><radialGradient id="spb1" cx="0.4" cy="0.35"><stop offset="0" stop-color="#FEF08A"/><stop offset="1" stop-color="#EAB308"/></radialGradient><linearGradient id="spb2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4ADE80"/><stop offset="1" stop-color="#16A34A"/></linearGradient></defs><rect x="8" y="6" width="14" height="52" rx="3" fill="url(#spb2)" stroke="#15803D" stroke-width="1.2"/><rect x="42" y="14" width="14" height="44" rx="3" fill="url(#spb2)" stroke="#15803D" stroke-width="1.2"/><ellipse cx="32" cy="32" rx="12" ry="9" fill="url(#spb1)" stroke="#A16207" stroke-width="1.2"/><circle cx="36" cy="30" r="2" fill="#0F172A"/><path d="M44 32 L50 30 L44 34 Z" fill="#F97316"/><path d="M22 32 Q14 26 10 30 Q14 34 22 32 Z" fill="#FBBF24" stroke="#A16207" stroke-width="0.8"/></svg>` },
+      icon:`<svg viewBox="0 0 64 64" fill="none"><defs><linearGradient id="lsp1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#34D399"/><stop offset="1" stop-color="#059669"/></linearGradient><linearGradient id="lsp2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#64748B"/><stop offset="0.5" stop-color="#F1F5F9"/><stop offset="1" stop-color="#64748B"/></linearGradient></defs><path d="M27 54 Q32 62 37 54 Q35 58 32 59 Q29 58 27 54 Z" fill="#F59E0B"/><path d="M22 38 L14 52 L22 48 Z" fill="#6366F1"/><path d="M42 38 L50 52 L42 48 Z" fill="#6366F1"/><path d="M32 6 Q42 18 42 36 L42 48 L22 48 L22 36 Q22 18 32 6 Z" fill="url(#lsp2)" stroke="#475569"/><path d="M32 6 Q38 14 40 22 L24 22 Q26 14 32 6 Z" fill="url(#lsp1)"/><circle cx="32" cy="30" r="6" fill="#0F172A" stroke="#10B981" stroke-width="2"/></svg>` },
     snake:{ name:'Classic Snake', title:'SNAKE', tagline:'Eat • Grow • Survive',
-      icon:`<svg viewBox="0 0 64 64" fill="none"><defs><linearGradient id="ss1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4ADE80"/><stop offset="1" stop-color="#16A34A"/></linearGradient><radialGradient id="ss2" cx="0.4" cy="0.35"><stop offset="0" stop-color="#FCA5A5"/><stop offset="1" stop-color="#DC2626"/></radialGradient></defs><rect x="6" y="6" width="52" height="52" rx="6" stroke="#166534" stroke-width="1.5" fill="rgba(22,163,74,0.08)"/><rect x="10" y="10" width="10" height="10" rx="2" fill="url(#ss1)"/><rect x="21" y="10" width="10" height="10" rx="2" fill="url(#ss1)"/><rect x="32" y="10" width="10" height="10" rx="2" fill="url(#ss1)"/><rect x="32" y="21" width="10" height="10" rx="2" fill="url(#ss1)"/><circle cx="37" cy="15" r="2" fill="#0F172A"/><circle cx="44" cy="44" r="5" fill="url(#ss2)" stroke="#991B1B" stroke-width="1"/></svg>` },
-    jungle:{ name:'Jungle Safari Run', title:'SAFARI', tagline:'Run • Dodge • Collect',
-      icon:`<svg viewBox="0 0 64 64" fill="none"><defs><linearGradient id="ljg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4ADE80"/><stop offset="1" stop-color="#16A34A"/></linearGradient></defs><rect x="4" y="48" width="56" height="12" rx="3" fill="#78350F"/><path d="M14 48 Q18 30 22 20 Q26 12 32 14 Q38 12 42 20 Q46 30 50 48 Z" fill="url(#ljg1)"/><circle cx="32" cy="22" r="6" fill="#FCD34D"/><circle cx="30" cy="21" r="1.5" fill="#0F172A"/><circle cx="34" cy="21" r="1.5" fill="#0F172A"/></svg>` },
-    block:{ name:'Block Puzzle', title:'BLOCK', tagline:'Place • Clear • Score',
-      icon:`<svg viewBox="0 0 64 64" fill="none"><defs><linearGradient id="lbg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#93C5FD"/><stop offset="1" stop-color="#3B82F6"/></linearGradient></defs><rect x="6" y="6" width="16" height="16" rx="3" fill="url(#lbg1)"/><rect x="24" y="6" width="16" height="16" rx="3" fill="#F9A8D4"/><rect x="42" y="6" width="16" height="16" rx="3" fill="#6EE7B7"/><rect x="6" y="24" width="16" height="16" rx="3" fill="#F9A8D4"/><rect x="24" y="24" width="16" height="16" rx="3" fill="#6EE7B7"/><rect x="42" y="24" width="16" height="16" rx="3" fill="url(#lbg1)"/><rect x="6" y="42" width="16" height="16" rx="3" fill="#6EE7B7"/><rect x="24" y="42" width="16" height="16" rx="3" fill="url(#lbg1)"/><rect x="42" y="42" width="16" height="16" rx="3" fill="#F9A8D4"/></svg>` },
+      icon:`<svg viewBox="0 0 64 64" fill="none"><defs><linearGradient id="lsn1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4ADE80"/><stop offset="1" stop-color="#15803D"/></linearGradient></defs><rect x="6" y="6" width="52" height="52" rx="6" stroke="#166534" stroke-width="1.5" fill="rgba(22,163,74,0.08)"/><rect x="10" y="10" width="10" height="10" rx="2" fill="url(#lsn1)"/><rect x="21" y="10" width="10" height="10" rx="2" fill="url(#lsn1)"/><rect x="32" y="10" width="10" height="10" rx="2" fill="url(#lsn1)"/><rect x="32" y="21" width="10" height="10" rx="2" fill="url(#lsn1)"/><circle cx="37" cy="15" r="2" fill="#0F172A"/><circle cx="44" cy="44" r="5" fill="#DC2626" stroke="#991B1B"/></svg>` },
+    candy:{ name:'Candy Crush', title:'CANDY', tagline:'Match • Combo • Boom',
+      icon:`<svg viewBox="0 0 64 64" fill="none"><defs><radialGradient id="lcd1"><stop offset="0" stop-color="#F9A8D4"/><stop offset="1" stop-color="#DB2777"/></radialGradient><radialGradient id="lcd2"><stop offset="0" stop-color="#C4B5FD"/><stop offset="1" stop-color="#6D28D9"/></radialGradient><radialGradient id="lcd3"><stop offset="0" stop-color="#93C5FD"/><stop offset="1" stop-color="#1D4ED8"/></radialGradient><radialGradient id="lcd4"><stop offset="0" stop-color="#6EE7B7"/><stop offset="1" stop-color="#047857"/></radialGradient></defs><circle cx="16" cy="16" r="10" fill="url(#lcd1)"/><circle cx="34" cy="16" r="10" fill="url(#lcd2)"/><circle cx="52" cy="16" r="10" fill="url(#lcd3)"/><circle cx="16" cy="34" r="10" fill="url(#lcd4)"/><circle cx="34" cy="34" r="10" fill="url(#lcd1)"/><circle cx="52" cy="34" r="10" fill="url(#lcd2)"/><circle cx="16" cy="52" r="10" fill="url(#lcd3)"/><circle cx="34" cy="52" r="10" fill="url(#lcd4)"/><circle cx="52" cy="52" r="10" fill="url(#lcd1)"/></svg>` },
+    fruit:{ name:'Fruit Crush', title:'FRUIT', tagline:'Match • Juicy • Boom',
+      icon:`<svg viewBox="0 0 64 64" fill="none"><defs><radialGradient id="lfr1"><stop offset="0" stop-color="#FCA5A5"/><stop offset="1" stop-color="#B91C1C"/></radialGradient><radialGradient id="lfr2"><stop offset="0" stop-color="#FED7AA"/><stop offset="1" stop-color="#C2410C"/></radialGradient><radialGradient id="lfr3"><stop offset="0" stop-color="#C4B5FD"/><stop offset="1" stop-color="#6D28D9"/></radialGradient><radialGradient id="lfr4"><stop offset="0" stop-color="#FEF08A"/><stop offset="1" stop-color="#A16207"/></radialGradient></defs><circle cx="18" cy="20" r="11" fill="url(#lfr1)"/><circle cx="44" cy="20" r="11" fill="url(#lfr2)"/><circle cx="18" cy="44" r="11" fill="url(#lfr3)"/><ellipse cx="44" cy="44" rx="11" ry="10" fill="url(#lfr4)"/></svg>` },
+    block:{ name:'Block Puzzle', title:'BLOCK', tagline:'Place • Clear • 500pts',
+      icon:`<svg viewBox="0 0 64 64" fill="none"><defs><linearGradient id="lbl1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#93C5FD"/><stop offset="1" stop-color="#2563EB"/></linearGradient></defs><rect x="6" y="6" width="16" height="16" rx="3" fill="url(#lbl1)"/><rect x="24" y="6" width="16" height="16" rx="3" fill="#F9A8D4"/><rect x="42" y="6" width="16" height="16" rx="3" fill="#6EE7B7"/><rect x="6" y="24" width="16" height="16" rx="3" fill="#F9A8D4"/><rect x="24" y="24" width="16" height="16" rx="3" fill="#6EE7B7"/><rect x="42" y="24" width="16" height="16" rx="3" fill="url(#lbl1)"/><rect x="6" y="42" width="16" height="16" rx="3" fill="#6EE7B7"/><rect x="24" y="42" width="16" height="16" rx="3" fill="url(#lbl1)"/><rect x="42" y="42" width="16" height="16" rx="3" fill="#F9A8D4"/></svg>` },
     shooter:{ name:'Space Shooter', title:'SHOOTER', tagline:'Shoot • Dodge • Survive',
-      icon:`<svg viewBox="0 0 64 64" fill="none"><defs><linearGradient id="lsh1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C4B5FD"/><stop offset="1" stop-color="#7C3AED"/></linearGradient></defs><path d="M32 6 L38 20 L34 20 L34 40 L30 40 L30 20 L26 20 Z" fill="url(#lsh1)"/><circle cx="32" cy="28" r="4" fill="#0F172A" stroke="#34D399"/><circle cx="14" cy="14" r="5" fill="#DC2626"/><circle cx="50" cy="14" r="5" fill="#DC2626"/></svg>` },
-    chicken:{ name:'Chicken Road', title:'CHICKEN', tagline:'Cross • Multiply • Cash Out',
-      icon:`<svg viewBox="0 0 64 64" fill="none"><defs><linearGradient id="lch1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FEF08A"/><stop offset="1" stop-color="#EAB308"/></linearGradient></defs><rect x="4" y="20" width="56" height="24" fill="#374151"/><rect x="4" y="26" width="56" height="2" fill="#FCD34D" stroke-dasharray="4,4"/><rect x="4" y="36" width="56" height="2" fill="#FCD34D" stroke-dasharray="4,4"/><ellipse cx="32" cy="32" rx="7" ry="9" fill="url(#lch1)"/><circle cx="32" cy="22" r="5" fill="url(#lch1)"/><circle cx="30" cy="21" r="1" fill="#0F172A"/><circle cx="34" cy="21" r="1" fill="#0F172A"/><path d="M32 24 L30 26 L34 26 Z" fill="#F97316"/></svg>` },
-    candy:{ name:'Candy Crush', title:'CANDY', tagline:'Match • Combo • Score Big',
-      icon:`<svg viewBox="0 0 64 64" fill="none"><defs><linearGradient id="cy1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F9A8D4"/><stop offset="1" stop-color="#EC4899"/></linearGradient><linearGradient id="cy2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C4B5FD"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient><linearGradient id="cy3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#93C5FD"/><stop offset="1" stop-color="#3B82F6"/></linearGradient><linearGradient id="cy4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6EE7B7"/><stop offset="1" stop-color="#10B981"/></linearGradient></defs><rect x="6" y="6" width="18" height="18" rx="5" fill="url(#cy1)"/><rect x="24" y="6" width="18" height="18" rx="5" fill="url(#cy2)"/><rect x="42" y="6" width="18" height="18" rx="5" fill="url(#cy3)"/><rect x="6" y="24" width="18" height="18" rx="5" fill="url(#cy4)"/><path d="M33 24 L35 30 L41 32 L35 34 L33 40 L31 34 L25 32 L31 30 Z" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1"/><rect x="42" y="24" width="18" height="18" rx="5" fill="url(#cy1)"/><rect x="6" y="42" width="18" height="18" rx="5" fill="url(#cy2)"/><rect x="24" y="42" width="18" height="18" rx="5" fill="url(#cy3)"/><rect x="42" y="42" width="18" height="18" rx="5" fill="url(#cy4)"/></svg>` },
-    fruit:{ name:'Fruit Crush', title:'FRUIT', tagline:'Match • Juicy • Rewards',
-      icon:`<svg viewBox="0 0 64 64" fill="none"><defs><radialGradient id="fr1" cx="0.4" cy="0.35"><stop offset="0" stop-color="#FCA5A5"/><stop offset="1" stop-color="#DC2626"/></radialGradient><radialGradient id="fr2" cx="0.4" cy="0.35"><stop offset="0" stop-color="#FED7AA"/><stop offset="1" stop-color="#EA580C"/></radialGradient><radialGradient id="fr3" cx="0.4" cy="0.35"><stop offset="0" stop-color="#C4B5FD"/><stop offset="1" stop-color="#7C3AED"/></radialGradient><radialGradient id="fr4" cx="0.4" cy="0.35"><stop offset="0" stop-color="#FEF08A"/><stop offset="1" stop-color="#EAB308"/></radialGradient></defs><circle cx="20" cy="22" r="13" fill="url(#fr1)"/><path d="M20 10 Q22 5 27 6" stroke="#65A30D" stroke-width="2.5" fill="none"/><ellipse cx="16" cy="17" rx="4" ry="2.5" fill="rgba(255,255,255,.4)" transform="rotate(-30 16 17)"/><circle cx="44" cy="22" r="13" fill="url(#fr2)"/><ellipse cx="40" cy="17" rx="4" ry="2.5" fill="rgba(255,255,255,.4)" transform="rotate(-30 40 17)"/><circle cx="20" cy="44" r="13" fill="url(#fr3)"/><ellipse cx="16" cy="39" rx="4" ry="2.5" fill="rgba(255,255,255,.4)" transform="rotate(-30 16 39)"/><ellipse cx="44" cy="44" rx="13" ry="12" fill="url(#fr4)"/><ellipse cx="40" cy="39" rx="4" ry="2.5" fill="rgba(255,255,255,.4)" transform="rotate(-30 40 39)"/></svg>` }
+      icon:`<svg viewBox="0 0 64 64" fill="none"><defs><linearGradient id="lsh1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C4B5FD"/><stop offset="1" stop-color="#6D28D9"/></linearGradient></defs><path d="M32 6 L38 18 L34 18 L34 40 L30 40 L30 18 L26 18 Z" fill="url(#lsh1)"/><circle cx="32" cy="26" r="4" fill="#0F172A" stroke="#34D399"/><circle cx="14" cy="14" r="5" fill="#DC2626"/><circle cx="50" cy="14" r="5" fill="#DC2626"/><rect x="30" y="42" width="4" height="6" fill="#FCD34D"/></svg>` },
+    arrow:{ name:'Arrow Maze', title:'ARROW', tagline:'Trace • Chain • +100 Bonus',
+      icon:`<svg viewBox="0 0 64 64" fill="none"><defs><linearGradient id="lar1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F472B6"/><stop offset="1" stop-color="#7C3AED"/></linearGradient></defs><rect x="4" y="4" width="56" height="56" rx="8" fill="rgba(15,23,42,0.5)" stroke="#334155" stroke-width="1.5"/><path d="M14 20 L14 44 L22 44 L22 28 L34 28" stroke="url(#lar1)" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><polygon points="34,24 44,28 34,32" fill="url(#lar1)"/></svg>` },
+    ballsort:{ name:'Ball Sort Puzzle', title:'BALL SORT', tagline:'Sort • 200 per Tube • 2000/Round',
+      icon:`<svg viewBox="0 0 64 64" fill="none"><defs><linearGradient id="lbs1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(148,163,184,0.3)"/><stop offset="1" stop-color="rgba(148,163,184,0.05)"/></linearGradient></defs><path d="M8 10 L8 50 Q8 56 14 56 L18 56 Q24 56 24 50 L24 10" stroke="#94A3B8" stroke-width="2" fill="url(#lbs1)"/><circle cx="16" cy="16" r="4" fill="#F472B6"/><circle cx="16" cy="26" r="4" fill="#F472B6"/><circle cx="16" cy="36" r="4" fill="#FCD34D"/><circle cx="16" cy="46" r="4" fill="#FCD34D"/><path d="M28 10 L28 50 Q28 56 34 56 L38 56 Q44 56 44 50 L44 10" stroke="#94A3B8" stroke-width="2" fill="url(#lbs1)"/><circle cx="36" cy="16" r="4" fill="#4ADE80"/><circle cx="36" cy="26" r="4" fill="#F472B6"/><circle cx="36" cy="36" r="4" fill="#4ADE80"/><circle cx="36" cy="46" r="4" fill="#F472B6"/></svg>` }
   };
   const cfg = configs[type];
   setText('splashTitle', cfg.title);
@@ -4404,7 +4302,6 @@ function launchGame(type){
   setStyle('startSplash','display','flex');
   setStyle('gameOverScreen','display','none');
   setStyle('gameControls','display','none');
-  setStyle('cashoutBtn','display','none');
   setHTML('powerupBar','');
 }
 
@@ -4417,10 +4314,10 @@ function beginGameFromSplash(){
     'Pro tip: Collect rare coins for bonus points!',
     'Watch for magnet & shield power-ups!',
     'Higher levels = more points per action',
-    'Shield protects you for 5 seconds',
-    'Magnet pulls all coins toward you!',
-    'Chicken Road: Cash out before accident!',
-    'Block Puzzle: Clear lines for 100 points!'
+    '4+ match creates a bomb — click it to explode!',
+    'Arrow Maze: trace the path in order!',
+    'Ball Sort: only same-color balls can stack!',
+    'Block Puzzle: 500 points per cleared line!'
   ];
   setText('loadingTip', tips[Math.floor(Math.random()*tips.length)]);
   let progress=0;
