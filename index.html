@@ -154,7 +154,8 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 .lb-you{display:inline-block;font-size:9px;font-weight:800;padding:2px 6px;border-radius:6px;background:rgba(99,102,241,.2);color:#A5B4FC;margin-left:6px;letter-spacing:.3px}
 .lb-points{font-weight:800;font-size:13px;color:var(--accent);background:rgba(16,185,129,.1);padding:5px 11px;border-radius:20px;border:1px solid rgba(16,185,129,.2);white-space:nowrap}
 .lb-points.gold{color:var(--gold);background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.3)}
-
+.lb-prize{font-size:11px;font-weight:800;color:#FCD34D;margin-top:3px;letter-spacing:.3px}
+.prize-split{font-size:10px;color:rgba(245,158,11,.75);font-weight:700;margin-top:4px;letter-spacing:.3px}
 .wallet-card{position:relative;background:linear-gradient(135deg,#6366F1 0%,#8B5CF6 100%);color:#fff;padding:28px 22px;border-radius:24px;text-align:center;margin-bottom:22px;overflow:hidden}
 .wallet-card::before{content:"";position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,rgba(255,255,255,.25),transparent 70%)}
 .wallet-card::after{content:"";position:absolute;bottom:-60px;left:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(255,255,255,.15),transparent 70%)}
@@ -693,9 +694,13 @@ body.low-end .screen{animation:none !important}
       <div class="lb-hero-title">🏆 Global Ranking</div>
       <div class="lb-hero-sub">Top players win real cash every Sunday 1:00 PM</div>
       <div class="prize-banner">
-        <div class="prize-banner-left"><div class="prize-label">Weekly Prize Pool</div><div class="prize-value" id="prizePool">₹0</div></div>
-        <div class="prize-icon"><svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></div>
-      </div>
+  <div class="prize-banner-left">
+    <div class="prize-label">Weekly Prize Pool</div>
+    <div class="prize-value" id="prizePool">₹0</div>
+    <div class="prize-split">🥇 70% • 🥈 20% • 🥉 10%</div>
+  </div>
+  <div class="prize-icon"><svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></div>
+</div>
     </div>
     <div id="lbList"></div>
   </div>
@@ -978,6 +983,18 @@ let userData = null;
 let isSignupMode = false;
 let isAppShutdown = false;
 let prizePool = 0;
+
+  
+/* ============================================================
+   PRIZE DISTRIBUTION — 70% / 20% / 10%
+   ============================================================ */
+function getPrizeShare(rank, totalPool) {
+  if (!totalPool || totalPool <= 0) return 0;
+  if (rank === 1) return Math.floor(totalPool * 0.70);
+  if (rank === 2) return Math.floor(totalPool * 0.20);
+  if (rank === 3) return Math.floor(totalPool * 0.10);
+  return 0;
+}
 
 function setText(id, v){ const e=document.getElementById(id); if(e) e.innerText=v; }
 function setHTML(id, v){ const e=document.getElementById(id); if(e) e.innerHTML=v; }
@@ -1528,18 +1545,29 @@ function loadLeaderboard(){
       html='<div class="empty-state">No ranking data yet. Be the first to play!</div>';
     } else {
       users.forEach((u,i)=>{
-        const topClass = i===0?'top1':(i===1?'top2':(i===2?'top3':''));
-        const rankLabel = i===0?'🥇':(i===1?'🥈':(i===2?'🥉':`${i+1}`));
-        const isYou = currentUser && u._key===currentUser.uid;
-        const avatar = u.profilePic||'https://via.placeholder.com/100';
-        const pointsGold = i<3?'gold':'';
-        html+=`<div class="lb-item ${topClass}">
-          <div class="lb-rank">${rankLabel}</div>
-          <div class="lb-avatar"><img src="${avatar}" onerror="this.src='https://via.placeholder.com/100'"></div>
-          <div class="lb-info"><div class="lb-name">${u.name}${isYou?'<span class="lb-you">YOU</span>':''}</div></div>
-          <div class="lb-points ${pointsGold}">${u.points} Pts</div>
-        </div>`;
-      });
+  const rank = i + 1;
+  const topClass = i===0?'top1':(i===1?'top2':(i===2?'top3':''));
+  const rankLabel = i===0?'🥇':(i===1?'🥈':(i===2?'🥉':`${rank}`));
+  const isYou = currentUser && u._key===currentUser.uid;
+  const avatar = u.profilePic||'https://via.placeholder.com/100';
+  const pointsGold = i<3?'gold':'';
+
+  // ➕ টপ ৩-এর প্রাইজ ক্যালকুলেশন
+  const prizeAmount = getPrizeShare(rank, prizePool);
+  const prizeTag = prizeAmount > 0
+    ? `<div class="lb-prize">💰 Prize: ₹${prizeAmount}</div>`
+    : '';
+
+  html+=`<div class="lb-item ${topClass}">
+    <div class="lb-rank">${rankLabel}</div>
+    <div class="lb-avatar"><img src="${avatar}" onerror="this.src='https://via.placeholder.com/100'"></div>
+    <div class="lb-info">
+      <div class="lb-name">${u.name}${isYou?'<span class="lb-you">YOU</span>':''}</div>
+      ${prizeTag}
+    </div>
+    <div class="lb-points ${pointsGold}">${u.points} Pts</div>
+  </div>`;
+});
     }
     setHTML('lbList', html);
   });
