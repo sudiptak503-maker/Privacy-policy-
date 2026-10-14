@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#0A0E1A">
+<meta name="monetag" content="dfcb2614d26b9f29302af52883171b79">
+  <meta name="theme-color" content="#0A0E1A">
 <title>PlayEarn — Premium</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -5989,6 +5990,60 @@ console.log('[PlayEarn] Mode:', GAME_MODE.toUpperCase(), '| DPR:', MAX_DPR, '| F
     gameLoop = requestAnimationFrame(loopNinjaSlice);
   }
 
+})();
+</script>
+<script>
+// === SHORTCUT BUG FIX FOR FRUIT CRUSH ===
+(function() {
+  let lastTapTime = 0;
+  const originalHandleTileTap = window.handleTileTap;
+
+  // ১. ডাবল ট্যাপ/ইভেন্ট এরর হ্যান্ডেলিং (Debounce Guard)
+  window.handleTileTap = function(row, col) {
+    const now = Date.now();
+    // একই ক্লিকে দুইবার ফাংশন কল হলে (80ms এর মধ্যে) দ্বিতীয়টি অটোমেটিক ব্লক করবে
+    if (now - lastTapTime < 80) return; 
+    lastTapTime = now;
+
+    try {
+      if (typeof originalHandleTileTap === 'function') {
+        originalHandleTileTap(row, col);
+      }
+    } catch (err) {
+      console.warn('Fruit Crush Tap Error Handled:', err);
+    }
+  };
+
+  // ২. আঙুল টেনে (Swipe) খেলার শর্টকাট হ্যান্ডলার
+  let startR = null, startC = null;
+  const gameCanvas = document.getElementById('gameCanvas');
+  
+  if (gameCanvas) {
+    gameCanvas.addEventListener('pointerdown', (e) => {
+      if (window.activeGame !== 'fruit') return;
+      const rect = gameCanvas.getBoundingClientRect();
+      startC = Math.floor((e.clientX - rect.left - window.gridOffsetX) / window.tileSize);
+      startR = Math.floor((e.clientY - rect.top - window.gridOffsetY) / window.tileSize);
+    });
+
+    gameCanvas.addEventListener('pointermove', (e) => {
+      if (window.activeGame !== 'fruit' || startR === null || window.isSwapping) return;
+      const rect = gameCanvas.getBoundingClientRect();
+      const curC = Math.floor((e.clientX - rect.left - window.gridOffsetX) / window.tileSize);
+      const curR = Math.floor((e.clientY - rect.top - window.gridOffsetY) / window.tileSize);
+
+      if ((curR !== startR || curC !== startC) && Math.abs(curR - startR) + Math.abs(curC - startC) === 1) {
+        if (curR >= 0 && curR < window.gridSize && curC >= 0 && curC < window.gridSize) {
+          lastTapTime = 0; // সোয়াইপের জন্য গার্ড রিসেট
+          window.selectedTile = { row: startR, col: startC };
+          window.handleTileTap(curR, curC);
+          startR = null; startC = null;
+        }
+      }
+    });
+
+    window.addEventListener('pointerup', () => { startR = null; startC = null; });
+  }
 })();
 </script>
 
