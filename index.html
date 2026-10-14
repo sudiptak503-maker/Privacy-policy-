@@ -2408,7 +2408,26 @@ document.addEventListener('keyup', e=>{
 
 function handleCanvasTouchStart(e){
   if(!activeGame || activeGame==='candy') return;
-  if(activeGame==='candy'||activeGame==='fruit') return;
+  if(activeGame==='fruit'){
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches ? e.touches[0] : e;
+    const x = touch.clientX - rect.left;
+    const y = touch.clientY - rect.top;
+    const col = Math.floor((x - gridOffsetX) / tileSize);
+    const row = Math.floor((y - gridOffsetY) / tileSize);
+    if(row >= 0 && row < gridSize && col >= 0 && col < gridSize){
+      const tile = grid[row][col];
+      if(typeof tile === 'string' && tile.startsWith('bomb')){
+        movesLeft--;
+        updateGameUI();
+        explodeBomb(row, col, tile === 'bomb_large' ? 'large' : 'small');
+      } else {
+        handleTileTap(row, col);
+      }
+    }
+    return;
+  }
 
   if(activeGame==='snake'){
     e.preventDefault();
@@ -2503,6 +2522,8 @@ function startGame(type){
   activeGame=type;
   lastGameType=type;
   trackGamePlay(type);
+  setStyle('candyGameContainer', 'display', 'none');
+  setStyle('gameCanvas', 'display', 'block');
 
   const titles={car:'Car',space:'Rocket',snake:'Snake',candy:'Candy',fruit:'Fruit',block:'Block',shooter:'Shooter',arrow:'Arrow Maze',ballsort:'Ball Sort'};
   setText('gameTitleUI', titles[type]||'Game');
@@ -5034,5 +5055,942 @@ console.log('[PlayEarn] Mode:', GAME_MODE.toUpperCase(), '| DPR:', MAX_DPR, '| F
   };
 })();
 </script>
+  <!-- ============================================================
+     ULTIMATE PRO EXPANSION PACK:
+     1. Fruit Crush Auto-Fix
+     2. Neon Cyber Breaker (4X Points + Powerups)
+     3. Ninja Blade Blitz (4X Points + Blade Trail & Combos)
+     ============================================================ -->
+<style>
+  .game-card.cyber::before{background:radial-gradient(circle,rgba(6,182,212,.25),transparent 65%)}
+  .game-card.ninja::before{background:radial-gradient(circle,rgba(244,63,94,.25),transparent 65%)}
+  .game-thumb.cyber{background:linear-gradient(135deg,rgba(6,182,212,.28),rgba(59,130,246,.2));border-color:rgba(6,182,212,.45)}
+  .game-thumb.ninja{background:linear-gradient(135deg,rgba(244,63,94,.28),rgba(245,158,11,.2));border-color:rgba(244,63,94,.45)}
+  .game-badge.mega4x{background:linear-gradient(135deg,#F59E0B,#EF4444);color:#fff;border:none;box-shadow:0 2px 10px rgba(239,68,68,.4);animation:pulseBadge 1.8s infinite}
+</style>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ------------------------------------------------------------
+     1. INJECT 2 NEW GAME CARDS INTO HOME SCREEN
+     ------------------------------------------------------------ */
+  function injectNewGameCards() {
+    const homeScreen = document.getElementById('screenHome');
+    if (!homeScreen || document.getElementById('cardCyberBreaker')) return;
+
+    const cardsHTML = `
+    <div class="game-card cyber" id="cardCyberBreaker" onclick="launchGame('cyber')">
+      <div class="game-card-inner">
+        <div class="game-thumb cyber">
+          <svg viewBox="0 0 64 64" fill="none">
+            <defs>
+              <linearGradient id="cyb1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#06B6D4"/><stop offset="1" stop-color="#3B82F6"/></linearGradient>
+              <linearGradient id="cyb2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F43F5E"/><stop offset="1" stop-color="#FB923C"/></linearGradient>
+            </defs>
+            <rect x="6" y="10" width="15" height="7" rx="2" fill="url(#cyb2)"/>
+            <rect x="24" y="10" width="16" height="7" rx="2" fill="#A855F7"/>
+            <rect x="43" y="10" width="15" height="7" rx="2" fill="url(#cyb1)"/>
+            <rect x="6" y="20" width="15" height="7" rx="2" fill="#10B981"/>
+            <rect x="24" y="20" width="16" height="7" rx="2" fill="#F59E0B"/>
+            <rect x="43" y="20" width="15" height="7" rx="2" fill="url(#cyb2)"/>
+            <circle cx="32" cy="38" r="5" fill="#FEF08A" stroke="#F59E0B" stroke-width="1.5"/>
+            <rect x="14" y="50" width="36" height="7" rx="3.5" fill="url(#cyb1)" stroke="#67E8F9" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="game-info">
+          <h3>Neon Cyber Breaker</h3>
+          <p>Smash neon bricks, catch 3x multi-balls & earn 4X mega rewards!</p>
+          <div class="game-badges">
+            <span class="game-badge mega4x">🔥 4X POINTS</span>
+            <span class="game-badge blue">+80 / brick</span>
+            <span class="game-badge gold">+2000 / level</span>
+          </div>
+        </div>
+        <div class="game-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+      </div>
+    </div>
+
+    <div class="game-card ninja" id="cardNinjaSlice" onclick="launchGame('ninja')">
+      <div class="game-card-inner">
+        <div class="game-thumb ninja">
+          <svg viewBox="0 0 64 64" fill="none">
+            <defs>
+              <linearGradient id="nin1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="0.5" stop-color="#38BDF8"/><stop offset="1" stop-color="#6366F1"/></linearGradient>
+              <radialGradient id="nin2" cx="0.4" cy="0.4"><stop offset="0" stop-color="#FCA5A5"/><stop offset="1" stop-color="#E11D48"/></radialGradient>
+            </defs>
+            <path d="M14 38 A16 16 0 0 1 42 18 Z" fill="url(#nin2)"/>
+            <path d="M22 46 A16 16 0 0 0 50 26 Z" fill="url(#nin2)"/>
+            <path d="M8 54 L56 10" stroke="url(#nin1)" stroke-width="4" stroke-linecap="round"/>
+            <circle cx="48" cy="16" r="3" fill="#FEF08A"/>
+            <circle cx="18" cy="22" r="2" fill="#F43F5E"/>
+            <circle cx="46" cy="44" r="2.5" fill="#F59E0B"/>
+          </svg>
+        </div>
+        <div class="game-info">
+          <h3>Ninja Blade Blitz</h3>
+          <p>Swipe glowing katana blade to slice flying fruits & golden stars!</p>
+          <div class="game-badges">
+            <span class="game-badge mega4x">⚡ 4X POINTS</span>
+            <span class="game-badge pink">+80 / slice</span>
+            <span class="game-badge gold">+400 Golden</span>
+          </div>
+        </div>
+        <div class="game-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+      </div>
+    </div>`;
+
+    homeScreen.insertAdjacentHTML('beforeend', cardsHTML);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', injectNewGameCards);
+  } else {
+    injectNewGameCards();
+  }
+
+  /* ------------------------------------------------------------
+     2. ULTRA PRO SOUND EFFECTS (Web Audio Synthesizer)
+     ------------------------------------------------------------ */
+  let sfxCtx = null;
+  function getAudioCtx() {
+    if (window.Sound && Sound.isMuted && Sound.isMuted()) return null;
+    if (!sfxCtx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) sfxCtx = new AC();
+    }
+    if (sfxCtx && sfxCtx.state === 'suspended') sfxCtx.resume();
+    return sfxCtx;
+  }
+
+  const ProSFX = {
+    laserBounce() {
+      const ac = getAudioCtx(); if (!ac) return;
+      const t = ac.currentTime;
+      const osc = ac.createOscillator(), g = ac.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(520, t);
+      osc.frequency.exponentialRampToValueAtTime(880, t + 0.09);
+      g.gain.setValueAtTime(0.14, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+      osc.connect(g); g.connect(ac.destination);
+      osc.start(t); osc.stop(t + 0.1);
+    },
+    brickShatter(row) {
+      const ac = getAudioCtx(); if (!ac) return;
+      const t = ac.currentTime;
+      const base = 440 + (6 - (row || 0)) * 90;
+      [base, base * 1.25, base * 1.5].forEach((freq, idx) => {
+        const osc = ac.createOscillator(), g = ac.createGain();
+        osc.type = idx === 0 ? 'sine' : 'triangle';
+        osc.frequency.setValueAtTime(freq, t + idx * 0.025);
+        g.gain.setValueAtTime(0.12, t + idx * 0.025);
+        g.gain.exponentialRampToValueAtTime(0.001, t + idx * 0.025 + 0.14);
+        osc.connect(g); g.connect(ac.destination);
+        osc.start(t + idx * 0.025); osc.stop(t + idx * 0.025 + 0.15);
+      });
+    },
+    swordSlash() {
+      const ac = getAudioCtx(); if (!ac) return;
+      const t = ac.currentTime;
+      const osc = ac.createOscillator(), g = ac.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(900, t);
+      osc.frequency.exponentialRampToValueAtTime(140, t + 0.11);
+      g.gain.setValueAtTime(0.09, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.11);
+      osc.connect(g); g.connect(ac.destination);
+      osc.start(t); osc.stop(t + 0.12);
+    },
+    juicySlice(isGolden) {
+      const ac = getAudioCtx(); if (!ac) return;
+      const t = ac.currentTime;
+      const freqs = isGolden ? [587.33, 880, 1174.66, 1760] : [523.25, 783.99, 1046.5];
+      freqs.forEach((f, i) => {
+        const osc = ac.createOscillator(), g = ac.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(f, t + i * 0.03);
+        g.gain.setValueAtTime(0.14, t + i * 0.03);
+        g.gain.exponentialRampToValueAtTime(0.001, t + i * 0.03 + 0.18);
+        osc.connect(g); g.connect(ac.destination);
+        osc.start(t + i * 0.03); osc.stop(t + i * 0.03 + 0.2);
+      });
+    },
+    megaCombo() {
+      const ac = getAudioCtx(); if (!ac) return;
+      const t = ac.currentTime;
+      [440, 554.37, 659.25, 880, 1108.73, 1318.5].forEach((f, i) => {
+        const osc = ac.createOscillator(), g = ac.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(f, t + i * 0.045);
+        g.gain.setValueAtTime(0.15, t + i * 0.045);
+        g.gain.exponentialRampToValueAtTime(0.001, t + i * 0.045 + 0.28);
+        osc.connect(g); g.connect(ac.destination);
+        osc.start(t + i * 0.045); osc.stop(t + i * 0.045 + 0.3);
+      });
+    }
+  };
+
+  /* ------------------------------------------------------------
+     3. FIX FRUIT CRUSH TOUCH & DISPLAY + ROUTE NEW GAMES
+     ------------------------------------------------------------ */
+  if (canvas) {
+    canvas.addEventListener('pointerdown', function(e) {
+      if (activeGame === 'fruit') {
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const col = Math.floor((x - gridOffsetX) / tileSize);
+        const row = Math.floor((y - gridOffsetY) / tileSize);
+        if (row >= 0 && row < gridSize && col >= 0 && col < gridSize) {
+          const tile = grid[row] && grid[row][col];
+          if (typeof tile === 'string' && tile.startsWith('bomb')) {
+            movesLeft--;
+            updateGameUI();
+            explodeBomb(row, col, tile === 'bomb_large' ? 'large' : 'small');
+          } else {
+            handleTileTap(row, col);
+          }
+        }
+      } else if (activeGame === 'cyber') {
+        const rect = canvas.getBoundingClientRect();
+        cyberState.targetX = e.clientX - rect.left;
+      } else if (activeGame === 'ninja') {
+        const rect = canvas.getBoundingClientRect();
+        ninjaState.isSwiping = true;
+        addNinjaBladePoint(e.clientX - rect.left, e.clientY - rect.top);
+      }
+    });
+
+    canvas.addEventListener('pointermove', function(e) {
+      if (activeGame === 'cyber') {
+        const rect = canvas.getBoundingClientRect();
+        cyberState.targetX = e.clientX - rect.left;
+      } else if (activeGame === 'ninja') {
+        if (e.buttons === 1 || e.pointerType === 'touch' || ninjaState.isSwiping) {
+          const rect = canvas.getBoundingClientRect();
+          addNinjaBladePoint(e.clientX - rect.left, e.clientY - rect.top);
+        }
+      }
+    });
+
+    window.addEventListener('pointerup', function() {
+      if (activeGame === 'ninja') ninjaState.isSwiping = false;
+    });
+  }
+
+  /* ------------------------------------------------------------
+     4. OVERRIDE LAUNCH, START & GAME OVER FOR NEW GAMES
+     ------------------------------------------------------------ */
+  const _origLaunchGame = window.launchGame;
+  window.launchGame = function(type) {
+    if (type === 'cyber' || type === 'ninja') {
+      pendingGameType = type;
+      Sound.click();
+      Sound.splash();
+      const customMeta = {
+        cyber: {
+          title: 'CYBER BREAKER',
+          tagline: '🔥 4X Mega Points • +80/Brick • +2000/Level',
+          icon: `<svg viewBox="0 0 64 64" fill="none"><rect x="8" y="12" width="20" height="9" rx="3" fill="#F43F5E"/><rect x="36" y="12" width="20" height="9" rx="3" fill="#06B6D4"/><rect x="8" y="25" width="20" height="9" rx="3" fill="#F59E0B"/><rect x="36" y="25" width="20" height="9" rx="3" fill="#10B981"/><circle cx="32" cy="42" r="5" fill="#FEF08A"/><rect x="14" y="52" width="36" height="7" rx="3.5" fill="#3B82F6"/></svg>`
+        },
+        ninja: {
+          title: 'NINJA BLITZ',
+          tagline: '⚡ 4X Mega Points • +80/Fruit • +400 Golden',
+          icon: `<svg viewBox="0 0 64 64" fill="none"><circle cx="28" cy="34" r="14" fill="#E11D48"/><circle cx="44" cy="22" r="10" fill="#F59E0B"/><path d="M8 56 L56 8" stroke="#38BDF8" stroke-width="5" stroke-linecap="round"/></svg>`
+        }
+      }[type];
+
+      setText('splashTitle', customMeta.title);
+      setText('splashTagline', customMeta.tagline);
+      setHTML('splashIcon', customMeta.icon);
+      setStyle('btnStartGame', 'display', 'flex');
+      setStyle('splashLoading', 'display', 'none');
+      const fill = document.getElementById('loadingBarFill');
+      if (fill) fill.style.width = '0%';
+      setText('loadingPercent', '0%');
+      setStyle('gameOverlay', 'display', 'flex');
+      setStyle('startSplash', 'display', 'flex');
+      setStyle('gameOverScreen', 'display', 'none');
+      setStyle('gameControls', 'display', 'none');
+      setStyle('candyGameContainer', 'display', 'none');
+      setHTML('powerupBar', '');
+      return;
+    }
+    return _origLaunchGame(type);
+  };
+
+  const _origStartGame = window.startGame;
+  window.startGame = function(type) {
+    // Ensure main canvas is visible and Candy container is hidden
+    setStyle('candyGameContainer', 'display', 'none');
+    setStyle('gameCanvas', 'display', 'block');
+
+    if (type === 'cyber') {
+      startCyberBreaker();
+      return;
+    }
+    if (type === 'ninja') {
+      startNinjaSlice();
+      return;
+    }
+    return _origStartGame(type);
+  };
+
+  // Patch triggerGameOver & quitGame so history saves proper game names for Cyber & Ninja
+  const _origTriggerGameOver = window.triggerGameOver;
+  window.triggerGameOver = function(reason) {
+    if (lastGameType === 'cyber' || lastGameType === 'ninja') {
+      if (gameLoop) cancelAnimationFrame(gameLoop);
+      gameLoop = null;
+      activeGame = '';
+      magnetActive = false; shieldActive = false;
+      renderPowerupBar();
+      Sound.stopBgm();
+      Sound.gameOver();
+      setText('finalScore', score);
+      setText('finalLevel', gameLevel);
+      setText('gameOverSub', reason || 'Game Over');
+      setStyle('gameOverScreen', 'display', 'flex');
+      setStyle('gameControls', 'display', 'none');
+      if (score > 0 && currentUser) {
+        const newPoints = (userData.points || 0) + score;
+        db.ref('users/' + currentUser.uid).update({ points: newPoints });
+        const gName = lastGameType === 'cyber' ? 'Neon Cyber Breaker (4X)' : 'Ninja Blade Blitz (4X)';
+        db.ref('users/' + currentUser.uid + '/history').push({ game: gName, points: score, time: Date.now() });
+        db.ref('notifications/' + currentUser.uid).push({ title: '4X Mega Game Over', msg: `You earned ${score} points in ${gName}!`, time: Date.now() });
+      }
+      return;
+    }
+    return _origTriggerGameOver(reason);
+  };
+
+  /* ------------------------------------------------------------
+     5. GAME 1: NEON CYBER BREAKER (4X MEGA POINTS)
+     ------------------------------------------------------------ */
+  const cyberState = {
+    paddle: { x: 100, y: 400, w: 104, h: 14, baseW: 104, wideTimer: 0 },
+    balls: [],
+    bricks: [],
+    drops: [],
+    floats: [],
+    targetX: null
+  };
+
+  function buildCyberBricks(level) {
+    cyberState.bricks = [];
+    const cols = 6;
+    const rows = Math.min(8, 4 + level);
+    const pad = 7;
+    const offsetTop = 68;
+    const usableW = canvas._w - 28;
+    const bw = (usableW - pad * (cols - 1)) / cols;
+    const bh = 22;
+    const palette = [
+      ['#FB7185', '#E11D48', 160],
+      ['#FBBF24', '#D97706', 140],
+      ['#34D399', '#059669', 120],
+      ['#38BDF8', '#0284C7', 100],
+      ['#C084FC', '#7C3AED', 80]
+    ];
+    for (let r = 0; r < rows; r++) {
+      const pal = palette[r % palette.length];
+      for (let c = 0; c < cols; c++) {
+        const hp = (r === 0 && level >= 2) ? 2 : 1;
+        cyberState.bricks.push({
+          x: 14 + c * (bw + pad),
+          y: offsetTop + r * (bh + pad),
+          w: bw,
+          h: bh,
+          hp: hp,
+          maxHp: hp,
+          c1: pal[0],
+          c2: pal[1],
+          pts: pal[2],
+          row: r
+        });
+      }
+    }
+  }
+
+  function spawnCyberBall(x, y, vx, vy) {
+    cyberState.balls.push({
+      x: x, y: y,
+      vx: vx || (Math.random() > 0.5 ? 4.2 : -4.2),
+      vy: vy || -5.8,
+      r: 8,
+      trail: []
+    });
+  }
+
+  function startCyberBreaker() {
+    activeGame = 'cyber';
+    lastGameType = 'cyber';
+    trackGamePlay('cyber');
+    setText('gameTitleUI', 'Cyber 4X');
+    score = 0; health = 3; gameLevel = 1; particles = [];
+    setStyle('levelStat', 'display', 'block');
+    setStyle('movesStat', 'display', 'none');
+    setStyle('healthStat', 'display', 'block');
+    setStyle('gameControls', 'display', 'flex');
+    updateGameUI();
+    Sound.startBgm('shooter');
+
+    requestAnimationFrame(() => {
+      resizeCanvas();
+      if (!canvas._w || !canvas._h) { setTimeout(startCyberBreaker, 80); return; }
+      cyberState.paddle.baseW = Math.min(125, canvas._w * 0.3);
+      cyberState.paddle.w = cyberState.paddle.baseW;
+      cyberState.paddle.x = (canvas._w - cyberState.paddle.w) / 2;
+      cyberState.paddle.y = canvas._h - 56;
+      cyberState.paddle.wideTimer = 0;
+      cyberState.targetX = cyberState.paddle.x + cyberState.paddle.w / 2;
+      cyberState.balls = [];
+      cyberState.drops = [];
+      cyberState.floats = [];
+      spawnCyberBall(canvas._w / 2, cyberState.paddle.y - 16, 4.2, -5.8);
+      buildCyberBricks(gameLevel);
+      _lastFrame = performance.now();
+      loopCyberBreaker();
+    });
+  }
+
+  function loopCyberBreaker() {
+    if (activeGame !== 'cyber') return;
+    const now = performance.now();
+    if (now - _lastFrame < FRAME_MS) { gameLoop = requestAnimationFrame(loopCyberBreaker); return; }
+    const dt = (now - _lastFrame) / 1000;
+    _lastFrame = now;
+
+    // Background
+    const bg = ctx.createLinearGradient(0, 0, 0, canvas._h);
+    bg.addColorStop(0, '#040814');
+    bg.addColorStop(0.5, '#091326');
+    bg.addColorStop(1, '#0F172A');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, canvas._w, canvas._h);
+
+    // Subtle cyber grid
+    if (!IS_LOW_END) {
+      ctx.strokeStyle = 'rgba(6, 182, 212, 0.06)';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < canvas._w; x += 36) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas._h); ctx.stroke();
+      }
+      for (let y = 0; y < canvas._h; y += 36) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas._w, y); ctx.stroke();
+      }
+    }
+
+    // Paddle control
+    const p = cyberState.paddle;
+    if (p.wideTimer > 0) {
+      p.wideTimer -= dt;
+      p.w = p.baseW * 1.45;
+      if (p.wideTimer <= 0) p.w = p.baseW;
+    }
+    const moveSpd = keys.boost ? 13 : 8.5;
+    if (keys.left) cyberState.targetX = (cyberState.targetX || (p.x + p.w / 2)) - moveSpd;
+    if (keys.right) cyberState.targetX = (cyberState.targetX || (p.x + p.w / 2)) + moveSpd;
+    if (cyberState.targetX !== null) {
+      const desiredX = cyberState.targetX - p.w / 2;
+      p.x += (desiredX - p.x) * 0.28;
+    }
+    p.x = Math.max(8, Math.min(canvas._w - p.w - 8, p.x));
+    p.y = canvas._h - 54;
+
+    // Draw Paddle
+    ctx.save();
+    if (!IS_LOW_END) { ctx.shadowColor = '#06B6D4'; ctx.shadowBlur = 16; }
+    const pg = ctx.createLinearGradient(p.x, p.y, p.x + p.w, p.y);
+    pg.addColorStop(0, '#06B6D4');
+    pg.addColorStop(0.5, '#38BDF8');
+    pg.addColorStop(1, '#6366F1');
+    ctx.fillStyle = pg;
+    roundRect(ctx, p.x, p.y, p.w, p.h, 7);
+    ctx.fill();
+    ctx.restore();
+
+    // Draw Bricks
+    for (let i = cyberState.bricks.length - 1; i >= 0; i--) {
+      const b = cyberState.bricks[i];
+      ctx.save();
+      if (!IS_LOW_END) { ctx.shadowColor = b.c1; ctx.shadowBlur = 8; }
+      const bgGrad = ctx.createLinearGradient(b.x, b.y, b.x, b.y + b.h);
+      bgGrad.addColorStop(0, b.c1);
+      bgGrad.addColorStop(1, b.c2);
+      ctx.fillStyle = bgGrad;
+      roundRect(ctx, b.x, b.y, b.w, b.h, 5);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      if (b.hp > 1) {
+        ctx.strokeStyle = '#FEF08A';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+      ctx.fillStyle = 'rgba(255,255,255,0.28)';
+      ctx.fillRect(b.x + 4, b.y + 3, b.w - 8, 3);
+      ctx.restore();
+    }
+
+    // Update & Draw Balls
+    for (let bi = cyberState.balls.length - 1; bi >= 0; bi--) {
+      const ball = cyberState.balls[bi];
+      ball.trail.push({ x: ball.x, y: ball.y });
+      if (ball.trail.length > (IS_LOW_END ? 3 : 7)) ball.trail.shift();
+
+      ball.x += ball.vx;
+      ball.y += ball.vy;
+
+      // Wall bounce
+      if (ball.x - ball.r < 6) { ball.x = 6 + ball.r; ball.vx = Math.abs(ball.vx); ProSFX.laserBounce(); }
+      if (ball.x + ball.r > canvas._w - 6) { ball.x = canvas._w - 6 - ball.r; ball.vx = -Math.abs(ball.vx); ProSFX.laserBounce(); }
+      if (ball.y - ball.r < 8) { ball.y = 8 + ball.r; ball.vy = Math.abs(ball.vy); ProSFX.laserBounce(); }
+
+      // Paddle bounce
+      if (ball.vy > 0 &&
+          ball.y + ball.r >= p.y &&
+          ball.y - ball.r <= p.y + p.h &&
+          ball.x >= p.x - 4 &&
+          ball.x <= p.x + p.w + 4) {
+        const hitPos = (ball.x - (p.x + p.w / 2)) / (p.w / 2);
+        const speed = Math.min(9.5, Math.hypot(ball.vx, ball.vy) * 1.02);
+        const angle = hitPos * (Math.PI / 3);
+        ball.vx = speed * Math.sin(angle);
+        ball.vy = -Math.abs(speed * Math.cos(angle));
+        ball.y = p.y - ball.r - 1;
+        ProSFX.laserBounce();
+        spawnParticles(ball.x, p.y, '#38BDF8', 8);
+      }
+
+      // Brick collision
+      for (let i = cyberState.bricks.length - 1; i >= 0; i--) {
+        const b = cyberState.bricks[i];
+        if (ball.x + ball.r > b.x && ball.x - ball.r < b.x + b.w &&
+            ball.y + ball.r > b.y && ball.y - ball.r < b.y + b.h) {
+          ball.vy = -ball.vy;
+          b.hp--;
+          if (b.hp <= 0) {
+            score += b.pts;
+            updateGameUI();
+            ProSFX.brickShatter(b.row);
+            spawnParticles(b.x + b.w / 2, b.y + b.h / 2, b.c1, 14);
+            cyberState.floats.push({ x: b.x + b.w / 2, y: b.y, text: '+' + b.pts, color: '#FCD34D', life: 1 });
+            // 28% chance to drop 4X powerup or coin
+            if (Math.random() < 0.28) {
+              const rType = Math.random();
+              const dType = rType < 0.45 ? 'coin400' : (rType < 0.75 ? 'multiball' : 'wide');
+              cyberState.drops.push({ x: b.x + b.w / 2, y: b.y + b.h / 2, type: dType, vy: 3.2 });
+            }
+            cyberState.bricks.splice(i, 1);
+          } else {
+            score += 40;
+            updateGameUI();
+            ProSFX.laserBounce();
+          }
+          break;
+        }
+      }
+
+      // Draw Trail & Ball
+      ball.trail.forEach((tPos, idx) => {
+        ctx.fillStyle = `rgba(56, 189, 248, ${(idx + 1) / ball.trail.length * 0.35})`;
+        ctx.beginPath();
+        ctx.arc(tPos.x, tPos.y, ball.r * (idx / ball.trail.length), 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.save();
+      if (!IS_LOW_END) { ctx.shadowColor = '#FEF08A'; ctx.shadowBlur = 14; }
+      ctx.fillStyle = '#FEF08A';
+      ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+
+      // Ball lost
+      if (ball.y - ball.r > canvas._h) {
+        cyberState.balls.splice(bi, 1);
+      }
+    }
+
+    // Check if all balls fell
+    if (cyberState.balls.length === 0) {
+      health--;
+      updateGameUI();
+      Sound.crash();
+      if (health <= 0) {
+        return triggerGameOver('All cyber balls lost!');
+      } else {
+        spawnCyberBall(p.x + p.w / 2, p.y - 16, 4.2, -5.8);
+      }
+    }
+
+    // Powerup & 4X Coin Drops
+    for (let i = cyberState.drops.length - 1; i >= 0; i--) {
+      const d = cyberState.drops[i];
+      d.y += d.vy;
+      ctx.save();
+      if (d.type === 'coin400') {
+        drawCoin(d.x, d.y, 13);
+      } else {
+        ctx.fillStyle = d.type === 'multiball' ? '#EC4899' : '#10B981';
+        roundRect(ctx, d.x - 24, d.y - 10, 48, 20, 10);
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 10px Sora, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(d.type === 'multiball' ? '3X BALL' : 'WIDE', d.x, d.y + 4);
+      }
+      ctx.restore();
+
+      if (d.y + 12 >= p.y && d.y - 12 <= p.y + p.h && d.x >= p.x - 10 && d.x <= p.x + p.w + 10) {
+        if (d.type === 'coin400') {
+          score += 400;
+          Sound.bigCoin();
+          cyberState.floats.push({ x: d.x, y: p.y - 10, text: '💎 +400!', color: '#34D399', life: 1 });
+        } else if (d.type === 'multiball') {
+          ProSFX.megaCombo();
+          const ref = cyberState.balls[0] || { x: p.x + p.w / 2, y: p.y - 16 };
+          spawnCyberBall(ref.x, ref.y, -4.5, -5.8);
+          spawnCyberBall(ref.x, ref.y, 4.5, -5.8);
+          cyberState.floats.push({ x: d.x, y: p.y - 10, text: '🔥 3X MULTI-BALL!', color: '#F472B6', life: 1 });
+        } else if (d.type === 'wide') {
+          Sound.powerup();
+          p.wideTimer = 10;
+          cyberState.floats.push({ x: d.x, y: p.y - 10, text: '⚡ MEGA PADDLE!', color: '#38BDF8', life: 1 });
+        }
+        updateGameUI();
+        cyberState.drops.splice(i, 1);
+        continue;
+      }
+      if (d.y > canvas._h + 30) cyberState.drops.splice(i, 1);
+    }
+
+    // Level Cleared -> +2000 Bonus
+    if (cyberState.bricks.length === 0) {
+      score += 2000;
+      gameLevel++;
+      updateGameUI();
+      ProSFX.megaCombo();
+      cyberState.floats.push({ x: canvas._w / 2, y: canvas._h / 2, text: '🏆 LEVEL CLEAR! +2000', color: '#FEF08A', life: 1.4 });
+      buildCyberBricks(gameLevel);
+      cyberState.balls = [];
+      spawnCyberBall(p.x + p.w / 2, p.y - 16, 4.6, -6.2);
+    }
+
+    // Floating Score Texts
+    for (let i = cyberState.floats.length - 1; i >= 0; i--) {
+      const f = cyberState.floats[i];
+      ctx.save();
+      ctx.globalAlpha = Math.min(1, f.life);
+      ctx.fillStyle = f.color;
+      ctx.font = 'bold 16px Sora, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(f.text, f.x, f.y);
+      ctx.restore();
+      f.y -= 1.2;
+      f.life -= 0.022;
+      if (f.life <= 0) cyberState.floats.splice(i, 1);
+    }
+
+    updateParticles();
+    drawParticles();
+    gameLoop = requestAnimationFrame(loopCyberBreaker);
+  }
+
+  /* ------------------------------------------------------------
+     6. GAME 2: NINJA BLADE BLITZ (4X MEGA POINTS)
+     ------------------------------------------------------------ */
+  const ninjaState = {
+    items: [],
+    halves: [],
+    splats: [],
+    trail: [],
+    floats: [],
+    spawnTimer: 0,
+    isSwiping: false,
+    comboTimer: 0,
+    comboCount: 0
+  };
+
+  const NINJA_FRUITS = [
+    { name: 'Watermelon', c1: '#4ADE80', c2: '#EF4444', r: 28, pts: 80 },
+    { name: 'Mango',      c1: '#FDE047', c2: '#F97316', r: 25, pts: 80 },
+    { name: 'Dragon',     c1: '#F43F5E', c2: '#FCE7F3', r: 26, pts: 100 },
+    { name: 'Blueberry',  c1: '#60A5FA', c2: '#1D4ED8', r: 23, pts: 80 },
+    { name: 'GoldenStar', c1: '#FEF08A', c2: '#F59E0B', r: 27, pts: 400, golden: true }
+  ];
+
+  function startNinjaSlice() {
+    activeGame = 'ninja';
+    lastGameType = 'ninja';
+    trackGamePlay('ninja');
+    setText('gameTitleUI', 'Ninja 4X');
+    score = 0; health = 3; gameLevel = 1; particles = [];
+    setStyle('levelStat', 'display', 'block');
+    setStyle('movesStat', 'display', 'none');
+    setStyle('healthStat', 'display', 'block');
+    setStyle('gameControls', 'display', 'none');
+    updateGameUI();
+    Sound.startBgm('fruit');
+
+    requestAnimationFrame(() => {
+      resizeCanvas();
+      if (!canvas._w || !canvas._h) { setTimeout(startNinjaSlice, 80); return; }
+      ninjaState.items = [];
+      ninjaState.halves = [];
+      ninjaState.splats = [];
+      ninjaState.trail = [];
+      ninjaState.floats = [];
+      ninjaState.spawnTimer = 0.4;
+      ninjaState.comboCount = 0;
+      _lastFrame = performance.now();
+      loopNinjaSlice();
+    });
+  }
+
+  function spawnNinjaWave() {
+    const count = Math.min(5, 2 + Math.floor(Math.random() * 2) + Math.floor(gameLevel / 3));
+    for (let i = 0; i < count; i++) {
+      const isBomb = Math.random() < 0.16;
+      const isGolden = !isBomb && Math.random() < 0.18;
+      const fTemplate = isGolden
+        ? NINJA_FRUITS[4]
+        : NINJA_FRUITS[Math.floor(Math.random() * 4)];
+      const x = canvas._w * 0.15 + Math.random() * (canvas._w * 0.7);
+      const y = canvas._h + 30;
+      const targetX = canvas._w * 0.2 + Math.random() * (canvas._w * 0.6);
+      const vx = (targetX - x) / 65;
+      const vy = -(Math.sqrt(2 * 0.22 * (canvas._h * 0.68 + Math.random() * 90)));
+      ninjaState.items.push({
+        x, y, vx, vy,
+        r: isBomb ? 25 : fTemplate.r,
+        rot: 0,
+        vrot: (Math.random() - 0.5) * 0.14,
+        isBomb: isBomb,
+        golden: !!fTemplate.golden,
+        c1: isBomb ? '#1F2937' : fTemplate.c1,
+        c2: isBomb ? '#EF4444' : fTemplate.c2,
+        pts: fTemplate.pts,
+        sliced: false
+      });
+    }
+  }
+
+  function addNinjaBladePoint(x, y) {
+    ninjaState.trail.push({ x, y, life: 1 });
+    if (ninjaState.trail.length > 16) ninjaState.trail.shift();
+    if (ninjaState.trail.length >= 2) {
+      const p1 = ninjaState.trail[ninjaState.trail.length - 2];
+      const p2 = ninjaState.trail[ninjaState.trail.length - 1];
+      if (Math.hypot(p2.x - p1.x, p2.y - p1.y) > 12 && Math.random() < 0.35) {
+        ProSFX.swordSlash();
+      }
+      checkBladeHits(p1.x, p1.y, p2.x, p2.y);
+    }
+  }
+
+  function checkBladeHits(x1, y1, x2, y2) {
+    let slicedNow = 0;
+    for (let i = ninjaState.items.length - 1; i >= 0; i--) {
+      const it = ninjaState.items[i];
+      if (it.sliced) continue;
+      const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+      const dist = Math.min(Math.hypot(it.x - x2, it.y - y2), Math.hypot(it.x - mx, it.y - my));
+      if (dist <= it.r + 14) {
+        it.sliced = true;
+        if (it.isBomb) {
+          health--;
+          updateGameUI();
+          Sound.bomb();
+          spawnParticles(it.x, it.y, '#EF4444', 25);
+          ninjaState.floats.push({ x: it.x, y: it.y, text: '💥 BOMB! -1 ❤️', color: '#EF4444', life: 1.2 });
+          ninjaState.items.splice(i, 1);
+          if (health <= 0) return triggerGameOver('You sliced an explosive bomb!');
+          continue;
+        }
+        // Fruit Sliced!
+        slicedNow++;
+        score += it.pts;
+        ProSFX.juicySlice(it.golden);
+        spawnParticles(it.x, it.y, it.c2, it.golden ? 22 : 14);
+        if (!IS_LOW_END && ninjaState.splats.length < 18) {
+          ninjaState.splats.push({ x: it.x, y: it.y, r: it.r * 1.1, color: it.c2, alpha: 0.45 });
+        }
+        // Create 2 flying halves
+        ninjaState.halves.push(
+          { x: it.x - 6, y: it.y, vx: it.vx - 2.4, vy: it.vy * 0.4, r: it.r, c1: it.c1, c2: it.c2, rot: it.rot, vrot: -0.12, side: 0, life: 1 },
+          { x: it.x + 6, y: it.y, vx: it.vx + 2.4, vy: it.vy * 0.4, r: it.r, c1: it.c1, c2: it.c2, rot: it.rot, vrot: 0.12, side: 1, life: 1 }
+        );
+        ninjaState.floats.push({
+          x: it.x, y: it.y,
+          text: it.golden ? '⭐ GOLDEN +400!' : '+' + it.pts,
+          color: it.golden ? '#FEF08A' : '#4ADE80',
+          life: 1
+        });
+        ninjaState.items.splice(i, 1);
+      }
+    }
+
+    if (slicedNow > 0) {
+      ninjaState.comboCount += slicedNow;
+      ninjaState.comboTimer = 0.28;
+      if (ninjaState.comboCount >= 3) {
+        const bonus = ninjaState.comboCount * 100;
+        score += bonus;
+        ProSFX.megaCombo();
+        ninjaState.floats.push({
+          x: x2, y: y2 - 24,
+          text: `🔥 ${ninjaState.comboCount}X BLITZ COMBO! +${bonus}`,
+          color: '#F472B6',
+          life: 1.3
+        });
+        ninjaState.comboCount = 0;
+      }
+      const newLvl = Math.min(10, 1 + Math.floor(score / 1200));
+      if (newLvl > gameLevel) { gameLevel = newLvl; Sound.levelUp(); }
+      updateGameUI();
+    }
+  }
+
+  function loopNinjaSlice() {
+    if (activeGame !== 'ninja') return;
+    const now = performance.now();
+    if (now - _lastFrame < FRAME_MS) { gameLoop = requestAnimationFrame(loopNinjaSlice); return; }
+    const dt = (now - _lastFrame) / 1000;
+    _lastFrame = now;
+
+    // Dojo Dark Gradient Background
+    const bg = ctx.createLinearGradient(0, 0, 0, canvas._h);
+    bg.addColorStop(0, '#18071C');
+    bg.addColorStop(0.5, '#0F071E');
+    bg.addColorStop(1, '#07040E');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, canvas._w, canvas._h);
+
+    // Background Juice Splats
+    for (let i = ninjaState.splats.length - 1; i >= 0; i--) {
+      const s = ninjaState.splats[i];
+      ctx.save();
+      ctx.globalAlpha = s.alpha;
+      ctx.fillStyle = s.color;
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+      s.alpha -= 0.0025;
+      if (s.alpha <= 0) ninjaState.splats.splice(i, 1);
+    }
+
+    // Spawn waves
+    ninjaState.spawnTimer -= dt;
+    if (ninjaState.spawnTimer <= 0) {
+      spawnNinjaWave();
+      ninjaState.spawnTimer = Math.max(1.0, 2.1 - gameLevel * 0.08);
+    }
+
+    if (ninjaState.comboTimer > 0) {
+      ninjaState.comboTimer -= dt;
+      if (ninjaState.comboTimer <= 0) ninjaState.comboCount = 0;
+    }
+
+    // Update & Draw Whole Fruits / Bombs
+    for (let i = ninjaState.items.length - 1; i >= 0; i--) {
+      const it = ninjaState.items[i];
+      it.x += it.vx;
+      it.y += it.vy;
+      it.vy += 0.22;
+      it.rot += it.vrot;
+
+      ctx.save();
+      ctx.translate(it.x, it.y);
+      ctx.rotate(it.rot);
+      if (it.isBomb) {
+        drawBomb(0, 0, it.r, 'small');
+      } else {
+        if (!IS_LOW_END && it.golden) { ctx.shadowColor = '#F59E0B'; ctx.shadowBlur = 18; }
+        ctx.fillStyle = it.c1;
+        ctx.beginPath(); ctx.arc(0, 0, it.r, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = it.c2;
+        ctx.beginPath(); ctx.arc(0, 0, it.r * 0.78, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.45)';
+        ctx.beginPath(); ctx.arc(-it.r * 0.28, -it.r * 0.28, it.r * 0.2, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.restore();
+
+      if (it.y > canvas._h + 70 && it.vy > 0) {
+        ninjaState.items.splice(i, 1);
+      }
+    }
+
+    // Update & Draw Sliced Halves
+    for (let i = ninjaState.halves.length - 1; i >= 0; i--) {
+      const h = ninjaState.halves[i];
+      h.x += h.vx;
+      h.y += h.vy;
+      h.vy += 0.28;
+      h.rot += h.vrot;
+      h.life -= 0.02;
+
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, h.life);
+      ctx.translate(h.x, h.y);
+      ctx.rotate(h.rot);
+      ctx.fillStyle = h.c1;
+      ctx.beginPath();
+      ctx.arc(0, 0, h.r, h.side === 0 ? 0 : Math.PI, h.side === 0 ? Math.PI : Math.PI * 2);
+      ctx.closePath(); ctx.fill();
+      ctx.fillStyle = h.c2;
+      ctx.beginPath();
+      ctx.arc(0, 0, h.r * 0.76, h.side === 0 ? 0 : Math.PI, h.side === 0 ? Math.PI : Math.PI * 2);
+      ctx.closePath(); ctx.fill();
+      ctx.restore();
+
+      if (h.life <= 0) ninjaState.halves.splice(i, 1);
+    }
+
+    // Draw Glowing Katana Blade Trail
+    if (ninjaState.trail.length > 1) {
+      ctx.save();
+      for (let i = 1; i < ninjaState.trail.length; i++) {
+        const p1 = ninjaState.trail[i - 1];
+        const p2 = ninjaState.trail[i];
+        ctx.strokeStyle = `rgba(56, 189, 248, ${p2.life})`;
+        ctx.lineWidth = (i / ninjaState.trail.length) * 9;
+        ctx.lineCap = 'round';
+        if (!IS_LOW_END) { ctx.shadowColor = '#38BDF8'; ctx.shadowBlur = 14; }
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+    for (let i = ninjaState.trail.length - 1; i >= 0; i--) {
+      ninjaState.trail[i].life -= 0.08;
+      if (ninjaState.trail[i].life <= 0) ninjaState.trail.splice(i, 1);
+    }
+
+    // Floating Texts
+    for (let i = ninjaState.floats.length - 1; i >= 0; i--) {
+      const f = ninjaState.floats[i];
+      ctx.save();
+      ctx.globalAlpha = Math.min(1, f.life);
+      ctx.fillStyle = f.color;
+      ctx.font = 'bold 17px Sora, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(f.text, f.x, f.y);
+      ctx.restore();
+      f.y -= 1.3;
+      f.life -= 0.022;
+      if (f.life <= 0) ninjaState.floats.splice(i, 1);
+    }
+
+    updateParticles();
+    drawParticles();
+    gameLoop = requestAnimationFrame(loopNinjaSlice);
+  }
+
+})();
+</script>
+
 </body>
 </html>
