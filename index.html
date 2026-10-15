@@ -4565,7 +4565,32 @@ const SMART_AD_URL = 'https://www.profitableratecpmnetwork.com/c4istdeh4?key=d6d
 let activeAdWindow = null;
 let adCloseTimer = null;
 let pendingDoubleReward = null;
+let adReturnContext = 'গেমে';
+let adHistoryGuardActive = false;
+function installAdBackGuard(){
+  if (adHistoryGuardActive) return;
+  adHistoryGuardActive = true;
+  try { history.pushState({__gameAdReturnGuard:true}, '', location.href); } catch(e) {}
+}
+window.addEventListener('popstate', function(){
+  // Keep Android/WebView Back from immediately exiting the app after an ad launch.
+  if (adHistoryGuardActive) {
+    try { history.pushState({__gameAdReturnGuard:true}, '', location.href); } catch(e) {}
+    closeAdAndReturn();
+    showAlert('গেমে ফিরে এসেছেন।','success');
+  }
+});
+document.addEventListener('visibilitychange', function(){
+  if (!document.hidden && adHistoryGuardActive) {
+    const panel = document.getElementById('adReturnPanel');
+    const msg = document.getElementById('adReturnMessage');
+    if (panel) panel.style.display = 'block';
+    if (msg) msg.textContent = 'গেমে ফিরে এসেছেন। নিচের বাটনে চাপ দিয়ে বিজ্ঞাপন উইন্ডো বন্ধ করুন।';
+  }
+});
 function openAdWithManualClose(context){
+  adReturnContext = context || 'গেমে';
+  installAdBackGuard();
   // Open synchronously during the click so browser/WebView popup blockers are less likely to block it.
   try { activeAdWindow = window.open(SMART_AD_URL, '_blank'); } catch(e) { activeAdWindow = null; }
   const panel = document.getElementById('adReturnPanel');
@@ -4585,6 +4610,7 @@ function closeAdAndReturn(){
   activeAdWindow = null;
   const panel = document.getElementById('adReturnPanel');
   if (panel) panel.style.display = 'none';
+  adHistoryGuardActive = false;
   // Keep the current app screen intact; closing a third-party tab does not certify ad completion.
 }
 /* ---------- GAME OVER / REWARDED POINTS ---------- */
