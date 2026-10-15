@@ -6226,6 +6226,143 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 </script>
+<script>
+// =========================================================================
+// 🚀 MASTER OVERRIDE: Ad Cooldown + Instant Double Points + Smart Back Button
+// =========================================================================
+
+document.addEventListener("DOMContentLoaded", function() {
+
+    // ---------------------------------------------------------------------
+    // ১. অ্যাড কুলডাউন লজিক (সরাসরি অ্যাড ইঞ্জিনকে কন্ট্রোল করবে, তাই ১০০% কাজ করবে)
+    // ---------------------------------------------------------------------
+    if(typeof window.openAdWithManualClose === 'function' && !window.adCooldownHooked) {
+        const originalAdOpener = window.openAdWithManualClose;
+        
+        // ওয়ালেট এবং লিডারবোর্ডের জন্য আলাদা আলাদা টাইমার
+        window.adTimers = { 'Wallet': 0, 'Leaderboard': 0 };
+        
+        window.openAdWithManualClose = function(context) {
+            // যদি ওয়ালেট বা লিডারবোর্ড হয়, তবেই ২ মিনিটের কুলডাউন চেক করবে
+            if (context === 'Wallet' || context === 'Leaderboard') {
+                const now = Date.now();
+                const cooldown = 2 * 60 * 1000; // ২ মিনিট (১২০,০০০ মিলি-সেকেন্ড)
+                
+                if (now - window.adTimers[context] < cooldown) {
+                    console.log(context + " Ad is on cooldown.");
+                    return false; // ২ মিনিট পার না হলে অ্যাড ওপেন হবে না!
+                }
+                window.adTimers[context] = now; // নতুন সময় সেভ করা হলো
+            }
+            // শর্ত পূরণ হলে অরিজিনাল অ্যাড ফাংশনটি রান করবে
+            return originalAdOpener(context);
+        };
+        window.adCooldownHooked = true; 
+    }
+
+    // ---------------------------------------------------------------------
+    // ২. স্মার্ট ব্যাক বাটন (Popstate History)
+    // ---------------------------------------------------------------------
+    history.replaceState({ screen: 'Home' }, 'Home', '');
+
+    if (typeof window.navTo === 'function' && !window.navToHooked) {
+        const originalNav = window.navTo;
+        window.navTo = function(screenName, el) {
+            originalNav(screenName, el); // আপনার অরিজিনাল ফাংশন রান করবে
+            
+            if (screenName !== 'Home') {
+                history.pushState({ screen: screenName }, screenName, '');
+            }
+        };
+        window.navToHooked = true;
+    }
+
+    window.addEventListener('popstate', function(event) {
+        if (window.adHistoryGuardActive || (event.state && event.state.__gameAdReturnGuard)) {
+            return; 
+        }
+
+        const gameOverlay = document.getElementById('gameOverlay');
+        const candyGame = document.getElementById('candyGameContainer');
+        const startSplash = document.getElementById('startSplash');
+        const gameOverScreen = document.getElementById('gameOverScreen');
+
+        if ((gameOverlay && gameOverlay.style.display === 'flex') || 
+            (candyGame && candyGame.style.display === 'flex') ||
+            (startSplash && startSplash.style.display === 'flex') ||
+            (gameOverScreen && gameOverScreen.style.display === 'flex')) {
+            
+            if (typeof quitGame === 'function') quitGame();
+            history.pushState({ screen: 'Home' }, 'Home', ''); 
+            return;
+        }
+        
+        const homeTab = document.querySelectorAll('.nav-item')[0];
+        if (homeTab && !homeTab.classList.contains('active')) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            const homeScreen = document.getElementById('screenHome');
+            if(homeScreen) homeScreen.classList.add('active');
+            
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            homeTab.classList.add('active');
+            
+            if(typeof Sound !== 'undefined' && Sound.startBgm) Sound.startBgm('home');
+            history.pushState({ screen: 'Home' }, 'Home', ''); 
+            return;
+        }
+    });
+
+    // ---------------------------------------------------------------------
+    // ৩. ইন্সট্যান্ট ডবল পয়েন্ট (অ্যাড খোলার আগেই পয়েন্ট যুক্ত হবে)
+    // ---------------------------------------------------------------------
+    window.watchRewardAd = function() {
+        const btn = document.getElementById('doublePointsBtn');
+        
+        if (typeof pendingDoubleReward === 'undefined' || !pendingDoubleReward || pendingDoubleReward.claimed) { 
+            if(btn) btn.disabled = true; 
+            return; 
+        }
+        
+        const bonus = Math.max(0, Number(pendingDoubleReward.score) || 0);
+        if(bonus <= 0){ 
+            if(btn) btn.style.display = 'none'; 
+            return; 
+        }
+
+        pendingDoubleReward.claimed = true; // ক্লেইম লক করা হলো
+        
+        // ফায়ারবেসে সাথে সাথে পয়েন্ট আপডেট
+        if(typeof currentUser !== 'undefined' && currentUser && typeof db !== 'undefined') {
+            db.ref('users/' + currentUser.uid + '/points').transaction(v => (Number(v)||0) + bonus).then(result => {
+                if(typeof userData !== 'undefined' && userData) {
+                    userData.points = Number(result.snapshot.val()) || 0;
+                }
+                const pointsUI = document.getElementById('heroPoints');
+                if(pointsUI) {
+                    pointsUI.innerText = (typeof userData !== 'undefined' && userData) ? userData.points : result.snapshot.val();
+                }
+            }).catch(e => console.error(e));
+        }
+
+        // বাটন ও টেক্সট সাথে সাথে আপডেট
+        if(btn){
+            btn.textContent = '✓ পয়েন্ট ডবল করা হয়েছে';
+            btn.style.background = '#059669'; 
+            btn.onclick = null; 
+        }
+        const noteUI = document.getElementById('doublePointsNote');
+        if(noteUI) noteUI.innerText = 'অতিরিক্ত ' + bonus + ' পয়েন্ট আপনার অ্যাকাউন্টে সাথে সাথে যুক্ত হয়েছে!';
+        
+        if(typeof showAlert === 'function') showAlert('অভিনন্দন! ডবল পয়েন্ট যুক্ত হয়েছে।', 'success');
+
+        // পয়েন্ট ডাটাবেসে সেভ হয়ে যাওয়ার পর অ্যাড উইন্ডো ওপেন হবে
+        if(typeof window.openAdWithManualClose === 'function'){
+            // 'গেমে' পাস করলে কুলডাউন লজিক এটিকে আটকাবে না, কারণ এটি Wallet বা Leaderboard নয়
+            window.openAdWithManualClose('গেমে');
+        }
+    };
+});
+</script>
 
 </body>
 </html>
