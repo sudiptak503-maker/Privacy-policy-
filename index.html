@@ -4616,17 +4616,19 @@ function closeAdAndReturn(){
 /* ---------- GAME OVER / REWARDED POINTS ---------- */
 function watchRewardAd(){
   const btn = document.getElementById('doublePointsBtn');
-  if (!pendingDoubleReward || pendingDoubleReward.claimed) { if(btn) btn.disabled = true; return; }
+  const p = pendingDoubleReward;
+  if (!p || p.claimed) { if(btn) btn.disabled = true; return; }
+  if (!currentUser || !p.baseAwarded) {
+    showAlert('আপনার মূল স্কোর সংরক্ষণ হওয়া পর্যন্ত অপেক্ষা করুন, তারপর আবার চেষ্টা করুন।','warning');
+    return;
+  }
+  // Open the ad synchronously from the click to reduce WebView/popup blocking,
+  // then claim the bonus immediately; this Smart Link does not verify ad completion.
   const opened = openAdWithManualClose('গেমে');
   if (!opened) {
     showAlert('বিজ্ঞাপন খুলতে পারেনি। আপনার ব্রাউজার/Sketchware WebView-তে পপ-আপ অনুমতি বা external link handling পরীক্ষা করুন।','warning');
-    return;
   }
-  if(btn){
-    btn.textContent = '✓ বিজ্ঞাপন থেকে ফিরে এসে বোনাস দাবি করুন';
-    btn.onclick = confirmDoubleReward;
-  }
-  showAlert('বিজ্ঞাপন থেকে ফিরে এসে বোনাস দাবি করতে পারেন। সতর্কতা: Smart Link বিজ্ঞাপন দেখা সম্পন্ন হয়েছে কিনা যাচাই করে না।','info','বিজ্ঞাপন');
+  confirmDoubleReward();
 }
 function confirmDoubleReward(){
   const p = pendingDoubleReward;
@@ -6139,31 +6141,26 @@ console.log('[PlayEarn] Mode:', GAME_MODE.toUpperCase(), '| DPR:', MAX_DPR, '| F
 })();
 </script>
 <script>
-// === SHORTCUT BUG FIX FOR FRUIT CRUSH ===
+// =========================================================================
+// 🚀 THE FINAL MASTER SCRIPT (WITH PERMANENT LOCALSTORAGE COOLDOWN)
+// =========================================================================
+
+// ১. FRUIT CRUSH BUG FIX
 (function() {
   let lastTapTime = 0;
   const originalHandleTileTap = window.handleTileTap;
 
-  // ১. ডাবল ট্যাপ/ইভেন্ট এরর হ্যান্ডেলিং (Debounce Guard)
   window.handleTileTap = function(row, col) {
     const now = Date.now();
-    // একই ক্লিকে দুইবার ফাংশন কল হলে (80ms এর মধ্যে) দ্বিতীয়টি অটোমেটিক ব্লক করবে
     if (now - lastTapTime < 80) return; 
     lastTapTime = now;
-
     try {
-      if (typeof originalHandleTileTap === 'function') {
-        originalHandleTileTap(row, col);
-      }
-    } catch (err) {
-      console.warn('Fruit Crush Tap Error Handled:', err);
-    }
+      if (typeof originalHandleTileTap === 'function') originalHandleTileTap(row, col);
+    } catch (err) { console.warn('Fruit Crush Tap Error Handled:', err); }
   };
 
-  // ২. আঙুল টেনে (Swipe) খেলার শর্টকাট হ্যান্ডলার
   let startR = null, startC = null;
   const gameCanvas = document.getElementById('gameCanvas');
-  
   if (gameCanvas) {
     gameCanvas.addEventListener('pointerdown', (e) => {
       if (window.activeGame !== 'fruit') return;
@@ -6171,7 +6168,6 @@ console.log('[PlayEarn] Mode:', GAME_MODE.toUpperCase(), '| DPR:', MAX_DPR, '| F
       startC = Math.floor((e.clientX - rect.left - window.gridOffsetX) / window.tileSize);
       startR = Math.floor((e.clientY - rect.top - window.gridOffsetY) / window.tileSize);
     });
-
     gameCanvas.addEventListener('pointermove', (e) => {
       if (window.activeGame !== 'fruit' || startR === null || window.isSwapping) return;
       const rect = gameCanvas.getBoundingClientRect();
@@ -6180,105 +6176,217 @@ console.log('[PlayEarn] Mode:', GAME_MODE.toUpperCase(), '| DPR:', MAX_DPR, '| F
 
       if ((curR !== startR || curC !== startC) && Math.abs(curR - startR) + Math.abs(curC - startC) === 1) {
         if (curR >= 0 && curR < window.gridSize && curC >= 0 && curC < window.gridSize) {
-          lastTapTime = 0; // সোয়াইপের জন্য গার্ড রিসেট
+          lastTapTime = 0; 
           window.selectedTile = { row: startR, col: startC };
           window.handleTileTap(curR, curC);
           startR = null; startC = null;
         }
       }
     });
-
     window.addEventListener('pointerup', () => { startR = null; startC = null; });
   }
 })();
-</script>
-<script>
-// --- Back Button Navigation Fix ---
-document.addEventListener("DOMContentLoaded", function() {
-    // শুরুতে অ্যাপ লোড হলে হোম পেজের একটি স্টেট সেভ করে রাখা
-    history.replaceState({ screen: 'Home' }, 'Home', '#Home');
 
-    // আপনার অরিজিনাল navTo ফাংশনটি ওভাররাইড করে হিস্ট্রি যুক্ত করা
-    const origNavTo = window.navTo;
-    window.navTo = function(screenName, el) {
-        origNavTo(screenName, el);
-        
-        // হোম পেজ ছাড়া অন্য যেকোনো পেজে গেলে হিস্ট্রিতে পুশ করা
-        if (screenName !== 'Home') {
-            history.pushState({ screen: screenName }, screenName, '#' + screenName);
+// ২. MASTER APP CONTROLLER (LOCALSTORAGE AD COOLDOWN + SMART BACK)
+(function() {
+    
+    // ফোনের মেমোরি (LocalStorage) থেকে অ্যাড কুলডাউন চেক করার ফাংশন
+    function canShowAd(screenName) {
+        try {
+            const storageKey = 'playearn_ad_timer_' + screenName;
+            const lastTime = parseInt(localStorage.getItem(storageKey) || '0', 10);
+            const now = Date.now();
+            const cooldown = 2 * 60 * 1000; // ২ মিনিট (১২০,০০০ মিলি-সেকেন্ড)
+            
+            // যদি ২ মিনিট পার না হয়ে থাকে, তবে false রিটার্ন করবে (অ্যাড দেখাবে না)
+            if (now - lastTime < cooldown) {
+                return false; 
+            }
+            // ২ মিনিট পার হলে নতুন সময় ফোনের মেমোরিতে সেভ করে রাখবে
+            localStorage.setItem(storageKey, now.toString());
+            return true;
+        } catch(e) {
+            return true;
         }
-    };
+    }
 
-    // মোবাইল বা হার্ডওয়্যার ব্যাক বাটন চাপলে এই popstate ইভেন্ট কাজ করবে
-    window.addEventListener('popstate', function(event) {
-        // ১. যদি গেম চালু অবস্থায় থাকে, তাহলে ব্যাক করলে গেম থেকে বের হয়ে হোমে আসবে
-        if (document.getElementById('gameOverlay').style.display === 'flex' || 
-            document.getElementById('candyGameContainer').style.display === 'flex') {
-            if(typeof quitGame === 'function') quitGame();
-            // হিস্ট্রি ঠিক রাখার জন্য আবার হোম স্টেট পুশ করা
-            history.pushState({ screen: 'Home' }, 'Home', '#Home'); 
-            return;
+    function applyOverrides() {
+        // --- ক. সরাসরি অ্যাড ওপেনার ফাংশনকে লক করা ---
+        if (typeof window.openAdWithManualClose === 'function' && !window.isAdOpenerHooked) {
+            const origOpenAd = window.openAdWithManualClose;
+            window.openAdWithManualClose = function(context) {
+                if (context === 'Wallet' || context === 'Leaderboard') {
+                    if (!canShowAd(context)) {
+                        console.log(context + " Ad is on 2-min cooldown (Saved in Memory).");
+                        return false; // অ্যাড ওপেন হওয়া পুরোপুরি ব্লক করবে
+                    }
+                }
+                return origOpenAd(context);
+            };
+            window.isAdOpenerHooked = true;
         }
-        
-        // ২. লিডারবোর্ড বা ওয়ালেট পেজে থাকলে ব্যাক বাটনে সোজা হোম স্ক্রিনে নিয়ে আসবে
-        const homeTab = document.querySelectorAll('.nav-item')[0]; // প্রথম আইটেমটি Home
-        origNavTo('Home', homeTab);
+
+        // --- খ. নেভিগেশন ফাংশন আপডেট ---
+        window.navTo = function(screenName, el) {
+            if(typeof Sound !== 'undefined' && typeof Sound.click === 'function') Sound.click();
+            
+            // স্ক্রিন পরিবর্তন ও বাটন অ্যাক্টিভ করা (আগেই পেজ খুলে যাবে)
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            const target = document.getElementById('screen' + screenName);
+            if(target) target.classList.add('active');
+            
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            if(el) el.classList.add('active');
+            
+            if(typeof Sound !== 'undefined' && typeof Sound.startBgm === 'function') {
+                if(screenName === 'Home') Sound.startBgm('home');
+                else if(screenName === 'Leaderboard') Sound.startBgm('leaderboard');
+                else Sound.startBgm('home');
+            }
+            
+            if(screenName === 'Leaderboard' && typeof loadLeaderboard === 'function') loadLeaderboard();
+            if(screenName === 'Notification' && typeof loadNotifications === 'function') loadNotifications();
+            if(screenName === 'Profile') {
+                if(typeof updateGameModeUI === 'function') updateGameModeUI();
+                if(typeof updateDebugInfo === 'function') updateDebugInfo();
+                if(typeof updateTrainingBadge === 'function') updateTrainingBadge();
+            }
+
+            // হিস্ট্রিতে পেজ সেভ করা (যাতে ব্যাক বাটন ঠিকমতো কাজ করে)
+            if (screenName !== 'Home') {
+                history.pushState({ screen: screenName }, screenName, '#' + screenName);
+            }
+
+            // সবশেষে অ্যাড চেক করা (কুলডাউন থাকলে ওপেন হবে না)
+            if (screenName === 'Wallet' || screenName === 'Leaderboard') {
+                if(typeof window.openAdWithManualClose === 'function'){
+                    window.openAdWithManualClose(screenName);
+                }
+            }
+        };
+
+        // --- গ. ডবল পয়েন্ট ফাংশন (আপনার পছন্দমতো যা ঠিকঠাক কাজ করছে) ---
+        window.watchRewardAd = function() {
+            const btn = document.getElementById('doublePointsBtn');
+            const p = pendingDoubleReward;
+            if (!p || p.claimed) { if (btn) btn.disabled = true; return; }
+            if (!currentUser || !p.baseAwarded) {
+                showAlert('আপনার মূল স্কোর সংরক্ষণ হওয়া পর্যন্ত অপেক্ষা করুন, তারপর আবার চেষ্টা করুন।','warning');
+                return;
+            }
+            // Open from the click first, then claim the bonus immediately. Smart Link does not verify ad completion.
+            const opened = (typeof openAdWithManualClose === 'function') && openAdWithManualClose('গেমে');
+            if (!opened) showAlert('বিজ্ঞাপন খুলতে পারেনি। আপনার ব্রাউজার/Sketchware WebView-তে পপ-আপ অনুমতি বা external link handling পরীক্ষা করুন।','warning');
+            confirmDoubleReward();
+        };
+    }
+
+    // কোড লোড হওয়ার সাথে সাথে এবং প্রয়োজনে একটু পর আবার রান করানো যাতে মিস না হয়
+    applyOverrides();
+    window.addEventListener('DOMContentLoaded', applyOverrides);
+    window.addEventListener('load', applyOverrides);
+
+    // --- ঘ. স্মার্ট ব্যাক বাটন (অ্যাড প্যানেল ও পেজ কন্ট্রোল) ---
+    window.addEventListener('DOMContentLoaded', function() {
+        history.replaceState({ screen: 'Home' }, 'Home', '');
+
+        window.addEventListener('popstate', function(event) {
+            const adPanel = document.getElementById('adReturnPanel');
+            
+            // ১. যদি বিজ্ঞাপন চলার কারণে নিচের লাল বাটন প্যানেলটি খোলা থাকে, তবে ব্যাক চাপলে শুধু বিজ্ঞাপনটি বন্ধ হবে, ইউজার ওই পেজেই (Wallet/Leaderboard) থাকবে!
+            if ((typeof adHistoryGuardActive !== 'undefined' && adHistoryGuardActive) || (adPanel && adPanel.style.display === 'block')) {
+                if (typeof closeAdAndReturn === 'function') closeAdAndReturn();
+                return; 
+            }
+
+            // ২. যদি গেম চলমান থাকে, তবে গেম থেকে বের হয়ে হোমে আসবে
+            const gameOverlay = document.getElementById('gameOverlay');
+            const candyGame = document.getElementById('candyGameContainer');
+            const startSplash = document.getElementById('startSplash');
+            const gameOverScreen = document.getElementById('gameOverScreen');
+
+            if ((gameOverlay && gameOverlay.style.display === 'flex') || 
+                (candyGame && candyGame.style.display === 'flex') ||
+                (startSplash && startSplash.style.display === 'flex') ||
+                (gameOverScreen && gameOverScreen.style.display === 'flex')) {
+                
+                if (typeof quitGame === 'function') quitGame();
+                history.pushState({ screen: 'Home' }, 'Home', ''); 
+                return;
+            }
+            
+            // ৩. যদি ওয়ালেট বা লিডারবোর্ডে থাকে এবং কোনো অ্যাড না চলে, তবে ব্যাক চাপলে হোমে ফিরে আসবে
+            const homeTab = document.querySelectorAll('.nav-item')[0];
+            if (homeTab && !homeTab.classList.contains('active')) {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                const homeScreen = document.getElementById('screenHome');
+                if(homeScreen) homeScreen.classList.add('active');
+                
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                homeTab.classList.add('active');
+                
+                if(typeof Sound !== 'undefined' && Sound.startBgm) Sound.startBgm('home');
+                history.pushState({ screen: 'Home' }, 'Home', ''); 
+                return;
+            }
+        });
     });
-});
+})();
 </script>
 <script>
 // =========================================================================
-// 🚀 MASTER OVERRIDE: Ad Cooldown + Instant Double Points + Smart Back Button
+// 🚀 PERMANENT 2-MINUTES AD COOLDOWN (USING LOCALSTORAGE) + SMART BACK
 // =========================================================================
 
 document.addEventListener("DOMContentLoaded", function() {
 
-    // ---------------------------------------------------------------------
-    // ১. অ্যাড কুলডাউন লজিক (সরাসরি অ্যাড ইঞ্জিনকে কন্ট্রোল করবে, তাই ১০০% কাজ করবে)
-    // ---------------------------------------------------------------------
-    if(typeof window.openAdWithManualClose === 'function' && !window.adCooldownHooked) {
-        const originalAdOpener = window.openAdWithManualClose;
-        
-        // ওয়ালেট এবং লিডারবোর্ডের জন্য আলাদা আলাদা টাইমার
-        window.adTimers = { 'Wallet': 0, 'Leaderboard': 0 };
+    // ১. লোকাল স্টোরেজ চেক করার ফাংশন (যা পেজ রিলোড বা ব্যাক করলেও মেমোরি ধরে রাখবে)
+    function checkAndSetAdCooldown(screenName) {
+        try {
+            const storageKey = 'playearn_ad_cooldown_' + screenName;
+            const lastTime = parseInt(localStorage.getItem(storageKey) || '0', 10);
+            const now = Date.now();
+            const cooldownTime = 2 * 60 * 1000; // ২ মিনিট (১২০,০০০ মিলি-সেকেন্ড)
+            
+            // যদি শেষ দেখার সময় থেকে ২ মিনিট পার না হয়ে থাকে
+            if (now - lastTime < cooldownTime) {
+                console.log(screenName + " Ad is on 2-minute cooldown.");
+                return false; // অ্যাড দেখানো যাবে না (কুলডাউন চলছে)
+            }
+            
+            // ২ মিনিট পার হয়ে গেলে নতুন সময় সেভ করে দেবো
+            localStorage.setItem(storageKey, now.toString());
+            return true; // অ্যাড দেখানো যাবে
+        } catch(e) {
+            return true;
+        }
+    }
+
+    // ২. সরাসরি অ্যাড ইঞ্জিনকে হুক করা, যাতে কুলডাউন টাইমের মধ্যে অ্যাড ওপেন না হয়
+    if (typeof window.openAdWithManualClose === 'function' && !window.adHookedByStorage) {
+        const originalOpenAd = window.openAdWithManualClose;
         
         window.openAdWithManualClose = function(context) {
-            // যদি ওয়ালেট বা লিডারবোর্ড হয়, তবেই ২ মিনিটের কুলডাউন চেক করবে
+            // শুধুমাত্র Wallet এবং Leaderboard এর জন্য কুলডাউন চেক করবে
             if (context === 'Wallet' || context === 'Leaderboard') {
-                const now = Date.now();
-                const cooldown = 2 * 60 * 1000; // ২ মিনিট (১২০,০০০ মিলি-সেকেন্ড)
-                
-                if (now - window.adTimers[context] < cooldown) {
-                    console.log(context + " Ad is on cooldown.");
-                    return false; // ২ মিনিট পার না হলে অ্যাড ওপেন হবে না!
+                if (!checkAndSetAdCooldown(context)) {
+                    return false; // কুলডাউন চলাকালীন অ্যাড ওপেন হবে না
                 }
-                window.adTimers[context] = now; // নতুন সময় সেভ করা হলো
             }
-            // শর্ত পূরণ হলে অরিজিনাল অ্যাড ফাংশনটি রান করবে
-            return originalAdOpener(context);
+            return originalOpenAd(context);
         };
-        window.adCooldownHooked = true; 
+        window.adHookedByStorage = true;
     }
 
-    // ---------------------------------------------------------------------
-    // ২. স্মার্ট ব্যাক বাটন (Popstate History)
-    // ---------------------------------------------------------------------
+    // ৩. স্মার্ট ব্যাক বাটন এবং পেজ নেভিগেশন ফিক্স
     history.replaceState({ screen: 'Home' }, 'Home', '');
 
-    if (typeof window.navTo === 'function' && !window.navToHooked) {
-        const originalNav = window.navTo;
-        window.navTo = function(screenName, el) {
-            originalNav(screenName, el); // আপনার অরিজিনাল ফাংশন রান করবে
-            
-            if (screenName !== 'Home') {
-                history.pushState({ screen: screenName }, screenName, '');
-            }
-        };
-        window.navToHooked = true;
-    }
-
     window.addEventListener('popstate', function(event) {
-        if (window.adHistoryGuardActive || (event.state && event.state.__gameAdReturnGuard)) {
+        const adPanel = document.getElementById('adReturnPanel');
+        
+        // যদি অ্যাড প্যানেল খোলা থাকে, তবে ব্যাক চাপলে শুধু প্যানেল বন্ধ হবে
+        if ((typeof adHistoryGuardActive !== 'undefined' && adHistoryGuardActive) || (adPanel && adPanel.style.display === 'block')) {
+            if (typeof closeAdAndReturn === 'function') closeAdAndReturn();
             return; 
         }
 
@@ -6312,57 +6420,23 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // ---------------------------------------------------------------------
-    // ৩. ইন্সট্যান্ট ডবল পয়েন্ট (অ্যাড খোলার আগেই পয়েন্ট যুক্ত হবে)
-    // ---------------------------------------------------------------------
+    // ৪. আপনার ডবল পয়েন্ট বাটন লজিক (যা অলরেডি সুন্দর কাজ করছে)
     window.watchRewardAd = function() {
-        const btn = document.getElementById('doublePointsBtn');
-        
-        if (typeof pendingDoubleReward === 'undefined' || !pendingDoubleReward || pendingDoubleReward.claimed) { 
-            if(btn) btn.disabled = true; 
-            return; 
-        }
-        
-        const bonus = Math.max(0, Number(pendingDoubleReward.score) || 0);
-        if(bonus <= 0){ 
-            if(btn) btn.style.display = 'none'; 
-            return; 
-        }
-
-        pendingDoubleReward.claimed = true; // ক্লেইম লক করা হলো
-        
-        // ফায়ারবেসে সাথে সাথে পয়েন্ট আপডেট
-        if(typeof currentUser !== 'undefined' && currentUser && typeof db !== 'undefined') {
-            db.ref('users/' + currentUser.uid + '/points').transaction(v => (Number(v)||0) + bonus).then(result => {
-                if(typeof userData !== 'undefined' && userData) {
-                    userData.points = Number(result.snapshot.val()) || 0;
-                }
-                const pointsUI = document.getElementById('heroPoints');
-                if(pointsUI) {
-                    pointsUI.innerText = (typeof userData !== 'undefined' && userData) ? userData.points : result.snapshot.val();
-                }
-            }).catch(e => console.error(e));
-        }
-
-        // বাটন ও টেক্সট সাথে সাথে আপডেট
-        if(btn){
-            btn.textContent = '✓ পয়েন্ট ডবল করা হয়েছে';
-            btn.style.background = '#059669'; 
-            btn.onclick = null; 
-        }
-        const noteUI = document.getElementById('doublePointsNote');
-        if(noteUI) noteUI.innerText = 'অতিরিক্ত ' + bonus + ' পয়েন্ট আপনার অ্যাকাউন্টে সাথে সাথে যুক্ত হয়েছে!';
-        
-        if(typeof showAlert === 'function') showAlert('অভিনন্দন! ডবল পয়েন্ট যুক্ত হয়েছে।', 'success');
-
-        // পয়েন্ট ডাটাবেসে সেভ হয়ে যাওয়ার পর অ্যাড উইন্ডো ওপেন হবে
-        if(typeof window.openAdWithManualClose === 'function'){
-            // 'গেমে' পাস করলে কুলডাউন লজিক এটিকে আটকাবে না, কারণ এটি Wallet বা Leaderboard নয়
-            window.openAdWithManualClose('গেমে');
-        }
-    };
+            const btn = document.getElementById('doublePointsBtn');
+            const p = pendingDoubleReward;
+            if (!p || p.claimed) { if (btn) btn.disabled = true; return; }
+            if (!currentUser || !p.baseAwarded) {
+                showAlert('আপনার মূল স্কোর সংরক্ষণ হওয়া পর্যন্ত অপেক্ষা করুন, তারপর আবার চেষ্টা করুন।','warning');
+                return;
+            }
+            // Open from the click first, then claim the bonus immediately. Smart Link does not verify ad completion.
+            const opened = (typeof openAdWithManualClose === 'function') && openAdWithManualClose('গেমে');
+            if (!opened) showAlert('বিজ্ঞাপন খুলতে পারেনি। আপনার ব্রাউজার/Sketchware WebView-তে পপ-আপ অনুমতি বা external link handling পরীক্ষা করুন।','warning');
+            confirmDoubleReward();
+        };
 });
 </script>
+
 
 </body>
 </html>
