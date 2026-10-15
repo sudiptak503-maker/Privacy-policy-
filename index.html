@@ -6192,6 +6192,40 @@ console.log('[PlayEarn] Mode:', GAME_MODE.toUpperCase(), '| DPR:', MAX_DPR, '| F
   }
 })();
 </script>
+<script>
+// --- Back Button Navigation Fix ---
+document.addEventListener("DOMContentLoaded", function() {
+    // শুরুতে অ্যাপ লোড হলে হোম পেজের একটি স্টেট সেভ করে রাখা
+    history.replaceState({ screen: 'Home' }, 'Home', '#Home');
+
+    // আপনার অরিজিনাল navTo ফাংশনটি ওভাররাইড করে হিস্ট্রি যুক্ত করা
+    const origNavTo = window.navTo;
+    window.navTo = function(screenName, el) {
+        origNavTo(screenName, el);
+        
+        // হোম পেজ ছাড়া অন্য যেকোনো পেজে গেলে হিস্ট্রিতে পুশ করা
+        if (screenName !== 'Home') {
+            history.pushState({ screen: screenName }, screenName, '#' + screenName);
+        }
+    };
+
+    // মোবাইল বা হার্ডওয়্যার ব্যাক বাটন চাপলে এই popstate ইভেন্ট কাজ করবে
+    window.addEventListener('popstate', function(event) {
+        // ১. যদি গেম চালু অবস্থায় থাকে, তাহলে ব্যাক করলে গেম থেকে বের হয়ে হোমে আসবে
+        if (document.getElementById('gameOverlay').style.display === 'flex' || 
+            document.getElementById('candyGameContainer').style.display === 'flex') {
+            if(typeof quitGame === 'function') quitGame();
+            // হিস্ট্রি ঠিক রাখার জন্য আবার হোম স্টেট পুশ করা
+            history.pushState({ screen: 'Home' }, 'Home', '#Home'); 
+            return;
+        }
+        
+        // ২. লিডারবোর্ড বা ওয়ালেট পেজে থাকলে ব্যাক বাটনে সোজা হোম স্ক্রিনে নিয়ে আসবে
+        const homeTab = document.querySelectorAll('.nav-item')[0]; // প্রথম আইটেমটি Home
+        origNavTo('Home', homeTab);
+    });
+});
+</script>
 
 </body>
 </html>
