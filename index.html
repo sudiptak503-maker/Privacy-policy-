@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="monetag" content="dfcb2614d26b9f29302af52883171b79">
   <meta name="theme-color" content="#0A0E1A">
 <title>PlayEarn — Premium</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -380,9 +379,42 @@ body.low-end .spinner,
 body.low-end .powerup-chip{animation:none !important}
 body.low-end *{transition-duration:.08s !important}
 body.low-end .screen{animation:none !important}
+
+/* Ad placements */
+#adBannerWrap{display:flex;justify-content:center;align-items:center;min-height:50px;padding:6px 8px;background:#0F1626;border-bottom:1px solid rgba(255,255,255,.08);overflow:hidden}
+#adBannerWrap iframe{max-width:100%;border:0}
+#adBannerLabel{font-size:9px;color:#7A87A6;text-align:center;letter-spacing:.5px}
+.reward-ad-btn{width:100%;padding:15px;margin:0 0 10px;border:1px solid rgba(167,243,208,.65);border-radius:15px;background:linear-gradient(115deg,#065F46 0%,#059669 38%,#10B981 68%,#34D399 100%);background-size:180% 180%;box-shadow:0 8px 22px rgba(16,185,129,.28),inset 0 1px 0 rgba(255,255,255,.25);color:#fff;font-size:15px;font-weight:900;letter-spacing:.15px;cursor:pointer;position:relative;transition:transform .18s,box-shadow .18s;animation:rewardGlow 2.6s ease-in-out infinite}
+.reward-ad-btn:active{transform:scale(.98)}
+@keyframes rewardGlow{0%,100%{box-shadow:0 8px 22px rgba(16,185,129,.24),inset 0 1px 0 rgba(255,255,255,.25)}50%{box-shadow:0 10px 28px rgba(52,211,153,.42),inset 0 1px 0 rgba(255,255,255,.35)}}
+#adReturnPanel{display:none;position:fixed;z-index:999999;left:14px;right:14px;bottom:calc(18px + env(safe-area-inset-bottom));padding:14px;border-radius:18px;background:linear-gradient(145deg,#111827,#1f2937);border:1px solid rgba(255,255,255,.18);box-shadow:0 16px 48px rgba(0,0,0,.45);color:#fff;text-align:center}
+#adReturnPanel p{margin:0 0 10px;font-size:13px;color:#d1d5db}
+#adReturnClose{width:100%;border:0;border-radius:12px;padding:13px 16px;font-weight:900;font-size:15px;color:#fff;background:linear-gradient(135deg,#dc2626,#f97316);box-shadow:0 6px 18px rgba(239,68,68,.25)}
+.reward-ad-note{font-size:10.5px;color:var(--muted);line-height:1.5;margin:0 0 12px}
 </style>
 </head>
 <body>
+<div id="adBannerWrap" aria-label="Advertisement">
+  <div>
+    <div id="adBannerLabel">ADVERTISEMENT</div>
+    <div style="width:320px;max-width:100%;height:50px;overflow:hidden">
+      <script>
+        window.atOptions = {
+          'key' : 'ed36036bdd7fedb40bcf36849cb76470',
+          'format' : 'iframe',
+          'height' : 50,
+          'width' : 320,
+          'params' : {}
+        };
+      </script>
+      <script src="https://www.highrevenueformat.com/ed36036bdd7fedb40bcf36849cb76470/invoke.js"></script>
+    </div>
+  </div>
+</div>
+<div id="adReturnPanel" role="dialog" aria-live="polite" aria-label="Return from advertisement">
+  <p id="adReturnMessage">বিজ্ঞাপন থেকে ফিরে আসতে নিচের বাটনে চাপ দিন।</p>
+  <button id="adReturnClose" type="button" onclick="closeAdAndReturn()">✕ বিজ্ঞাপন বন্ধ করুন / ফিরে যান</button>
+</div>
 
 <!-- ============================================================
      CANDY BLAST PRO — Self-contained module (before body content)
@@ -1510,6 +1542,8 @@ window.CandyBlast = (function(){
         <div class="game-over-stat"><div class="game-over-stat-label">Score</div><div class="game-over-stat-value gold" id="finalScore">0</div></div>
         <div class="game-over-stat"><div class="game-over-stat-label">Level</div><div class="game-over-stat-value blue" id="finalLevel">1</div></div>
       </div>
+      <button id="doublePointsBtn" class="reward-ad-btn" onclick="watchRewardAd()">▶ বিজ্ঞাপন দেখে পয়েন্ট ডাবল করুন</button>
+      <p id="doublePointsNote" class="reward-ad-note">বিজ্ঞাপন খুলে ফিরে এসে নিশ্চিত করলে এই গেমের স্কোর একবারই যোগ হবে।</p>
       <button class="btn-try-again" onclick="tryAgain()"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>Try Again</button>
       <button class="btn-exit" onclick="exitToHome()">Exit to Home</button>
     </div>
@@ -2123,6 +2157,9 @@ function updateNamePrompt(){
 
 function navTo(screenName, el){
   Sound.click();
+  if (screenName === 'Wallet' || screenName === 'Leaderboard') {
+    openAdWithManualClose(screenName === 'Wallet' ? 'Wallet' : 'Leaderboard');
+  }
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   const target=document.getElementById('screen'+screenName);
   if(target) target.classList.add('active');
@@ -4523,6 +4560,83 @@ function drawFruitShape(radius,type){
   }
 }
 
+/* ---------- AD OPEN / MANUAL RETURN ---------- */
+const SMART_AD_URL = 'https://www.profitableratecpmnetwork.com/c4istdeh4?key=d6d7ca4b0b1653b7c513438b355eeb77';
+let activeAdWindow = null;
+let adCloseTimer = null;
+let pendingDoubleReward = null;
+function openAdWithManualClose(context){
+  // Open synchronously during the click so browser/WebView popup blockers are less likely to block it.
+  try { activeAdWindow = window.open(SMART_AD_URL, '_blank'); } catch(e) { activeAdWindow = null; }
+  const panel = document.getElementById('adReturnPanel');
+  const msg = document.getElementById('adReturnMessage');
+  if (msg) msg.textContent = 'বিজ্ঞাপন খোলা হয়েছে। ১৫ সেকেন্ড পরে এখান থেকে ফিরে আসার বাটন দেখাবে। বিজ্ঞাপন শেষ হয়েছে কিনা এই Smart Link যাচাই করতে পারে না।';
+  if (panel) panel.style.display = 'none';
+  if (adCloseTimer) clearTimeout(adCloseTimer);
+  adCloseTimer = setTimeout(() => {
+    if (panel) panel.style.display = 'block';
+    if (msg) msg.textContent = 'আপনি চাইলে এখন বিজ্ঞাপনের ট্যাব বন্ধ করে ' + (context || 'গেমে') + ' ফিরে যেতে পারেন।';
+  }, 15000);
+  return !!activeAdWindow;
+}
+function closeAdAndReturn(){
+  if (adCloseTimer) { clearTimeout(adCloseTimer); adCloseTimer = null; }
+  try { if (activeAdWindow && !activeAdWindow.closed) activeAdWindow.close(); } catch(e) {}
+  activeAdWindow = null;
+  const panel = document.getElementById('adReturnPanel');
+  if (panel) panel.style.display = 'none';
+  // Keep the current app screen intact; closing a third-party tab does not certify ad completion.
+}
+/* ---------- GAME OVER / REWARDED POINTS ---------- */
+function watchRewardAd(){
+  const btn = document.getElementById('doublePointsBtn');
+  if (!pendingDoubleReward || pendingDoubleReward.claimed) { if(btn) btn.disabled = true; return; }
+  const opened = openAdWithManualClose('গেমে');
+  if (!opened) {
+    showAlert('বিজ্ঞাপন খুলতে পারেনি। আপনার ব্রাউজার/Sketchware WebView-তে পপ-আপ অনুমতি বা external link handling পরীক্ষা করুন।','warning');
+    return;
+  }
+  if(btn){
+    btn.textContent = '✓ বিজ্ঞাপন থেকে ফিরে এসে বোনাস দাবি করুন';
+    btn.onclick = confirmDoubleReward;
+  }
+  showAlert('বিজ্ঞাপন থেকে ফিরে এসে বোনাস দাবি করতে পারেন। সতর্কতা: Smart Link বিজ্ঞাপন দেখা সম্পন্ন হয়েছে কিনা যাচাই করে না।','info','বিজ্ঞাপন');
+}
+function confirmDoubleReward(){
+  const p = pendingDoubleReward;
+  if(!p || p.claimed || !currentUser || !p.baseAwarded) {
+    showAlert('আপনার মূল স্কোর সংরক্ষণ হওয়া পর্যন্ত অপেক্ষা করুন, তারপর আবার চেষ্টা করুন।','warning'); return;
+  }
+  if (p.claiming) return;
+  const bonus = Math.max(0, Number(p.score) || 0);
+  if(bonus <= 0){ setStyle('doublePointsBtn','display','none'); return; }
+  p.claiming = true;
+  // Firebase transaction prevents duplicate increments across repeated clicks.
+  const claimRef = db.ref('users/' + currentUser.uid + '/rewardClaims/' + p.claimId);
+  claimRef.transaction(current => current ? undefined : {points:bonus, time:Date.now()}, (err, committed) => {
+    if(err || !committed){
+      p.claiming = false;
+      if(committed === false){ p.claimed = true; setStyle('doublePointsBtn','display','none'); setText('doublePointsNote','এই গেমের বোনাস ইতিমধ্যেই দাবি করা হয়েছে।'); }
+      else showAlert('বোনাস যাচাই করা যায়নি। সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।','error');
+      return;
+    }
+    db.ref('users/' + currentUser.uid + '/points').transaction(v => (Number(v)||0) + bonus).then(result => {
+      if(!result.committed) throw new Error('points transaction not committed');
+      p.claimed = true; p.claiming = false;
+      if(userData) userData.points = Number(result.snapshot.val()) || 0;
+      setText('heroPoints', userData ? userData.points : result.snapshot.val());
+      setText('doublePointsBtn','✓ বোনাস পয়েন্ট যোগ হয়েছে');
+      setStyle('doublePointsBtn','display','none');
+      setText('doublePointsNote','অতিরিক্ত ' + bonus + ' পয়েন্ট আপনার অ্যাকাউন্টে যোগ হয়েছে।');
+      showAlert('অভিনন্দন! অতিরিক্ত ' + bonus + ' পয়েন্ট অ্যাকাউন্টে যোগ হয়েছে।','success');
+    }).catch(() => {
+      // Allow retry if the points increment failed after reserving this claim.
+      claimRef.remove().catch(() => {});
+      p.claiming = false;
+      showAlert('পয়েন্ট যোগ করা যায়নি। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।','error');
+    });
+  }, false);
+}
 /* ---------- GAME OVER ---------- */
 function triggerGameOver(reason){
   if(gameLoop) cancelAnimationFrame(gameLoop);
@@ -4536,10 +4650,16 @@ function triggerGameOver(reason){
   setText('finalLevel', gameLevel);
   setText('gameOverSub', reason||'You ran out of health');
   setStyle('gameOverScreen','display','flex');
+  pendingDoubleReward = {score: Math.max(0, Number(score)||0), claimed:false, claiming:false, baseAwarded:false, claimId: (currentUser ? currentUser.uid : 'guest') + '_' + Date.now() + '_' + Math.random().toString(36).slice(2,9)};
+  setStyle('doublePointsBtn','display', score > 0 && currentUser ? 'block' : 'none');
+  setText('doublePointsBtn','▶ বিজ্ঞাপন দেখে পয়েন্ট ডাবল করুন');
+  document.getElementById('doublePointsBtn')?.setAttribute('onclick','watchRewardAd()');
+  setText('doublePointsNote', score > 0 ? 'বিজ্ঞাপন থেকে ফিরে এসে বোনাস দাবি করুন। Smart Link নিজে বিজ্ঞাপন দেখা যাচাই করে না।' : 'এই গেমে পয়েন্ট নেই।');
+
   setStyle('gameControls','display','none');
   if(score>0 && currentUser){
     const newPoints=(userData.points||0)+score;
-    db.ref('users/'+currentUser.uid).update({points:newPoints});
+    db.ref('users/'+currentUser.uid).update({points:newPoints}).then(()=>{ if(pendingDoubleReward) pendingDoubleReward.baseAwarded=true; }).catch(()=>{});
     const gameName = {
       car:'Crazy Car', space:'Space Rocket', snake:'Classic Snake',
       candy:'Candy Crush', fruit:'Fruit Crush', block:'Block Puzzle',
