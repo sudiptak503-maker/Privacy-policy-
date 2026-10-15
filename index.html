@@ -381,7 +381,7 @@ body.low-end *{transition-duration:.08s !important}
 body.low-end .screen{animation:none !important}
 
 /* Ad placements */
-#adBannerWrap{display:flex;justify-content:center;align-items:center;min-height:50px;padding:6px 8px;background:#0F1626;border-bottom:1px solid rgba(255,255,255,.08);overflow:hidden}
+#adBannerWrap{display:none;justify-content:center;align-items:center;min-height:50px;padding:6px 8px;background:#0F1626;border-bottom:1px solid rgba(255,255,255,.08);overflow:hidden}
 #adBannerWrap iframe{max-width:100%;border:0}
 #adBannerLabel{font-size:9px;color:#7A87A6;text-align:center;letter-spacing:.5px}
 .reward-ad-btn{width:100%;padding:15px;margin:0 0 10px;border:1px solid rgba(167,243,208,.65);border-radius:15px;background:linear-gradient(115deg,#065F46 0%,#059669 38%,#10B981 68%,#34D399 100%);background-size:180% 180%;box-shadow:0 8px 22px rgba(16,185,129,.28),inset 0 1px 0 rgba(255,255,255,.25);color:#fff;font-size:15px;font-weight:900;letter-spacing:.15px;cursor:pointer;position:relative;transition:transform .18s,box-shadow .18s;animation:rewardGlow 2.6s ease-in-out infinite}
@@ -394,21 +394,10 @@ body.low-end .screen{animation:none !important}
 </style>
 </head>
 <body>
-<div id="adBannerWrap" aria-label="Advertisement">
+<div id="adBannerWrap" aria-label="Advertisement" style="display:none">
   <div>
     <div id="adBannerLabel">ADVERTISEMENT</div>
-    <div style="width:320px;max-width:100%;height:50px;overflow:hidden">
-      <script>
-        window.atOptions = {
-          'key' : 'ed36036bdd7fedb40bcf36849cb76470',
-          'format' : 'iframe',
-          'height' : 50,
-          'width' : 320,
-          'params' : {}
-        };
-      </script>
-      <script src="https://www.highrevenueformat.com/ed36036bdd7fedb40bcf36849cb76470/invoke.js"></script>
-    </div>
+    <div id="adBannerSlot" style="width:320px;max-width:100%;height:50px;overflow:hidden"></div>
   </div>
 </div>
 <div id="adReturnPanel" role="dialog" aria-live="polite" aria-label="Return from advertisement">
@@ -4561,12 +4550,33 @@ function drawFruitShape(radius,type){
 }
 
 /* ---------- AD OPEN / MANUAL RETURN ---------- */
-const SMART_AD_URL = 'https://www.profitableratecpmnetwork.com/c4istdeh4?key=d6d7ca4b0b1653b7c513438b355eeb77';
+const SMART_AD_URL = 'https://www.profitableratecpmnetwork.com/kfbbm5vm?key=a362b8536bcab3d94e8a1df89df67afe';
 let activeAdWindow = null;
 let adCloseTimer = null;
 let pendingDoubleReward = null;
 let adReturnContext = 'গেমে';
 let adHistoryGuardActive = false;
+let adBannerLoaded = false;
+// ব্যানার স্ক্রিপ্ট অ্যাপ খোলার সময় নয়—শুধু ব্যবহারকারী বিজ্ঞাপন-সম্পর্কিত বোতাম চাপলে লোড হবে।
+function loadAdBannerOnIntent(){
+  const wrap = document.getElementById('adBannerWrap');
+  const slot = document.getElementById('adBannerSlot');
+  if (!wrap || !slot) return;
+  wrap.style.display = 'flex';
+  if (adBannerLoaded) return;
+  adBannerLoaded = true;
+  window.atOptions = {
+    key: 'ed36036bdd7fedb40bcf36849cb76470',
+    format: 'iframe',
+    height: 50,
+    width: 320,
+    params: {}
+  };
+  const script = document.createElement('script');
+  script.src = 'https://www.highrevenueformat.com/ed36036bdd7fedb40bcf36849cb76470/invoke.js';
+  script.async = true;
+  slot.appendChild(script);
+}
 function installAdBackGuard(){
   if (adHistoryGuardActive) return;
   adHistoryGuardActive = true;
@@ -4589,6 +4599,7 @@ document.addEventListener('visibilitychange', function(){
   }
 });
 function openAdWithManualClose(context){
+  loadAdBannerOnIntent();
   adReturnContext = context || 'গেমে';
   installAdBackGuard();
   // Open synchronously during the click so browser/WebView popup blockers are less likely to block it.
@@ -4610,6 +4621,8 @@ function closeAdAndReturn(){
   activeAdWindow = null;
   const panel = document.getElementById('adReturnPanel');
   if (panel) panel.style.display = 'none';
+  const banner = document.getElementById('adBannerWrap');
+  if (banner) banner.style.display = 'none';
   adHistoryGuardActive = false;
   // Keep the current app screen intact; closing a third-party tab does not certify ad completion.
 }
