@@ -325,6 +325,17 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 #shutdownOverlay h1{font-family:'Sora',sans-serif;color:var(--danger);margin-bottom:10px;font-size:24px;font-weight:800}
 #shutdownOverlay p{color:var(--muted);font-size:14px;line-height:1.6;max-width:320px}
 
+
+.membership-card{margin:0 0 20px;padding:18px;border-radius:18px;border:1px solid rgba(245,158,11,.35);background:linear-gradient(135deg,rgba(245,158,11,.16),rgba(99,102,241,.12))}
+.membership-card h3{font-family:'Sora',sans-serif;font-size:16px;margin-bottom:6px}
+.membership-card p{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:12px}
+.membership-status{font-size:11px;font-weight:800;color:#FCD34D;margin-bottom:10px}
+.membership-btn{width:100%;padding:12px;border:0;border-radius:11px;background:linear-gradient(135deg,#F59E0B,#D97706);color:#111827;font-weight:800;font-size:13px}
+.membership-modal{align-items:stretch!important;padding:0!important}
+.membership-modal .modal-content{width:100%;max-width:none;height:100%;max-height:100%;border-radius:0;padding:28px 22px calc(24px + env(safe-area-inset-bottom));overflow-y:auto;display:flex;flex-direction:column;justify-content:flex-start}
+.upi-box{padding:14px;border-radius:12px;background:rgba(245,158,11,.1);border:1px dashed rgba(245,158,11,.55);margin:12px 0 18px;text-align:center}
+.upi-box strong{display:block;font-size:17px;color:#FCD34D;letter-spacing:.3px;margin:6px 0}
+
 .empty-state{text-align:center;padding:30px 20px;color:var(--muted);font-size:13px}
 .empty-state svg{width:44px;height:44px;stroke:var(--muted);fill:none;stroke-width:1.5;opacity:.5;margin-bottom:10px}
 ::-webkit-scrollbar{width:6px;height:6px}
@@ -379,31 +390,9 @@ body.low-end .spinner,
 body.low-end .powerup-chip{animation:none !important}
 body.low-end *{transition-duration:.08s !important}
 body.low-end .screen{animation:none !important}
-
-/* Ad placements */
-#adBannerWrap{display:none;justify-content:center;align-items:center;min-height:50px;padding:6px 8px;background:#0F1626;border-bottom:1px solid rgba(255,255,255,.08);overflow:hidden}
-#adBannerWrap iframe{max-width:100%;border:0}
-#adBannerLabel{font-size:9px;color:#7A87A6;text-align:center;letter-spacing:.5px}
-.reward-ad-btn{width:100%;padding:15px;margin:0 0 10px;border:1px solid rgba(167,243,208,.65);border-radius:15px;background:linear-gradient(115deg,#065F46 0%,#059669 38%,#10B981 68%,#34D399 100%);background-size:180% 180%;box-shadow:0 8px 22px rgba(16,185,129,.28),inset 0 1px 0 rgba(255,255,255,.25);color:#fff;font-size:15px;font-weight:900;letter-spacing:.15px;cursor:pointer;position:relative;transition:transform .18s,box-shadow .18s;animation:rewardGlow 2.6s ease-in-out infinite}
-.reward-ad-btn:active{transform:scale(.98)}
-@keyframes rewardGlow{0%,100%{box-shadow:0 8px 22px rgba(16,185,129,.24),inset 0 1px 0 rgba(255,255,255,.25)}50%{box-shadow:0 10px 28px rgba(52,211,153,.42),inset 0 1px 0 rgba(255,255,255,.35)}}
-#adReturnPanel{display:none;position:fixed;z-index:999999;left:14px;right:14px;bottom:calc(18px + env(safe-area-inset-bottom));padding:14px;border-radius:18px;background:linear-gradient(145deg,#111827,#1f2937);border:1px solid rgba(255,255,255,.18);box-shadow:0 16px 48px rgba(0,0,0,.45);color:#fff;text-align:center}
-#adReturnPanel p{margin:0 0 10px;font-size:13px;color:#d1d5db}
-#adReturnClose{width:100%;border:0;border-radius:12px;padding:13px 16px;font-weight:900;font-size:15px;color:#fff;background:linear-gradient(135deg,#dc2626,#f97316);box-shadow:0 6px 18px rgba(239,68,68,.25)}
-.reward-ad-note{font-size:10.5px;color:var(--muted);line-height:1.5;margin:0 0 12px}
 </style>
 </head>
 <body>
-<div id="adBannerWrap" aria-label="Advertisement" style="display:none">
-  <div>
-    <div id="adBannerLabel">ADVERTISEMENT</div>
-    <div id="adBannerSlot" style="width:320px;max-width:100%;height:50px;overflow:hidden"></div>
-  </div>
-</div>
-<div id="adReturnPanel" role="dialog" aria-live="polite" aria-label="Return from advertisement">
-  <p id="adReturnMessage">বিজ্ঞাপন থেকে ফিরে আসতে নিচের বাটনে চাপ দিন।</p>
-  <button id="adReturnClose" type="button" onclick="closeAdAndReturn()">✕ বিজ্ঞাপন বন্ধ করুন / ফিরে যান</button>
-</div>
 
 <!-- ============================================================
      CANDY BLAST PRO — Self-contained module (before body content)
@@ -1084,11 +1073,18 @@ window.CandyBlast = (function(){
   <div id="screenHome" class="screen active">
     <div class="home-hero">
       <h1>Play & Earn</h1>
-      <p>Compete with players worldwide. Top scorers win real cash prizes every week.</p>
+      <p>Compete with players worldwide. Top 10 active members win monthly cash prizes.</p>
       <div class="hero-stats">
         <div class="hero-stat"><div class="hero-stat-label">Your Points</div><div class="hero-stat-value" id="heroPoints">0</div></div>
         <div class="hero-stat"><div class="hero-stat-label">Wallet</div><div class="hero-stat-value green">₹<span id="heroWallet">0</span></div></div>
       </div>
+    </div>
+
+    <div class="membership-card">
+      <div class="membership-status" id="homeMembershipStatus">MEMBERSHIP: NOT ACTIVE</div>
+      <h3>⭐ Monthly Membership</h3>
+      <p>₹50 / মাস। মেম্বারশিপ থাকলে গেম খেলুন, মাসিক লিডারবোর্ডে অংশ নিন এবং যোগ্য হলে পুরস্কার জিতুন।</p>
+      <button class="membership-btn" onclick="openMembership()">মেম্বারশিপ দেখুন / অ্যাক্টিভ করুন</button>
     </div>
 
     <div class="section-label"><span>Available Games</span></div>
@@ -1353,12 +1349,12 @@ window.CandyBlast = (function(){
   <div id="screenLeaderboard" class="screen">
     <div class="lb-hero">
       <div class="lb-hero-title">🏆 Global Ranking</div>
-      <div class="lb-hero-sub">Top players win real cash every Sunday 1:00 PM</div>
+      <div class="lb-hero-sub">সক্রিয় মেম্বারদের মাসিক র‍্যাঙ্কিং • শীর্ষ ১০ জন পুরস্কার পাবেন</div>
       <div class="prize-banner">
   <div class="prize-banner-left">
-    <div class="prize-label">Weekly Prize Pool</div>
+    <div class="prize-label">Monthly Prize Pool</div>
     <div class="prize-value" id="prizePool">₹0</div>
-    <div class="prize-split">🥇 70% • 🥈 20% • 🥉 10%</div>
+    <div class="prize-split">১ম ৩০% • ২য় ২০% • ৩য় ১৫% • ৪র্থ–১০ম ৫% করে</div>
   </div>
   <div class="prize-icon"><svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></div>
 </div>
@@ -1370,7 +1366,7 @@ window.CandyBlast = (function(){
     <div class="wallet-card">
       <p>Available Balance</p>
       <h2>₹<span id="walletBal">0</span></h2>
-      <button class="btn-withdraw" onclick="document.getElementById('withdrawModal').style.display='flex'">Withdraw Money</button>
+      <button class="btn-withdraw" onclick="openWithdrawModal()">Withdraw Money</button>
     </div>
     <div class="section-title">Transaction History</div>
     <div id="walletHistory"></div>
@@ -1443,6 +1439,21 @@ window.CandyBlast = (function(){
   </div>
 </div>
 
+<div class="modal membership-modal" id="membershipModal">
+  <div class="modal-content">
+    <span class="admin-badge" style="background:rgba(245,158,11,.14);color:#FCD34D">PLAYEARN MEMBERSHIP</span>
+    <h2>⭐ মাসিক মেম্বারশিপ</h2>
+    <p style="color:var(--muted);font-size:13px;line-height:1.6">মূল্য: <b style="color:#FCD34D">₹৫০ / ৩০ দিন</b><br>প্রতি ১০০ ইন-গেম স্কোরে ১ রিওয়ার্ড পয়েন্ট (সর্বোচ্চ ২০ পয়েন্ট/গেম)।<br>সক্রিয় মেম্বারশিপ থাকলে গেম খেলা, মাসিক লিডারবোর্ডে অংশ নেওয়া এবং টাকা তোলার সুবিধা পাবেন।</p>
+    <div class="upi-box"><span style="font-size:11px;color:var(--muted)">পেমেন্টের জন্য UPI ID</span><strong id="membershipUpi">8391921082@ibl</strong><button class="profile-btn" onclick="copyMembershipUPI()">UPI ID কপি করুন</button></div>
+    <p style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:12px">UPI-তে ₹৫০ পাঠানোর পর নিচে Transaction ID লিখে Submit করুন। অ্যাডমিন পেমেন্ট যাচাই করে অনুমোদন করলে মেম্বারশিপ চালু হবে।</p>
+    <label class="modal-label">UPI Transaction ID</label>
+    <input type="text" id="membershipTxnId" placeholder="পেমেন্টের Transaction ID লিখুন">
+    <button class="btn-primary" onclick="submitMembershipRequest()">পেমেন্ট রিকোয়েস্ট পাঠান</button>
+    <div id="membershipRequestStatus" style="font-size:12px;color:var(--muted);margin-top:12px"></div>
+    <button class="profile-btn" style="width:100%;margin-top:18px;background:rgba(255,255,255,.06);color:var(--muted);border-color:var(--border)" onclick="closeMembership()">বন্ধ করুন</button>
+  </div>
+</div>
+
 <div class="modal" id="withdrawModal">
   <div class="modal-content">
     <h3>Withdraw Money</h3>
@@ -1458,11 +1469,13 @@ window.CandyBlast = (function(){
   <div class="modal-content" style="max-width:600px">
     <span class="admin-badge">MASTER ADMIN</span>
     <h2 style="color:var(--danger)">Control Panel</h2>
-    <label class="modal-label">Weekly Prize Pool (₹)</label>
+    <label class="modal-label">Monthly Prize Pool (₹)</label>
     <input type="number" id="adminPrizeInput" placeholder="e.g. 5000">
     <button class="btn-primary" onclick="updatePrizePool()" style="margin-bottom:20px;background:linear-gradient(135deg,#F59E0B,#D97706)">Update Prize Pool</button>
     <button class="btn-primary" id="btnShutdownToggle" onclick="toggleShutdown()" style="margin-bottom:10px;background:linear-gradient(135deg,#EF4444,#C13A4B)">Shut Down App</button>
-    <button class="btn-primary" onclick="forceLeaderboardUpdate()" style="margin-bottom:22px;background:linear-gradient(135deg,#6366F1,#8B5CF6)">Force Leaderboard Update</button>
+    <button class="btn-primary" onclick="forceLeaderboardUpdate()" style="margin-bottom:22px;background:linear-gradient(135deg,#6366F1,#8B5CF6)">Pay Previous Month Top 10</button>
+    <div class="section-title">Membership Requests</div>
+    <div id="adminMembershipList" style="margin-bottom:20px"></div>
     <div class="section-title">Withdraw Requests</div>
     <div id="adminWdList" style="margin-bottom:20px"></div>
     <div class="section-title">Users List</div>
@@ -1531,8 +1544,6 @@ window.CandyBlast = (function(){
         <div class="game-over-stat"><div class="game-over-stat-label">Score</div><div class="game-over-stat-value gold" id="finalScore">0</div></div>
         <div class="game-over-stat"><div class="game-over-stat-label">Level</div><div class="game-over-stat-value blue" id="finalLevel">1</div></div>
       </div>
-      <button id="doublePointsBtn" class="reward-ad-btn" onclick="watchRewardAd()">▶ বিজ্ঞাপন দেখে পয়েন্ট ডাবল করুন</button>
-      <p id="doublePointsNote" class="reward-ad-note">বিজ্ঞাপন খুলে ফিরে এসে নিশ্চিত করলে এই গেমের স্কোর একবারই যোগ হবে।</p>
       <button class="btn-try-again" onclick="tryAgain()"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>Try Again</button>
       <button class="btn-exit" onclick="exitToHome()">Exit to Home</button>
     </div>
@@ -1670,13 +1681,7 @@ let isSignupMode = false;
 let isAppShutdown = false;
 let prizePool = 0;
 
-function getPrizeShare(rank, totalPool) {
-  if (!totalPool || totalPool <= 0) return 0;
-  if (rank === 1) return Math.floor(totalPool * 0.70);
-  if (rank === 2) return Math.floor(totalPool * 0.20);
-  if (rank === 3) return Math.floor(totalPool * 0.10);
-  return 0;
-}
+function getPrizeShare(rank,totalPool){if(!totalPool||totalPool<=0||rank<1||rank>10)return 0;const shares={1:.30,2:.20,3:.15};if(rank===1){const base=Math.floor(totalPool*.30)+Math.floor(totalPool*.20)+Math.floor(totalPool*.15)+7*Math.floor(totalPool*.05);return Math.floor(totalPool*.30)+(totalPool-base);}return Math.floor(totalPool*(shares[rank]||.05));}
 
 function setText(id, v){ const e=document.getElementById(id); if(e) e.innerText=v; }
 function setHTML(id, v){ const e=document.getElementById(id); if(e) e.innerHTML=v; }
@@ -2096,7 +2101,7 @@ function handleAuth(){
       db.ref('users/'+cred.user.uid).set({
         name:name||'User', email:email, points:0, wallet:0,
         profilePic:'https://via.placeholder.com/100', isBanned:false,
-        gamePlayCounts:{}
+        membership:{status:'inactive',expiresAt:0}, membershipRequestStatus:'', monthlyPoints:{}, gamePlayCounts:{}
       });
     }).catch(e=>{
       if(err) err.innerText=e.message;
@@ -2146,9 +2151,6 @@ function updateNamePrompt(){
 
 function navTo(screenName, el){
   Sound.click();
-  if (screenName === 'Wallet' || screenName === 'Leaderboard') {
-    openAdWithManualClose(screenName === 'Wallet' ? 'Wallet' : 'Leaderboard');
-  }
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   const target=document.getElementById('screen'+screenName);
   if(target) target.classList.add('active');
@@ -2162,6 +2164,56 @@ function navTo(screenName, el){
   if(screenName==='Profile') { updateGameModeUI(); updateDebugInfo(); updateTrainingBadge(); }
 }
 
+
+/* ================= MEMBERSHIP + MONTHLY REWARDS ================= */
+const MEMBERSHIP_FEE=50, MEMBERSHIP_DAYS=30, ADMIN_EMAIL_MAIN='sudiptak503@gmail.com';
+function getISTMonthKey(dateValue){const d=new Date((dateValue||Date.now())+330*60000);return d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0');}
+function isMembershipActive(data){return !!(data&&data.membership&&data.membership.status==='active'&&Number(data.membership.expiresAt||0)>Date.now());}
+function refreshMembershipUI(){
+ const active=isMembershipActive(userData),el=document.getElementById('homeMembershipStatus');
+ if(el){el.textContent=active?'✓ MEMBERSHIP ACTIVE • মেয়াদ: '+new Date(userData.membership.expiresAt).toLocaleDateString('bn-IN'):'MEMBERSHIP: NOT ACTIVE';el.style.color=active?'#34D399':'#FCD34D';}
+ const status=document.getElementById('membershipRequestStatus');
+ if(status&&userData&&userData.membershipRequestStatus==='Pending')status.textContent='আপনার রিকোয়েস্ট অ্যাডমিনের অনুমোদনের অপেক্ষায় আছে।';
+}
+function openMembership(){if(!currentUser)return showAlert('প্রথমে লগইন করুন।','warning');setStyle('membershipModal','display','flex');refreshMembershipUI();if(isMembershipActive(userData)){const e=document.getElementById('membershipRequestStatus');if(e)e.textContent='আপনার মেম্বারশিপ সক্রিয় আছে।';}}
+function closeMembership(){setStyle('membershipModal','display','none');}
+function copyMembershipUPI(){const v='8391921082@ibl';if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(v).then(()=>showAlert('UPI ID কপি হয়েছে।','success'));else{const e=document.createElement('textarea');e.value=v;document.body.appendChild(e);e.select();document.execCommand('copy');e.remove();showAlert('UPI ID কপি হয়েছে।','success');}}
+async function submitMembershipRequest(){
+ if(!currentUser)return showAlert('প্রথমে লগইন করুন।','warning');
+ if(isMembershipActive(userData))return showAlert('আপনার মেম্বারশিপ ইতিমধ্যে সক্রিয়।','success');
+ const txn=(document.getElementById('membershipTxnId').value||'').trim();
+ if(txn.length<6)return showAlert('সঠিক Transaction ID দিন।','warning');
+ try{
+  const snap=await db.ref('membershipRequests').orderByChild('uid').equalTo(currentUser.uid).once('value');let pending=false,duplicate=false;
+  snap.forEach(c=>{const r=c.val()||{};if(r.status==='Pending')pending=true;if(String(r.transactionId||'').toLowerCase()===txn.toLowerCase())duplicate=true;});
+  if(pending)return showAlert('আপনার একটি রিকোয়েস্ট ইতিমধ্যে Pending আছে।','warning');
+  if(duplicate)return showAlert('এই Transaction ID আগে জমা দেওয়া হয়েছে।','error');
+  await db.ref('membershipRequests').push({uid:currentUser.uid,name:userData.name||'User',email:currentUser.email||'',amount:MEMBERSHIP_FEE,upi:'8391921082@ibl',transactionId:txn,status:'Pending',createdAt:Date.now()});
+  await db.ref('users/'+currentUser.uid).update({membershipRequestStatus:'Pending'});
+  document.getElementById('membershipTxnId').value='';showAlert('রিকোয়েস্ট অ্যাডমিনের কাছে পাঠানো হয়েছে। অনুমোদনের পর মেম্বারশিপ চালু হবে।','success');refreshMembershipUI();
+ }catch(err){showAlert('রিকোয়েস্ট পাঠানো যায়নি: '+err.message,'error');}
+}
+async function approveMembershipRequest(key){
+ if(!currentUser||currentUser.email!==ADMIN_EMAIL_MAIN)return showAlert('শুধু অ্যাডমিন অনুমোদন করতে পারবেন।','error');
+ const ref=db.ref('membershipRequests/'+key),snap=await ref.once('value'),r=snap.val();if(!r||r.status!=='Pending')return;
+ const us=await db.ref('users/'+r.uid).once('value'),u=us.val()||{},base=Math.max(Date.now(),Number(u.membership&&u.membership.expiresAt||0));
+ const updates={};updates['users/'+r.uid+'/membership']={status:'active',startedAt:Date.now(),expiresAt:base+MEMBERSHIP_DAYS*86400000,fee:MEMBERSHIP_FEE};updates['users/'+r.uid+'/membershipRequestStatus']='Approved';updates['membershipRequests/'+key+'/status']='Approved';updates['membershipRequests/'+key+'/reviewedAt']=Date.now();updates['membershipRequests/'+key+'/reviewedBy']=currentUser.email;
+ await db.ref().update(updates);await db.ref('notifications/'+r.uid).push({title:'মেম্বারশিপ চালু হয়েছে',msg:'আপনার ₹৫০ মেম্বারশিপ অনুমোদিত হয়েছে।',time:Date.now()});showAlert((r.name||'User')+'-এর মেম্বারশিপ চালু হয়েছে।','success');
+}
+async function rejectMembershipRequest(key){
+ if(!currentUser||currentUser.email!==ADMIN_EMAIL_MAIN)return showAlert('শুধু অ্যাডমিন রিজেক্ট করতে পারবেন।','error');
+ const ref=db.ref('membershipRequests/'+key),snap=await ref.once('value'),r=snap.val();if(!r||r.status!=='Pending')return;
+ const updates={};updates['membershipRequests/'+key+'/status']='Rejected';updates['membershipRequests/'+key+'/reviewedAt']=Date.now();updates['membershipRequests/'+key+'/reviewedBy']=currentUser.email;updates['users/'+r.uid+'/membershipRequestStatus']='Rejected';await db.ref().update(updates);
+ await db.ref('notifications/'+r.uid).push({title:'মেম্বারশিপ রিকোয়েস্ট বাতিল',msg:'আপনার পেমেন্ট রিকোয়েস্ট অনুমোদিত হয়নি। Transaction ID যাচাই করে অ্যাডমিনের সঙ্গে যোগাযোগ করুন।',time:Date.now()});
+}
+function recordGameReward(rawScore,gameName){
+ if(!currentUser||!isMembershipActive(userData))return 0;
+ const earned=Math.min(20,Math.max(1,Math.floor((Number(rawScore)||0)/100))),month=getISTMonthKey(),ref=db.ref('users/'+currentUser.uid);
+ ref.child('points').transaction(v=>(Number(v)||0)+earned);ref.child('monthlyPoints/'+month).transaction(v=>(Number(v)||0)+earned);
+ ref.child('history').push({game:gameName,points:earned,rawScore:Number(rawScore)||0,time:Date.now()});
+ db.ref('notifications/'+currentUser.uid).push({title:'Game Reward',msg:`${gameName}-এ ${earned} পয়েন্ট অর্জন করেছেন।`,time:Date.now()});return earned;
+}
+
 function updateUI(){
   if(!userData) return;
   setText('walletBal', userData.wallet||0);
@@ -2171,6 +2223,7 @@ function updateUI(){
   setText('profEmailText', userData.email);
   setSrc('profImage', userData.profilePic);
   updateTrainingBadge();
+  refreshMembershipUI();
   if(!currentUser) return;
   db.ref('users/'+currentUser.uid+'/history').orderByChild('time').limitToLast(5).on('value', snap=>{
     let html=''; let hist=[];
@@ -2224,7 +2277,8 @@ function updateTrainingBadge() {
   });
 }
 
-function submitWithdraw(){
+function openWithdrawModal(){if(!isMembershipActive(userData)){openMembership();showAlert('টাকা তুলতে সক্রিয় মেম্বারশিপ প্রয়োজন।','warning');return;}setStyle('withdrawModal','display','flex');}
+function submitWithdraw(){if(!isMembershipActive(userData)){setStyle('withdrawModal','display','none');openMembership();return showAlert('টাকা তুলতে সক্রিয় মেম্বারশিপ প্রয়োজন।','warning');}
   const amt=parseInt(document.getElementById('wdAmount').value);
   const upi=document.getElementById('wdUpi').value;
   if(isNaN(amt)||amt<=0){ showAlert('সঠিক এমাউন্ট দিন','warning'); return; }
@@ -2238,41 +2292,14 @@ function submitWithdraw(){
 }
 
 function loadLeaderboard(){
-  db.ref('users').orderByChild('points').limitToLast(100).once('value', snap=>{
-    let users=[];
-    snap.forEach(c=>{
-      const u=c.val(); u._key=c.key;
-      if(u.points>0 && !u.isBanned) users.push(u);
-    });
-    users.sort((a,b)=>b.points-a.points);
-    let html='';
-    if(users.length===0){
-      html='<div class="empty-state">No ranking data yet. Be the first to play!</div>';
-    } else {
-      users.forEach((u,i)=>{
-        const rank = i + 1;
-        const topClass = i===0?'top1':(i===1?'top2':(i===2?'top3':''));
-        const rankLabel = i===0?'🥇':(i===1?'🥈':(i===2?'🥉':`${rank}`));
-        const isYou = currentUser && u._key===currentUser.uid;
-        const avatar = u.profilePic||'https://via.placeholder.com/100';
-        const pointsGold = i<3?'gold':'';
-        const prizeAmount = getPrizeShare(rank, prizePool);
-        const prizeTag = prizeAmount > 0
-          ? `<div class="lb-prize">💰 Prize: ₹${prizeAmount}</div>`
-          : '';
-        html+=`<div class="lb-item ${topClass}">
-          <div class="lb-rank">${rankLabel}</div>
-          <div class="lb-avatar"><img src="${avatar}" onerror="this.src='https://via.placeholder.com/100'"></div>
-          <div class="lb-info">
-            <div class="lb-name">${u.name}${isYou?'<span class="lb-you">YOU</span>':''}</div>
-            ${prizeTag}
-          </div>
-          <div class="lb-points ${pointsGold}">${u.points} Pts</div>
-        </div>`;
-      });
-    }
-    setHTML('lbList', html);
-  });
+ const month=getISTMonthKey();setText('prizePool','₹'+prizePool);
+ db.ref('users').once('value',snap=>{
+  let users=[];snap.forEach(c=>{const u=c.val()||{};u._key=c.key;const pts=Number((u.monthlyPoints||{})[month]||0);if(pts>0&&!u.isBanned&&isMembershipActive(u)){u._monthPoints=pts;users.push(u);}});
+  users.sort((a,b)=>b._monthPoints-a._monthPoints);users=users.slice(0,10);let html='';
+  if(!users.length)html='<div class="empty-state">এই মাসে সক্রিয় মেম্বারদের কোনো র‍্যাঙ্কিং নেই।</div>';
+  else users.forEach((u,i)=>{const rank=i+1,top=i===0?'top1':i===1?'top2':i===2?'top3':'',medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':String(rank),you=currentUser&&u._key===currentUser.uid,avatar=u.profilePic||'https://via.placeholder.com/100',prize=getPrizeShare(rank,prizePool);html+=`<div class="lb-item ${top}"><div class="lb-rank">${medal}</div><div class="lb-avatar"><img src="${avatar}" onerror="this.src='https://via.placeholder.com/100'"></div><div class="lb-info"><div class="lb-name">${u.name||'Player'}${you?'<span class="lb-you">YOU</span>':''}</div><div class="lb-prize">সম্ভাব্য পুরস্কার: ₹${prize}</div></div><div class="lb-points ${i<3?'gold':''}">${u._monthPoints} Pts</div></div>`;});
+  setHTML('lbList',html);
+ });
 }
 
 function loadNotifications(){
@@ -4549,135 +4576,6 @@ function drawFruitShape(radius,type){
   }
 }
 
-/* ---------- AD OPEN / MANUAL RETURN ---------- */
-const SMART_AD_URL = 'https://www.profitableratecpmnetwork.com/kfbbm5vm?key=a362b8536bcab3d94e8a1df89df67afe';
-let activeAdWindow = null;
-let adCloseTimer = null;
-let pendingDoubleReward = null;
-let adReturnContext = 'গেমে';
-let adHistoryGuardActive = false;
-let adBannerLoaded = false;
-// ব্যানার স্ক্রিপ্ট অ্যাপ খোলার সময় নয়—শুধু ব্যবহারকারী বিজ্ঞাপন-সম্পর্কিত বোতাম চাপলে লোড হবে।
-function loadAdBannerOnIntent(){
-  const wrap = document.getElementById('adBannerWrap');
-  const slot = document.getElementById('adBannerSlot');
-  if (!wrap || !slot) return;
-  wrap.style.display = 'flex';
-  if (adBannerLoaded) return;
-  adBannerLoaded = true;
-  window.atOptions = {
-    key: 'ed36036bdd7fedb40bcf36849cb76470',
-    format: 'iframe',
-    height: 50,
-    width: 320,
-    params: {}
-  };
-  const script = document.createElement('script');
-  script.src = 'https://www.highrevenueformat.com/ed36036bdd7fedb40bcf36849cb76470/invoke.js';
-  script.async = true;
-  slot.appendChild(script);
-}
-function installAdBackGuard(){
-  if (adHistoryGuardActive) return;
-  adHistoryGuardActive = true;
-  try { history.pushState({__gameAdReturnGuard:true}, '', location.href); } catch(e) {}
-}
-window.addEventListener('popstate', function(){
-  // Keep Android/WebView Back from immediately exiting the app after an ad launch.
-  if (adHistoryGuardActive) {
-    try { history.pushState({__gameAdReturnGuard:true}, '', location.href); } catch(e) {}
-    closeAdAndReturn();
-    showAlert('গেমে ফিরে এসেছেন।','success');
-  }
-});
-document.addEventListener('visibilitychange', function(){
-  if (!document.hidden && adHistoryGuardActive) {
-    const panel = document.getElementById('adReturnPanel');
-    const msg = document.getElementById('adReturnMessage');
-    if (panel) panel.style.display = 'block';
-    if (msg) msg.textContent = 'গেমে ফিরে এসেছেন। নিচের বাটনে চাপ দিয়ে বিজ্ঞাপন উইন্ডো বন্ধ করুন।';
-  }
-});
-function openAdWithManualClose(context){
-  loadAdBannerOnIntent();
-  adReturnContext = context || 'গেমে';
-  installAdBackGuard();
-  // Open synchronously during the click so browser/WebView popup blockers are less likely to block it.
-  try { activeAdWindow = window.open(SMART_AD_URL, '_blank'); } catch(e) { activeAdWindow = null; }
-  const panel = document.getElementById('adReturnPanel');
-  const msg = document.getElementById('adReturnMessage');
-  if (msg) msg.textContent = 'বিজ্ঞাপন খোলা হয়েছে। ১৫ সেকেন্ড পরে এখান থেকে ফিরে আসার বাটন দেখাবে। বিজ্ঞাপন শেষ হয়েছে কিনা এই Smart Link যাচাই করতে পারে না।';
-  if (panel) panel.style.display = 'none';
-  if (adCloseTimer) clearTimeout(adCloseTimer);
-  adCloseTimer = setTimeout(() => {
-    if (panel) panel.style.display = 'block';
-    if (msg) msg.textContent = 'আপনি চাইলে এখন বিজ্ঞাপনের ট্যাব বন্ধ করে ' + (context || 'গেমে') + ' ফিরে যেতে পারেন।';
-  }, 15000);
-  return !!activeAdWindow;
-}
-function closeAdAndReturn(){
-  if (adCloseTimer) { clearTimeout(adCloseTimer); adCloseTimer = null; }
-  try { if (activeAdWindow && !activeAdWindow.closed) activeAdWindow.close(); } catch(e) {}
-  activeAdWindow = null;
-  const panel = document.getElementById('adReturnPanel');
-  if (panel) panel.style.display = 'none';
-  const banner = document.getElementById('adBannerWrap');
-  if (banner) banner.style.display = 'none';
-  adHistoryGuardActive = false;
-  // Keep the current app screen intact; closing a third-party tab does not certify ad completion.
-}
-/* ---------- GAME OVER / REWARDED POINTS ---------- */
-function watchRewardAd(){
-  const btn = document.getElementById('doublePointsBtn');
-  const p = pendingDoubleReward;
-  if (!p || p.claimed) { if(btn) btn.disabled = true; return; }
-  if (!currentUser || !p.baseAwarded) {
-    showAlert('আপনার মূল স্কোর সংরক্ষণ হওয়া পর্যন্ত অপেক্ষা করুন, তারপর আবার চেষ্টা করুন।','warning');
-    return;
-  }
-  // Open the ad synchronously from the click to reduce WebView/popup blocking,
-  // then claim the bonus immediately; this Smart Link does not verify ad completion.
-  const opened = openAdWithManualClose('গেমে');
-  if (!opened) {
-    showAlert('বিজ্ঞাপন খুলতে পারেনি। আপনার ব্রাউজার/Sketchware WebView-তে পপ-আপ অনুমতি বা external link handling পরীক্ষা করুন।','warning');
-  }
-  confirmDoubleReward();
-}
-function confirmDoubleReward(){
-  const p = pendingDoubleReward;
-  if(!p || p.claimed || !currentUser || !p.baseAwarded) {
-    showAlert('আপনার মূল স্কোর সংরক্ষণ হওয়া পর্যন্ত অপেক্ষা করুন, তারপর আবার চেষ্টা করুন।','warning'); return;
-  }
-  if (p.claiming) return;
-  const bonus = Math.max(0, Number(p.score) || 0);
-  if(bonus <= 0){ setStyle('doublePointsBtn','display','none'); return; }
-  p.claiming = true;
-  // Firebase transaction prevents duplicate increments across repeated clicks.
-  const claimRef = db.ref('users/' + currentUser.uid + '/rewardClaims/' + p.claimId);
-  claimRef.transaction(current => current ? undefined : {points:bonus, time:Date.now()}, (err, committed) => {
-    if(err || !committed){
-      p.claiming = false;
-      if(committed === false){ p.claimed = true; setStyle('doublePointsBtn','display','none'); setText('doublePointsNote','এই গেমের বোনাস ইতিমধ্যেই দাবি করা হয়েছে।'); }
-      else showAlert('বোনাস যাচাই করা যায়নি। সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।','error');
-      return;
-    }
-    db.ref('users/' + currentUser.uid + '/points').transaction(v => (Number(v)||0) + bonus).then(result => {
-      if(!result.committed) throw new Error('points transaction not committed');
-      p.claimed = true; p.claiming = false;
-      if(userData) userData.points = Number(result.snapshot.val()) || 0;
-      setText('heroPoints', userData ? userData.points : result.snapshot.val());
-      setText('doublePointsBtn','✓ বোনাস পয়েন্ট যোগ হয়েছে');
-      setStyle('doublePointsBtn','display','none');
-      setText('doublePointsNote','অতিরিক্ত ' + bonus + ' পয়েন্ট আপনার অ্যাকাউন্টে যোগ হয়েছে।');
-      showAlert('অভিনন্দন! অতিরিক্ত ' + bonus + ' পয়েন্ট অ্যাকাউন্টে যোগ হয়েছে।','success');
-    }).catch(() => {
-      // Allow retry if the points increment failed after reserving this claim.
-      claimRef.remove().catch(() => {});
-      p.claiming = false;
-      showAlert('পয়েন্ট যোগ করা যায়নি। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।','error');
-    });
-  }, false);
-}
 /* ---------- GAME OVER ---------- */
 function triggerGameOver(reason){
   if(gameLoop) cancelAnimationFrame(gameLoop);
@@ -4691,24 +4589,8 @@ function triggerGameOver(reason){
   setText('finalLevel', gameLevel);
   setText('gameOverSub', reason||'You ran out of health');
   setStyle('gameOverScreen','display','flex');
-  pendingDoubleReward = {score: Math.max(0, Number(score)||0), claimed:false, claiming:false, baseAwarded:false, claimId: (currentUser ? currentUser.uid : 'guest') + '_' + Date.now() + '_' + Math.random().toString(36).slice(2,9)};
-  setStyle('doublePointsBtn','display', score > 0 && currentUser ? 'block' : 'none');
-  setText('doublePointsBtn','▶ বিজ্ঞাপন দেখে পয়েন্ট ডাবল করুন');
-  document.getElementById('doublePointsBtn')?.setAttribute('onclick','watchRewardAd()');
-  setText('doublePointsNote', score > 0 ? 'বিজ্ঞাপন থেকে ফিরে এসে বোনাস দাবি করুন। Smart Link নিজে বিজ্ঞাপন দেখা যাচাই করে না।' : 'এই গেমে পয়েন্ট নেই।');
-
   setStyle('gameControls','display','none');
-  if(score>0 && currentUser){
-    const newPoints=(userData.points||0)+score;
-    db.ref('users/'+currentUser.uid).update({points:newPoints}).then(()=>{ if(pendingDoubleReward) pendingDoubleReward.baseAwarded=true; }).catch(()=>{});
-    const gameName = {
-      car:'Crazy Car', space:'Space Rocket', snake:'Classic Snake',
-      candy:'Candy Crush', fruit:'Fruit Crush', block:'Block Puzzle',
-      shooter:'Space Shooter', arrow:'Arrow Maze', ballsort:'Ball Sort'
-    }[lastGameType] || 'Game';
-    db.ref('users/'+currentUser.uid+'/history').push({game:gameName,points:score,time:Date.now()});
-    db.ref('notifications/'+currentUser.uid).push({title:'Game Over',msg:`You earned ${score} points in ${gameName}.`,time:Date.now()});
-  }
+  if(score>0&&currentUser){const gameName={car:'Crazy Car',space:'Space Rocket',snake:'Classic Snake',candy:'Candy Crush',fruit:'Fruit Crush',block:'Block Puzzle',shooter:'Space Shooter',arrow:'Arrow Maze',ballsort:'Ball Sort',cyber:'Neon Cyber Breaker',ninja:'Ninja Blade Blitz'}[lastGameType]||'Game';recordGameReward(score,gameName);}
 }
 
 function tryAgain(){
@@ -4720,13 +4602,7 @@ function tryAgain(){
 function quitGame(){
   if(activeGame === 'candy'){
     const finalScore = CandyBlast.quit();
-    if(finalScore > 0 && currentUser){
-      const newPoints = (userData.points || 0) + finalScore;
-      db.ref('users/' + currentUser.uid).update({ points: newPoints });
-      db.ref('users/' + currentUser.uid + '/history').push({
-        game: 'Candy Crush', points: finalScore, time: Date.now()
-      });
-    }
+    if(finalScore>0&&currentUser)recordGameReward(finalScore,'Candy Crush');
     exitCandyGame();
     return;
   }
@@ -4740,16 +4616,7 @@ function quitGame(){
   setStyle('startSplash','display','none');
   setStyle('gameOverlay','display','none');
   Sound.startBgm('home');
-  if(score>0 && currentUser){
-    const newPoints=(userData.points||0)+score;
-    db.ref('users/'+currentUser.uid).update({points:newPoints});
-    const gameName = {
-      car:'Crazy Car', space:'Space Rocket', snake:'Classic Snake',
-      candy:'Candy Crush', fruit:'Fruit Crush', block:'Block Puzzle',
-      shooter:'Space Shooter', arrow:'Arrow Maze', ballsort:'Ball Sort'
-    }[lastGameType] || 'Game';
-    db.ref('users/'+currentUser.uid+'/history').push({game:gameName,points:score,time:Date.now()});
-  }
+  if(score>0&&currentUser){const gameName={car:'Crazy Car',space:'Space Rocket',snake:'Classic Snake',candy:'Candy Crush',fruit:'Fruit Crush',block:'Block Puzzle',shooter:'Space Shooter',arrow:'Arrow Maze',ballsort:'Ball Sort',cyber:'Neon Cyber Breaker',ninja:'Ninja Blade Blitz'}[lastGameType]||'Game';recordGameReward(score,gameName);}
 }
 
 function exitToHome(){
@@ -4805,18 +4672,7 @@ function showCandyGameOver(finalScore) {
   setText('candyOverlayMsgText', 'আপনার মুভ শেষ হয়ে গেছে!');
   setText('candyOverlayScore', 'Score: ' + finalScore);
   Sound.gameOver();
-  if (finalScore > 0 && currentUser) {
-    const newPoints = (userData.points || 0) + finalScore;
-    db.ref('users/' + currentUser.uid).update({ points: newPoints });
-    db.ref('users/' + currentUser.uid + '/history').push({
-      game: 'Candy Crush', points: finalScore, time: Date.now()
-    });
-    db.ref('notifications/' + currentUser.uid).push({
-      title: 'Game Over',
-      msg: 'You earned ' + finalScore + ' points in Candy Crush.',
-      time: Date.now()
-    });
-  }
+  if(finalScore>0&&currentUser)recordGameReward(finalScore,'Candy Crush');
   setTimeout(() => { exitCandyGame(); }, 2500);
 }
 
@@ -4837,6 +4693,7 @@ let pendingGameType=null;
 let loadingTimer=null;
 
 function launchGame(type){
+  if(!isMembershipActive(userData)){openMembership();showAlert('গেম খেলতে হলে ₹৫০-এর সক্রিয় মাসিক মেম্বারশিপ প্রয়োজন।','warning','Membership Required');return;}
   pendingGameType=type;
   Sound.click();
   Sound.splash();
@@ -4964,6 +4821,9 @@ function loadAdminData(){
     });
     setHTML('adminUserList', html||'<div class="empty-state">No users.</div>');
   });
+  db.ref('membershipRequests').on('value',snap=>{
+    let html='';snap.forEach(c=>{const r=c.val()||{};if(r.status==='Pending')html+=`<div class="admin-wd"><div class="admin-row"><b>${r.name||'User'}</b><span style="color:var(--gold);font-weight:700">₹${r.amount||50}</span></div><div style="font-size:11.5px;color:var(--muted)">Transaction ID: ${r.transactionId||'-'}</div><div style="font-size:11.5px;color:var(--muted)">UPI: ${r.upi||'-'}</div><div class="admin-actions"><button class="btn-success" onclick="approveMembershipRequest('${c.key}')">Approve</button><button class="btn-danger" onclick="rejectMembershipRequest('${c.key}')">Reject</button></div></div>`;});setHTML('adminMembershipList',html||'<div class="empty-state">No pending membership requests.</div>');
+  });
   db.ref('withdraws').on('value', snap=>{
     let html='';
     snap.forEach(c=>{
@@ -5010,211 +4870,28 @@ console.log('[PlayEarn] Mode:', GAME_MODE.toUpperCase(), '| DPR:', MAX_DPR, '| F
 </script>
 <script>
 /* ============================================================
-   AUTO WEEKLY PAYOUT ENGINE
+   MONTHLY TOP-10 PAYOUT ENGINE
+   Admin-triggered. Production payout and approval need trusted
+   Firebase Cloud Functions and restrictive Realtime Database Rules.
    ============================================================ */
 (function(){
-  'use strict';
-  const ADMIN_EMAIL = 'sudiptak503@gmail.com';
-  const PAYOUT_KEY = 'system/lastPayoutWeek';
-  const IST_OFFSET_MIN = 330;
-  const PAYOUT_DAY = 0;
-  const PAYOUT_HOUR_IST = 13;
-  const CHECK_INTERVAL_MS = 60 * 1000;
-
-  function getISTDate(d) {
-    d = d || new Date();
-    const utcMs = d.getTime() + (d.getTimezoneOffset() * 60000);
-    return new Date(utcMs + (IST_OFFSET_MIN * 60000));
-  }
-
-  function getWeekId(istDate) {
-    const d = new Date(Date.UTC(istDate.getFullYear(), istDate.getMonth(), istDate.getDate()));
-    const day = d.getUTCDay() || 7;
-    d.setUTCDate(d.getUTCDate() + 4 - day);
-    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-    const weekNum = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-    return `${d.getUTCFullYear()}-W${String(weekNum).padStart(2,'0')}`;
-  }
-
-  function isPayoutTime() {
-    const ist = getISTDate();
-    if (ist.getDay() !== PAYOUT_DAY) return false;
-    if (ist.getHours() < PAYOUT_HOUR_IST) return false;
-    return true;
-  }
-
-  function prizeShare(rank, pool) {
-    if (!pool || pool <= 0) return 0;
-    if (rank === 1) return Math.floor(pool * 0.70);
-    if (rank === 2) return Math.floor(pool * 0.20);
-    if (rank === 3) return Math.floor(pool * 0.10);
-    return 0;
-  }
-
-  async function runPayout(reason) {
-    try {
-      const weekId = getWeekId(getISTDate());
-      const lastSnap = await db.ref(PAYOUT_KEY).once('value');
-      const lastWeek = lastSnap.val();
-      if (reason === 'auto' && lastWeek === weekId) {
-        console.log('[Payout] Already paid this week:', weekId);
-        return { skipped: true, reason: 'already-paid-this-week' };
-      }
-      const poolSnap = await db.ref('system/prizePool').once('value');
-      const totalPool = Number(poolSnap.val()) || 0;
-      if (totalPool <= 0) {
-        console.log('[Payout] Pool is 0 — skip');
-        return { skipped: true, reason: 'no-pool' };
-      }
-      const usersSnap = await db.ref('users').once('value');
-      const users = [];
-      usersSnap.forEach(c => {
-        const u = c.val() || {};
-        if (!u.isBanned && (u.points || 0) > 0) {
-          users.push({ uid: c.key, ...u });
-        }
-      });
-      if (users.length === 0) {
-        console.log('[Payout] No eligible users');
-        return { skipped: true, reason: 'no-eligible-users' };
-      }
-      users.sort((a, b) => (b.points || 0) - (a.points || 0));
-      const updates = {};
-      const winners = [];
-      const timestamp = Date.now();
-      for (let i = 0; i < Math.min(3, users.length); i++) {
-        const u = users[i];
-        const prize = prizeShare(i + 1, totalPool);
-        if (prize > 0) {
-          updates[`users/${u.uid}/wallet`] = (u.wallet || 0) + prize;
-          updates[`users/${u.uid}/lifetimeEarnings`] = (u.lifetimeEarnings || 0) + prize;
-          winners.push({ uid: u.uid, name: u.name, rank: i + 1, prize });
-        }
-      }
-      users.forEach(u => { updates[`users/${u.uid}/points`] = 0; });
-      updates[PAYOUT_KEY] = weekId;
-      updates['system/lastPayoutTime'] = timestamp;
-      updates['system/lastPayoutReason'] = reason;
-      updates['system/lastPayoutWinners'] = winners;
-      await db.ref().update(updates);
-      const notiPromises = winners.map(w =>
-        db.ref('notifications/' + w.uid).push({
-          title: '🏆 Prize Won!',
-          msg: `Congrats! You ranked #${w.rank} and won ₹${w.prize}. Added to your wallet.`,
-          time: timestamp
-        })
-      );
-      await Promise.all(notiPromises);
-      console.log('[Payout] Success:', winners);
-      return { success: true, weekId, winners, totalPool };
-    } catch (err) {
-      console.error('[Payout] Error:', err);
-      return { success: false, error: err.message };
-    }
-  }
-
-  window.forceLeaderboardUpdate = async function() {
-    const isAdmin = currentUser && currentUser.email === ADMIN_EMAIL;
-    if (!isAdmin) {
-      showAlert('Only admin can do this.', 'error', 'Access Denied');
-      return;
-    }
-    const confirmed = confirm(
-      '⚠️ This will:\n\n' +
-      '• Add prize money to top 3 wallets\n' +
-      '• Reset all users points to 0\n' +
-      '• Lock this week\'s payout\n\n' +
-      'Proceed?'
-    );
-    if (!confirmed) return;
-    showAlert('Processing payout...', 'info', 'Please Wait');
-    const result = await runPayout('force');
-    if (result.skipped) {
-      showAlert('Skipped: ' + result.reason, 'warning');
-      return;
-    }
-    if (!result.success) {
-      showAlert('Error: ' + result.error, 'error');
-      return;
-    }
-    let msg = '✅ Weekly Payout Complete!\n\n';
-    if (result.winners.length === 0) {
-      msg += 'No eligible winners found.\n';
-    } else {
-      result.winners.forEach(w => {
-        const medal = w.rank === 1 ? '🥇' : w.rank === 2 ? '🥈' : '🥉';
-        msg += `${medal} ${w.name} → ₹${w.prize}\n`;
-      });
-    }
-    msg += `\nAll users points have been reset.`;
-    showAlert(msg, 'success', 'Payout Complete');
-    if (typeof loadLeaderboard === 'function') loadLeaderboard();
-  };
-
-  let autoTimer = null;
-  let isPayoutRunning = false;
-
-  async function autoCheck() {
-    if (isPayoutRunning) return;
-    if (!isPayoutTime()) return;
-    const weekId = getWeekId(getISTDate());
-    const snap = await db.ref(PAYOUT_KEY).once('value');
-    if (snap.val() === weekId) return;
-    isPayoutRunning = true;
-    console.log('[Payout] Auto payout starting:', weekId);
-    try {
-      const result = await runPayout('auto');
-      if (result.success && currentUser && currentUser.email === ADMIN_EMAIL) {
-        showAlert(
-          `Auto payout complete!\n${result.winners.length} winners received total ₹${result.totalPool}.`,
-          'success',
-          'Auto Weekly Payout'
-        );
-      }
-    } finally {
-      isPayoutRunning = false;
-    }
-  }
-
-  function startAutoTimer() {
-    if (autoTimer) clearInterval(autoTimer);
-    autoTimer = setInterval(autoCheck, CHECK_INTERVAL_MS);
-    setTimeout(autoCheck, 3000);
-    document.addEventListener('visibilitychange', () => {
-      if (!document.hidden) setTimeout(autoCheck, 1500);
-    });
-  }
-
-  function initPayoutEngine() {
-    if (typeof db === 'undefined') {
-      setTimeout(initPayoutEngine, 500);
-      return;
-    }
-    startAutoTimer();
-    console.log('[Payout] Auto engine started — every Sunday 1:00 PM IST');
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initPayoutEngine);
-  } else {
-    initPayoutEngine();
-  }
-
-  window.__payoutDebug = {
-    status: () => {
-      const ist = getISTDate();
-      return {
-        istTime: ist.toString(),
-        istDay: ist.getDay(),
-        istHour: ist.getHours(),
-        weekId: getWeekId(ist),
-        isPayoutTime: isPayoutTime(),
-        payoutHourIST: PAYOUT_HOUR_IST
-      };
-    },
-    forceRun: () => runPayout('force'),
-    resetWeekLock: () => db.ref(PAYOUT_KEY).remove()
-  };
+ 'use strict';const ADMIN_EMAIL='sudiptak503@gmail.com';
+ function previousMonthKey(){const d=new Date(Date.now()+330*60000),first=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),1));first.setUTCMonth(first.getUTCMonth()-1);return first.getUTCFullYear()+'-'+String(first.getUTCMonth()+1).padStart(2,'0');}
+ async function runMonthlyPayout(){
+  if(!currentUser||currentUser.email!==ADMIN_EMAIL)return showAlert('শুধুমাত্র অ্যাডমিন পেআউট করতে পারবেন।','error');
+  const month=previousMonthKey(),lockRef=db.ref('system/monthlyPayouts/'+month),lock=await lockRef.once('value');
+  if(lock.exists())return showAlert('এই মাসের পুরস্কার ইতিমধ্যে বিতরণ করা হয়েছে।','warning');
+  const ps=await db.ref('system/prizePool').once('value'),pool=Number(ps.val())||0;if(pool<=0)return showAlert('আগে Monthly Prize Pool সেট করুন।','warning');
+  const us=await db.ref('users').once('value'),eligible=[];
+  us.forEach(c=>{const u=c.val()||{},pts=Number((u.monthlyPoints||{})[month]||0);if(pts>0&&!u.isBanned&&isMembershipActive(u))eligible.push({uid:c.key,...u,_pts:pts});});
+  eligible.sort((a,b)=>b._pts-a._pts);const winners=eligible.slice(0,10);if(!winners.length)return showAlert('এই মাসে কোনো যোগ্য সদস্য পাওয়া যায়নি।','warning');
+  if(!confirm(month+' মাসের Top 10 সদস্যকে ₹'+pool+' প্রাইজ পুল বিতরণ করবেন?'))return;
+  const updates={},paid=[];winners.forEach((u,i)=>{const prize=getPrizeShare(i+1,pool);if(prize>0){updates['users/'+u.uid+'/wallet']=(Number(u.wallet)||0)+prize;updates['users/'+u.uid+'/lifetimeEarnings']=(Number(u.lifetimeEarnings)||0)+prize;paid.push({uid:u.uid,name:u.name||'Player',rank:i+1,points:u._pts,prize});}});
+  updates['system/monthlyPayouts/'+month]={paidAt:Date.now(),paidBy:currentUser.email,totalPool:pool,winners:paid};await db.ref().update(updates);
+  await Promise.all(paid.map(w=>db.ref('notifications/'+w.uid).push({title:'🏆 মাসিক পুরস্কার জিতেছেন!',msg:`${month} মাসে আপনার স্থান #${w.rank}; পুরস্কার ₹${w.prize} আপনার Wallet-এ যোগ হয়েছে।`,time:Date.now()})));
+  showAlert(paid.map(w=>'#'+w.rank+' '+w.name+' — ₹'+w.prize).join('\n')+'\n\nমাসিক পুরস্কার বিতরণ সম্পন্ন।','success','Monthly Payout Complete');
+ }
+ window.forceLeaderboardUpdate=runMonthlyPayout;
 })();
 </script>
   <!-- ============================================================
@@ -5517,13 +5194,7 @@ console.log('[PlayEarn] Mode:', GAME_MODE.toUpperCase(), '| DPR:', MAX_DPR, '| F
       setText('gameOverSub', reason || 'Game Over');
       setStyle('gameOverScreen', 'display', 'flex');
       setStyle('gameControls', 'display', 'none');
-      if (score > 0 && currentUser) {
-        const newPoints = (userData.points || 0) + score;
-        db.ref('users/' + currentUser.uid).update({ points: newPoints });
-        const gName = lastGameType === 'cyber' ? 'Neon Cyber Breaker (4X)' : 'Ninja Blade Blitz (4X)';
-        db.ref('users/' + currentUser.uid + '/history').push({ game: gName, points: score, time: Date.now() });
-        db.ref('notifications/' + currentUser.uid).push({ title: '4X Mega Game Over', msg: `You earned ${score} points in ${gName}!`, time: Date.now() });
-      }
+      if(score>0&&currentUser){const gName=lastGameType==='cyber'?'Neon Cyber Breaker':'Ninja Blade Blitz';recordGameReward(score,gName);}
       return;
     }
     return _origTriggerGameOver(reason);
@@ -6154,26 +5825,31 @@ console.log('[PlayEarn] Mode:', GAME_MODE.toUpperCase(), '| DPR:', MAX_DPR, '| F
 })();
 </script>
 <script>
-// =========================================================================
-// 🚀 THE FINAL MASTER SCRIPT (WITH PERMANENT LOCALSTORAGE COOLDOWN)
-// =========================================================================
-
-// ১. FRUIT CRUSH BUG FIX
+// === SHORTCUT BUG FIX FOR FRUIT CRUSH ===
 (function() {
   let lastTapTime = 0;
   const originalHandleTileTap = window.handleTileTap;
 
+  // ১. ডাবল ট্যাপ/ইভেন্ট এরর হ্যান্ডেলিং (Debounce Guard)
   window.handleTileTap = function(row, col) {
     const now = Date.now();
+    // একই ক্লিকে দুইবার ফাংশন কল হলে (80ms এর মধ্যে) দ্বিতীয়টি অটোমেটিক ব্লক করবে
     if (now - lastTapTime < 80) return; 
     lastTapTime = now;
+
     try {
-      if (typeof originalHandleTileTap === 'function') originalHandleTileTap(row, col);
-    } catch (err) { console.warn('Fruit Crush Tap Error Handled:', err); }
+      if (typeof originalHandleTileTap === 'function') {
+        originalHandleTileTap(row, col);
+      }
+    } catch (err) {
+      console.warn('Fruit Crush Tap Error Handled:', err);
+    }
   };
 
+  // ২. আঙুল টেনে (Swipe) খেলার শর্টকাট হ্যান্ডলার
   let startR = null, startC = null;
   const gameCanvas = document.getElementById('gameCanvas');
+  
   if (gameCanvas) {
     gameCanvas.addEventListener('pointerdown', (e) => {
       if (window.activeGame !== 'fruit') return;
@@ -6181,6 +5857,7 @@ console.log('[PlayEarn] Mode:', GAME_MODE.toUpperCase(), '| DPR:', MAX_DPR, '| F
       startC = Math.floor((e.clientX - rect.left - window.gridOffsetX) / window.tileSize);
       startR = Math.floor((e.clientY - rect.top - window.gridOffsetY) / window.tileSize);
     });
+
     gameCanvas.addEventListener('pointermove', (e) => {
       if (window.activeGame !== 'fruit' || startR === null || window.isSwapping) return;
       const rect = gameCanvas.getBoundingClientRect();
@@ -6189,267 +5866,18 @@ console.log('[PlayEarn] Mode:', GAME_MODE.toUpperCase(), '| DPR:', MAX_DPR, '| F
 
       if ((curR !== startR || curC !== startC) && Math.abs(curR - startR) + Math.abs(curC - startC) === 1) {
         if (curR >= 0 && curR < window.gridSize && curC >= 0 && curC < window.gridSize) {
-          lastTapTime = 0; 
+          lastTapTime = 0; // সোয়াইপের জন্য গার্ড রিসেট
           window.selectedTile = { row: startR, col: startC };
           window.handleTileTap(curR, curC);
           startR = null; startC = null;
         }
       }
     });
+
     window.addEventListener('pointerup', () => { startR = null; startC = null; });
   }
 })();
-
-// ২. MASTER APP CONTROLLER (LOCALSTORAGE AD COOLDOWN + SMART BACK)
-(function() {
-    
-    // ফোনের মেমোরি (LocalStorage) থেকে অ্যাড কুলডাউন চেক করার ফাংশন
-    function canShowAd(screenName) {
-        try {
-            const storageKey = 'playearn_ad_timer_' + screenName;
-            const lastTime = parseInt(localStorage.getItem(storageKey) || '0', 10);
-            const now = Date.now();
-            const cooldown = 2 * 60 * 1000; // ২ মিনিট (১২০,০০০ মিলি-সেকেন্ড)
-            
-            // যদি ২ মিনিট পার না হয়ে থাকে, তবে false রিটার্ন করবে (অ্যাড দেখাবে না)
-            if (now - lastTime < cooldown) {
-                return false; 
-            }
-            // ২ মিনিট পার হলে নতুন সময় ফোনের মেমোরিতে সেভ করে রাখবে
-            localStorage.setItem(storageKey, now.toString());
-            return true;
-        } catch(e) {
-            return true;
-        }
-    }
-
-    function applyOverrides() {
-        // --- ক. সরাসরি অ্যাড ওপেনার ফাংশনকে লক করা ---
-        if (typeof window.openAdWithManualClose === 'function' && !window.isAdOpenerHooked) {
-            const origOpenAd = window.openAdWithManualClose;
-            window.openAdWithManualClose = function(context) {
-                if (context === 'Wallet' || context === 'Leaderboard') {
-                    if (!canShowAd(context)) {
-                        console.log(context + " Ad is on 2-min cooldown (Saved in Memory).");
-                        return false; // অ্যাড ওপেন হওয়া পুরোপুরি ব্লক করবে
-                    }
-                }
-                return origOpenAd(context);
-            };
-            window.isAdOpenerHooked = true;
-        }
-
-        // --- খ. নেভিগেশন ফাংশন আপডেট ---
-        window.navTo = function(screenName, el) {
-            if(typeof Sound !== 'undefined' && typeof Sound.click === 'function') Sound.click();
-            
-            // স্ক্রিন পরিবর্তন ও বাটন অ্যাক্টিভ করা (আগেই পেজ খুলে যাবে)
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            const target = document.getElementById('screen' + screenName);
-            if(target) target.classList.add('active');
-            
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            if(el) el.classList.add('active');
-            
-            if(typeof Sound !== 'undefined' && typeof Sound.startBgm === 'function') {
-                if(screenName === 'Home') Sound.startBgm('home');
-                else if(screenName === 'Leaderboard') Sound.startBgm('leaderboard');
-                else Sound.startBgm('home');
-            }
-            
-            if(screenName === 'Leaderboard' && typeof loadLeaderboard === 'function') loadLeaderboard();
-            if(screenName === 'Notification' && typeof loadNotifications === 'function') loadNotifications();
-            if(screenName === 'Profile') {
-                if(typeof updateGameModeUI === 'function') updateGameModeUI();
-                if(typeof updateDebugInfo === 'function') updateDebugInfo();
-                if(typeof updateTrainingBadge === 'function') updateTrainingBadge();
-            }
-
-            // হিস্ট্রিতে পেজ সেভ করা (যাতে ব্যাক বাটন ঠিকমতো কাজ করে)
-            if (screenName !== 'Home') {
-                history.pushState({ screen: screenName }, screenName, '#' + screenName);
-            }
-
-            // সবশেষে অ্যাড চেক করা (কুলডাউন থাকলে ওপেন হবে না)
-            if (screenName === 'Wallet' || screenName === 'Leaderboard') {
-                if(typeof window.openAdWithManualClose === 'function'){
-                    window.openAdWithManualClose(screenName);
-                }
-            }
-        };
-
-        // --- গ. ডবল পয়েন্ট ফাংশন (আপনার পছন্দমতো যা ঠিকঠাক কাজ করছে) ---
-        window.watchRewardAd = function() {
-            const btn = document.getElementById('doublePointsBtn');
-            const p = pendingDoubleReward;
-            if (!p || p.claimed) { if (btn) btn.disabled = true; return; }
-            if (!currentUser || !p.baseAwarded) {
-                showAlert('আপনার মূল স্কোর সংরক্ষণ হওয়া পর্যন্ত অপেক্ষা করুন, তারপর আবার চেষ্টা করুন।','warning');
-                return;
-            }
-            // Open from the click first, then claim the bonus immediately. Smart Link does not verify ad completion.
-            const opened = (typeof openAdWithManualClose === 'function') && openAdWithManualClose('গেমে');
-            if (!opened) showAlert('বিজ্ঞাপন খুলতে পারেনি। আপনার ব্রাউজার/Sketchware WebView-তে পপ-আপ অনুমতি বা external link handling পরীক্ষা করুন।','warning');
-            confirmDoubleReward();
-        };
-    }
-
-    // কোড লোড হওয়ার সাথে সাথে এবং প্রয়োজনে একটু পর আবার রান করানো যাতে মিস না হয়
-    applyOverrides();
-    window.addEventListener('DOMContentLoaded', applyOverrides);
-    window.addEventListener('load', applyOverrides);
-
-    // --- ঘ. স্মার্ট ব্যাক বাটন (অ্যাড প্যানেল ও পেজ কন্ট্রোল) ---
-    window.addEventListener('DOMContentLoaded', function() {
-        history.replaceState({ screen: 'Home' }, 'Home', '');
-
-        window.addEventListener('popstate', function(event) {
-            const adPanel = document.getElementById('adReturnPanel');
-            
-            // ১. যদি বিজ্ঞাপন চলার কারণে নিচের লাল বাটন প্যানেলটি খোলা থাকে, তবে ব্যাক চাপলে শুধু বিজ্ঞাপনটি বন্ধ হবে, ইউজার ওই পেজেই (Wallet/Leaderboard) থাকবে!
-            if ((typeof adHistoryGuardActive !== 'undefined' && adHistoryGuardActive) || (adPanel && adPanel.style.display === 'block')) {
-                if (typeof closeAdAndReturn === 'function') closeAdAndReturn();
-                return; 
-            }
-
-            // ২. যদি গেম চলমান থাকে, তবে গেম থেকে বের হয়ে হোমে আসবে
-            const gameOverlay = document.getElementById('gameOverlay');
-            const candyGame = document.getElementById('candyGameContainer');
-            const startSplash = document.getElementById('startSplash');
-            const gameOverScreen = document.getElementById('gameOverScreen');
-
-            if ((gameOverlay && gameOverlay.style.display === 'flex') || 
-                (candyGame && candyGame.style.display === 'flex') ||
-                (startSplash && startSplash.style.display === 'flex') ||
-                (gameOverScreen && gameOverScreen.style.display === 'flex')) {
-                
-                if (typeof quitGame === 'function') quitGame();
-                history.pushState({ screen: 'Home' }, 'Home', ''); 
-                return;
-            }
-            
-            // ৩. যদি ওয়ালেট বা লিডারবোর্ডে থাকে এবং কোনো অ্যাড না চলে, তবে ব্যাক চাপলে হোমে ফিরে আসবে
-            const homeTab = document.querySelectorAll('.nav-item')[0];
-            if (homeTab && !homeTab.classList.contains('active')) {
-                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-                const homeScreen = document.getElementById('screenHome');
-                if(homeScreen) homeScreen.classList.add('active');
-                
-                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-                homeTab.classList.add('active');
-                
-                if(typeof Sound !== 'undefined' && Sound.startBgm) Sound.startBgm('home');
-                history.pushState({ screen: 'Home' }, 'Home', ''); 
-                return;
-            }
-        });
-    });
-})();
 </script>
-<script>
-// =========================================================================
-// 🚀 PERMANENT 2-MINUTES AD COOLDOWN (USING LOCALSTORAGE) + SMART BACK
-// =========================================================================
-
-document.addEventListener("DOMContentLoaded", function() {
-
-    // ১. লোকাল স্টোরেজ চেক করার ফাংশন (যা পেজ রিলোড বা ব্যাক করলেও মেমোরি ধরে রাখবে)
-    function checkAndSetAdCooldown(screenName) {
-        try {
-            const storageKey = 'playearn_ad_cooldown_' + screenName;
-            const lastTime = parseInt(localStorage.getItem(storageKey) || '0', 10);
-            const now = Date.now();
-            const cooldownTime = 2 * 60 * 1000; // ২ মিনিট (১২০,০০০ মিলি-সেকেন্ড)
-            
-            // যদি শেষ দেখার সময় থেকে ২ মিনিট পার না হয়ে থাকে
-            if (now - lastTime < cooldownTime) {
-                console.log(screenName + " Ad is on 2-minute cooldown.");
-                return false; // অ্যাড দেখানো যাবে না (কুলডাউন চলছে)
-            }
-            
-            // ২ মিনিট পার হয়ে গেলে নতুন সময় সেভ করে দেবো
-            localStorage.setItem(storageKey, now.toString());
-            return true; // অ্যাড দেখানো যাবে
-        } catch(e) {
-            return true;
-        }
-    }
-
-    // ২. সরাসরি অ্যাড ইঞ্জিনকে হুক করা, যাতে কুলডাউন টাইমের মধ্যে অ্যাড ওপেন না হয়
-    if (typeof window.openAdWithManualClose === 'function' && !window.adHookedByStorage) {
-        const originalOpenAd = window.openAdWithManualClose;
-        
-        window.openAdWithManualClose = function(context) {
-            // শুধুমাত্র Wallet এবং Leaderboard এর জন্য কুলডাউন চেক করবে
-            if (context === 'Wallet' || context === 'Leaderboard') {
-                if (!checkAndSetAdCooldown(context)) {
-                    return false; // কুলডাউন চলাকালীন অ্যাড ওপেন হবে না
-                }
-            }
-            return originalOpenAd(context);
-        };
-        window.adHookedByStorage = true;
-    }
-
-    // ৩. স্মার্ট ব্যাক বাটন এবং পেজ নেভিগেশন ফিক্স
-    history.replaceState({ screen: 'Home' }, 'Home', '');
-
-    window.addEventListener('popstate', function(event) {
-        const adPanel = document.getElementById('adReturnPanel');
-        
-        // যদি অ্যাড প্যানেল খোলা থাকে, তবে ব্যাক চাপলে শুধু প্যানেল বন্ধ হবে
-        if ((typeof adHistoryGuardActive !== 'undefined' && adHistoryGuardActive) || (adPanel && adPanel.style.display === 'block')) {
-            if (typeof closeAdAndReturn === 'function') closeAdAndReturn();
-            return; 
-        }
-
-        const gameOverlay = document.getElementById('gameOverlay');
-        const candyGame = document.getElementById('candyGameContainer');
-        const startSplash = document.getElementById('startSplash');
-        const gameOverScreen = document.getElementById('gameOverScreen');
-
-        if ((gameOverlay && gameOverlay.style.display === 'flex') || 
-            (candyGame && candyGame.style.display === 'flex') ||
-            (startSplash && startSplash.style.display === 'flex') ||
-            (gameOverScreen && gameOverScreen.style.display === 'flex')) {
-            
-            if (typeof quitGame === 'function') quitGame();
-            history.pushState({ screen: 'Home' }, 'Home', ''); 
-            return;
-        }
-        
-        const homeTab = document.querySelectorAll('.nav-item')[0];
-        if (homeTab && !homeTab.classList.contains('active')) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            const homeScreen = document.getElementById('screenHome');
-            if(homeScreen) homeScreen.classList.add('active');
-            
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            homeTab.classList.add('active');
-            
-            if(typeof Sound !== 'undefined' && Sound.startBgm) Sound.startBgm('home');
-            history.pushState({ screen: 'Home' }, 'Home', ''); 
-            return;
-        }
-    });
-
-    // ৪. আপনার ডবল পয়েন্ট বাটন লজিক (যা অলরেডি সুন্দর কাজ করছে)
-    window.watchRewardAd = function() {
-            const btn = document.getElementById('doublePointsBtn');
-            const p = pendingDoubleReward;
-            if (!p || p.claimed) { if (btn) btn.disabled = true; return; }
-            if (!currentUser || !p.baseAwarded) {
-                showAlert('আপনার মূল স্কোর সংরক্ষণ হওয়া পর্যন্ত অপেক্ষা করুন, তারপর আবার চেষ্টা করুন।','warning');
-                return;
-            }
-            // Open from the click first, then claim the bonus immediately. Smart Link does not verify ad completion.
-            const opened = (typeof openAdWithManualClose === 'function') && openAdWithManualClose('গেমে');
-            if (!opened) showAlert('বিজ্ঞাপন খুলতে পারেনি। আপনার ব্রাউজার/Sketchware WebView-তে পপ-আপ অনুমতি বা external link handling পরীক্ষা করুন।','warning');
-            confirmDoubleReward();
-        };
-});
-</script>
-
 
 </body>
 </html>
